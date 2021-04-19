@@ -1,3 +1,3 @@
 # 1n6
 
-#### Django, mysql
+#### Django, Mysql, +
