@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mainP',
+    'posts',
     'corsheaders',
     'users',
 ]
@@ -82,15 +83,6 @@ WSGI_APPLICATION = 'snsP.wsgi.application'
 
 DATABASES = my_settings.DATABASES
 
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -115,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE =  'Asia/Seoul'   # timezone1서울
+TIME_ZONE = 'Asia/Seoul'   # timezone1서울
 
 USE_I18N = True
 
@@ -128,6 +120,7 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
+
     os.path.join(BASE_DIR, 'static'),  # base_dir은 프로젝트 폴더
 ]
 
@@ -135,6 +128,7 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEBUG = True
 
 ##CORS
 CORS_ORIGIN_ALLOW_ALL=True

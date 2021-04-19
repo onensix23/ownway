@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+                    crossorigin="anonymous"></script>
+
+    <title>게시판</title>
+</head>
+<body>
+    <div class="container">
+
+        <div class="row">
+            <div class="col-4">
+                <form action="./boardInsert" method="GET">
+                    <button type="submit" class="btn btn-primary btn-sm">Write</button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table" style="text-align:center;">
+                <tr>
+                    <td>제목</td>
+                    <td>{{board_detail.b_title}}</td>
+                    <td>글쓴이</td>
+                    <td>{{board_detail.m_id}}</td>
+                </tr>
+                <tr>
+                    <td>날짜</td>
+                    <td colspan="3">{{board_detail.b_datetime}}</td>
+<!--                    <td>좋아요</td>-->
+<!--                    <td>{{board_detail.b_like}}</td>-->
+                </tr>
+                <tr>
+                    <td colspan="4">{{board_detail.b_text|linebreaksbr}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="row">
+
+            {% if user.username == board_detail.m_id %}
+            <form action="./boardDelete?" method="POST"> {% csrf_token %}
+                <div class="form-group">
+                    <input type="hidden" name="b_id_d" id="b_id_d" value="{{board_detail.b_id}}">
+                    <button type="submit" class="btn btn-primary btn-sm">Delete</button>
+                </div>
+            </form>
+            <form action="./boardEdit" method="GET">
+                <div class="form-group">
+                    <input type="hidden" name="b_id_e" id="b_id_e" value="{{board_detail.b_id}}">
+                    <button type="submit" class="btn btn-primary btn-sm">Edit</button>
+                </div>
+            </form>
+
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
