@@ -10,4 +10,11 @@ class Posts(models.Model):
     b_title = models.CharField(max_length=15, null=False)  # 제목
     b_text = models.TextField()  # 내용
     b_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
-    image = models.ImageField(upload_to="img/")
+
+
+    def __str__(self):
+        return self.b_title
+
+class Photo(models.Model):
+    post = models.ForeignKey(Posts, on_delete=models.CASCADE, null=False)
+    image = models.ImageField(upload_to='images/', blank=False, null=False)

@@ -27,14 +27,25 @@ def boardInsert(request):
         b_title = request.POST.get('b_title')
         b_text = request.POST.get('b_text')
 
-        new_board = Posts(user_id=user_id, b_title=b_title, b_text=b_text)
+        new_post = Posts(user_id=user_id, b_title=b_title, b_text=b_text)
 
-        new_board.save()  # insert
+        new_post.save()  # insert
+
+        for img in request.FILES.getlist('imgs'):
+            # Photo 객체를 하나 생성한다.
+            photo = Photo()
+            # 외래키로 현재 생성한 Post의 기본키를 참조한다.
+            photo.post = new_post
+            # imgs로부터 가져온 이미지 파일 하나를 저장한다.
+            photo.image = img
+            # 데이터베이스에 저장
+            photo.save()
+
 
         return redirect('boardOpen')
 
 
-def boardDetail(request):
+def boardDetail(request, b_id):
     """
         boardList
             - b_id 갖고 get 으로 넘어옴
@@ -44,12 +55,13 @@ def boardDetail(request):
 
     """
     if request.method == 'GET':
-        b_id = request.GET.get('b_id')
+        # b_id = request.GET.get('b_id')
 
         # board_detail = Board.objects.filter(b_id=b_id)
-        board_detail = Posts.objects.get(b_id=b_id)
-
-        return render(request, 'board/detail_board.html', {'board_detail':board_detail})
+        #board_detail = Posts.objects.get(b_id=b_id)
+        board_detail = Posts.objects.select_related().get(b_id=b_id)
+        board_photo = Photo.objects.get(post_id=b_id)
+        return render(request, 'board/detail_board.html', {'board_detail':board_detail, 'board_photo':board_photo})
 
 
 def boardEdit(request):

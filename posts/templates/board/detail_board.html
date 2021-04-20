@@ -1,19 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-     <meta charset="utf-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base.html" %}
+{% load static %}
 
-     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
-     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-                    crossorigin="anonymous"></script>
+{% block content %}
+<style>
+.max-small {
+    width: auto;
+    height: auto;
 
-    <title>게시판</title>
-</head>
-<body>
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+</style>
+
     <div class="container">
-
+        {% if user.is_authenticated %}
         <div class="row">
             <div class="col-4">
                 <form action="./boardInsert" method="GET">
@@ -21,6 +24,7 @@
                 </form>
             </div>
         </div>
+        {% endif %}
         <div class="row">
             <table class="table" style="text-align:center;">
                 <tr>
@@ -32,11 +36,14 @@
                 <tr>
                     <td>날짜</td>
                     <td colspan="3">{{board_detail.b_datetime}}</td>
-<!--                    <td>좋아요</td>-->
-<!--                    <td>{{board_detail.b_like}}</td>-->
                 </tr>
                 <tr>
                     <td colspan="4">{{board_detail.b_text|linebreaksbr}}</td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <img class="max-small" src="{{board_photo.image.url}}" ><br>
+                    </td>
                 </tr>
             </table>
         </div>
@@ -59,5 +66,4 @@
             {% endif %}
         </div>
     </div>
-</body>
-</html>
+{% endblock %}
