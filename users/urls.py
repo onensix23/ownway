@@ -3,6 +3,6 @@ from . import views
 urlpatterns = [
    path('register/', views.register),
    #즉, 최종적인 url은 127~~~~:8000/user/register가 된다.
-   path('login/', views.login),
-   path('logout/', views.logout),
+   path('login/', views.signin),
+   path('logout/', views.signout),
 ]

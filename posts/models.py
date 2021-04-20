@@ -9,5 +9,5 @@ class Posts(models.Model):
     user_id = models.CharField(max_length=12, null=False)  # 작성자
     b_title = models.CharField(max_length=15, null=False)  # 제목
     b_text = models.TextField()  # 내용
-    b_datetime = models.DateTimeField(default=timezone.now(), null=False)  # 날짜
+    b_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
     image = models.ImageField(upload_to="img/")
