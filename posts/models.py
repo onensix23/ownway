@@ -2,6 +2,8 @@ from datetime import datetime
 from django.utils import timezone
 from django.db import models
 from django.utils.timezone import now
+from uuid import uuid4
+
 
 
 class Posts(models.Model):
@@ -18,3 +20,9 @@ class Posts(models.Model):
 class Photo(models.Model):
     post = models.ForeignKey(Posts, on_delete=models.CASCADE, null=False)
     image = models.ImageField(upload_to='images/', blank=False, null=False)
+    filename = models.CharField(max_length=64, null=True, verbose_name='첨부파일명')
+
+    def get_file_path(instance, filename):
+        ymd_path = datetime.now().strftime('%Y/%m/%d')
+        uuid_name = uuid4().hex
+        return '/'.join(['media/images/', ymd_path, uuid_name])

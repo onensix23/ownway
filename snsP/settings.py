@@ -121,7 +121,7 @@ USE_TZ = False
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
 
-    os.path.join(BASE_DIR, 'static'),  # base_dir은 프로젝트 폴더
+    os.path.join(BASE_DIR, '../mainP/static'),  # base_dir은 프로젝트 폴더
 ]
 
 # media files

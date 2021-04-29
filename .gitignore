@@ -160,3 +160,7 @@ Thumbs.db
 
 
 # End of https://www.toptal.com/developers/gitignore/api/django
+
+
+# 사진 폴더 무시
+media/

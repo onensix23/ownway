@@ -20,7 +20,8 @@ def boardInsert(request):
             - post 방식으로 받으면 insert 하고 read_page.html 로 redirect
     """
     if request.method == 'GET':
-        return render(request,  'board/insert_board.html')
+        return render(request, 'board/insert_board_loc.html')
+        # return render(request,  'board/insert_board.html')
 
     elif request.method == 'POST':
         user_id = request.user.get_username()
@@ -31,15 +32,31 @@ def boardInsert(request):
 
         new_post.save()  # insert
 
-        for img in request.FILES.getlist('imgs'):
-            # Photo 객체를 하나 생성한다.
-            photo = Photo()
-            # 외래키로 현재 생성한 Post의 기본키를 참조한다.
-            photo.post = new_post
-            # imgs로부터 가져온 이미지 파일 하나를 저장한다.
-            photo.image = img
-            # 데이터베이스에 저장
-            photo.save()
+        if request.FILES:
+            if 'imgs' in request.FILES.keys():
+                # Photo 객체를 하나 생성한다.
+                photo = Photo()
+                # 외래키로 현재 생성한 Post의 기본키를 참조한다.
+                photo.post = new_post
+                photo.image = request.FILES['imgs']
+                request.FILES['imgs'].name = photo.get_file_path(request.FILES['imgs'].name)
+                photo.filename = request.FILES['imgs'].name
+                # 데이터베이스에 저장
+                photo.save()
+
+
+        # for img in request.FILES.getlist('imgs'):
+        #     # Photo 객체를 하나 생성한다.
+        #     photo = Photo()
+        #     # 외래키로 현재 생성한 Post의 기본키를 참조한다.
+        #     photo.post = new_post
+        #     # imgs로부터 가져온 이미지 파일 하나를 저장한다.
+        #     photo.image = img
+        #     # 파일명 변경
+        #     photo.filename = img.name
+        #
+        #     # 데이터베이스에 저장
+        #     photo.save()
 
 
         return redirect('boardOpen')
