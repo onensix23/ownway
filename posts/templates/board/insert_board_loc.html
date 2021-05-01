@@ -105,18 +105,32 @@
 
 			console.log(data1);
 		}
-
+		function checkTitle(){
+			if($("#title1").val() == ""){
+			    alert("제목을 입력해주세요.");
+			    return false;
+			}else{
+				return true;
+			}
+		}
 		function checkPost(){
-			if($("#title1").val() == "" || $("#content1").val() == ""){
-			    alert("모든 내용을 입력해주세요.");
+			if($("#content1").val() == ""){
+			    alert("내용을 입력해주세요.");
 			    return false;
 			}else{
 				return true;
 			}
 		}
 
-		function writePost(){
+		function writeTitle(){
 			data1.push($("#title1").val());
+			$("#row4").css({'display':'none'});
+			$("#row5").css({'display':''});
+
+			console.log(data1);
+		}
+
+		function writePost(){
 			data1.push($("#content1").val());
 
 			console.log(data1);
@@ -165,6 +179,7 @@
 			<h2>사진 업로드</h2>
 			<form action="javascript: selectPhoto()" role="form" method="post" onsubmit="return checkPhoto()" enctype="multipart/form-data">
 				<div class="mb-3">
+
 					<input class="btn btn-primary" multiple="multiple" type="file" id="file1" name="file1" />
 				</div>
 				<div class="mb-3">
@@ -174,11 +189,10 @@
 		</div>
 
 		<div class="row" id="row4" style="display:none;">
-			<h2>내용 입력</h2>
-			<form action="javascript: writePost()" role="form" method="post" onsubmit="return checkPost()" enctype="multipart/form-data">
+			<h2>제목</h2>
+			<form action="javascript: writeTitle()" role="form" method="post" onsubmit="return checkTitle()">
 				<div class="mb-3">
 					<input type="text" class="form-control" id="title1" name="title1">
-					<textarea id="content1" name="content1" class="form-control"> </textarea>
 				</div>
 				<div class="mb-3">
 					<input class="btn btn-info" type="submit" value="저장">
@@ -186,6 +200,17 @@
 			</form>
 		</div>
 
-
+		<div class="row" id="row5" style="display:none;">
+			<h2>내용</h2>
+			<form action="javascript: writePost()" role="form" method="post" onsubmit="return checkPost()" enctype="multipart/form-data">
+				<div class="mb-3">
+					<textarea id="content1" name="content1" class="form-control"> </textarea>
+				</div>
+				<div class="mb-3">
+					<input class="btn btn-info" type="submit" value="저장">
+				</div>
+			</form>
+		</div>
 	</div>
+
 {% endblock %}

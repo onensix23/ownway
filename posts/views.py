@@ -1,7 +1,7 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import *
-
+from .forms import *
 
 # Create your views here.
 
@@ -20,7 +20,9 @@ def boardInsert(request):
             - post 방식으로 받으면 insert 하고 read_page.html 로 redirect
     """
     if request.method == 'GET':
-        return render(request, 'board/insert_board_loc.html')
+        form1 = CreatePost()
+        form2 = CreatePhoto()
+        return render(request, 'board/insert_board_loc.html', {'form1': form1, 'form2': form2})
         # return render(request,  'board/insert_board.html')
 
     elif request.method == 'POST':
