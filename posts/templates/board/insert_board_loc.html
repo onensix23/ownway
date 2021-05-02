@@ -54,7 +54,9 @@
 		    	return false;
 		  	}
 		  	else{
-			  return true;
+				$("#row1").css({'display':'none'});
+				$("#row2").css({'display':''});
+			  	return true;
 		  	}
 		}
 
@@ -62,9 +64,6 @@
 			data1.push($("#sido1").val());
 			data1.push($("#gugun1").val());
 			console.log(data1);
-
-			$("#row1").css({'display':'none'});
-			$("#row2").css({'display':''});
 		}
 
 
@@ -74,15 +73,15 @@
 			    return false;
 			  }
 			else{
+				$("#row2").css({'display':'none'});
+				$("#row3").css({'display':''});
+
 				return true;
 			}
 		}
 
 		function selectTheme(){
 			data1.push($("#theme1 option:selected").val());
-
-			$("#row2").css({'display':'none'});
-			$("#row3").css({'display':''});
 
 			console.log(data1);
 		}
@@ -93,6 +92,8 @@
 			    return false;
 			  }
 			else{
+				$("#row3").css({'display':'none'});
+				$("#row4").css({'display':''});
 				return true;
 			}
 		}
@@ -100,8 +101,7 @@
 		function selectPhoto(){
 			data1.push($("#file1").val());
 
-			$("#row3").css({'display':'none'});
-			$("#row4").css({'display':''});
+
 
 			console.log(data1);
 		}
@@ -110,6 +110,8 @@
 			    alert("제목을 입력해주세요.");
 			    return false;
 			}else{
+				$("#row4").css({'display':'none'});
+				$("#row5").css({'display':''});
 				return true;
 			}
 		}
@@ -124,16 +126,16 @@
 
 		function writeTitle(){
 			data1.push($("#title1").val());
-			$("#row4").css({'display':'none'});
-			$("#row5").css({'display':''});
+
 
 			console.log(data1);
 		}
 
 		function writePost(){
-			data1.push($("#content1").val());
+			var k = $("#fr").serialize()
+			console.log(k);
 
-			console.log(data1);
+
 		}
 
 	</script>
@@ -141,76 +143,84 @@
         <div class="row">
             <h1 style="text-align:center; margin:auto;">글 쓰기</h1>
         </div>
-
+		<form action="{% url 'boardInsert' %}" method="POST" role="form" name="fr"  id="fr" enctype="multipart/form-data"> {% csrf_token %}
 		<div class="row" id="row1">
 			<h2>시/군.구 선택</h2>
-			<form action="javascript: selectLoc()" name="fr" id="fr" role="form" method="post" onsubmit="return checkLoc()">
-				<div class="mb-3">
-					<select class="form-control" name="sido1" id="sido1"></select>
-					<select class="form-control" name="gugun1" id="gugun1"></select>
-				</div>
-				<div class="mb-3">
-					<input class="btn btn-info" type="submit" value="다음">
-				</div>
-			</form>
+			<div class="mb-3">
+				<select class="form-control" name="sido1" id="sido1"></select>
+				<select class="form-control" name="gugun1" id="gugun1"></select>
+				<select class="form-control" name="dong1" id="dong1">
+					<option value="1">전체</option>
+				</select>
+			</div>
+			<div class="mb-3">
+				<input class="btn btn-info" type="button" value="다음" onclick="return checkLoc()">
+			</div>
+			<!--<form action="javascript: selectLoc()" name="fr" id="fr" role="form" method="post" onsubmit="return checkLoc()">
+
+			</form>-->
 		</div>
 
 		<div class="row" id="row2" style="display:none;">
 			<h2>장소 선택</h2>
-			<form action="javascript: selectTheme()" role="form" method="post" onsubmit="return checkLoc()">
-				<div class="mb-3">
-						<select class="form-control" name="theme1" id="theme1">
-							<option value="장소 선택">장소 선택</option>
-							<option value="술">술</option>
-							<option value="식사">식사</option>
-							<option value="놀이">놀이</option>
-							<option value="실외">실외</option>
-							<option value="디저트">디저트</option>
-						</select>
-				</div>
-				<div class="mb-3">
-					<input class="btn btn-info" type="submit" value="다음">
-				</div>
-			</form>
+<!--			<form action="javascript: selectTheme()" role="form" method="post" onsubmit="return checkLoc()">
+
+			</form>-->
+			<div class="mb-3">
+				<select class="form-control" name="theme1" id="theme1">
+					<option value="장소 선택">장소 선택</option>
+					<option value="술">술</option>
+					<option value="식사">식사</option>
+					<option value="놀이">놀이</option>
+					<option value="실외">실외</option>
+					<option value="디저트">디저트</option>
+				</select>
+			</div>
+			<div class="mb-3">
+				<input class="btn btn-info" type="button" value="다음" onclick="return checkTheme()">
+			</div>
 		</div>
 
 
 		<div class="row" id="row3" style="display:none;">
 			<h2>사진 업로드</h2>
-			<form action="javascript: selectPhoto()" role="form" method="post" onsubmit="return checkPhoto()" enctype="multipart/form-data">
-				<div class="mb-3">
+<!--			<form action="javascript: selectPhoto()" role="form" method="post" onsubmit="return checkPhoto()" enctype="multipart/form-data">
 
-					<input class="btn btn-primary" multiple="multiple" type="file" id="file1" name="file1" />
-				</div>
-				<div class="mb-3">
-					<input class="btn btn-info" type="submit" value="다음">
-				</div>
-			</form>
+			</form>-->
+			<div class="mb-3">
+				<input class="btn btn-primary" multiple="multiple" type="file" id="file1" name="file1" />
+			</div>
+			<div class="mb-3">
+				<input class="btn btn-info" type="button" value="다음" onclick="return checkPhoto()">
+			</div>
 		</div>
 
 		<div class="row" id="row4" style="display:none;">
 			<h2>제목</h2>
-			<form action="javascript: writeTitle()" role="form" method="post" onsubmit="return checkTitle()">
-				<div class="mb-3">
-					<input type="text" class="form-control" id="title1" name="title1">
-				</div>
-				<div class="mb-3">
-					<input class="btn btn-info" type="submit" value="저장">
-				</div>
-			</form>
+<!--			<form action="javascript: writeTitle()" role="form" method="post" onsubmit="return checkTitle()">
+
+			</form>-->
+			<div class="mb-3">
+				<input type="text" class="form-control" id="title1" name="title1">
+			</div>
+			<div class="mb-3">
+				<input class="btn btn-info" type="button" value="저장" onclick="return checkTitle()">
+			</div>
 		</div>
 
 		<div class="row" id="row5" style="display:none;">
 			<h2>내용</h2>
-			<form action="javascript: writePost()" role="form" method="post" onsubmit="return checkPost()" enctype="multipart/form-data">
-				<div class="mb-3">
-					<textarea id="content1" name="content1" class="form-control"> </textarea>
-				</div>
-				<div class="mb-3">
-					<input class="btn btn-info" type="submit" value="저장">
-				</div>
-			</form>
+<!--			<form action="javascript: writePost()" role="form" method="post" onsubmit="return checkPost()" enctype="multipart/form-data">
+
+			</form>-->
+			<div class="mb-3">
+				<textarea id="content1" name="content1" class="form-control"> </textarea>
+			</div>
+			<div class="mb-3">
+				<input class="btn btn-info" type="submit" value="저장" onclick="return checkPost()">
+			</div>
 		</div>
+		</form>
 	</div>
 
 {% endblock %}

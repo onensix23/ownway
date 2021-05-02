@@ -9,9 +9,10 @@ from imagekit.processors import ResizeToFill
 class Posts(models.Model):
     b_id = models.AutoField(primary_key=True)   #게시물 번호
     user_id = models.CharField(max_length=12, null=False)  # 작성자
-    b_locType1 = models.CharField(max_length=12, null=False, default='')  # 작성자
-    b_locType2 = models.CharField(max_length=12, null=False, default='')  # 작성자
-    b_locType3 = models.CharField(max_length=12, null=True, default='')  # 작성자
+    b_locType1 = models.CharField(max_length=12, null=False, default='')  # 시
+    b_locType2 = models.CharField(max_length=12, null=False, default='')  # 구군
+    b_locType3 = models.CharField(max_length=12, null=True, default='')  # 동
+    b_theme = models.CharField(max_length=12, null=True, default='') #장소 테마
     b_title = models.CharField(max_length=15, null=False)  # 제목
     b_text = models.TextField()  # 내용
     b_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
@@ -25,7 +26,7 @@ class Photo(models.Model):
     post = models.ForeignKey(Posts, on_delete=models.CASCADE, null=False)
     #image = models.ImageField(upload_to='images/', blank=False, null=False)
     image = ProcessedImageField(
-        upload_to='images/',
+        upload_to='images/'+datetime.now().strftime('%Y%m%d')+'/',
         processors=[ResizeToFill(600,600)],
         format='JPEG',
         options={'quality': 90}

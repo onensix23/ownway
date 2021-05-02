@@ -27,22 +27,35 @@ def boardInsert(request):
 
     elif request.method == 'POST':
         user_id = request.user.get_username()
-        b_title = request.POST.get('b_title')
-        b_text = request.POST.get('b_text')
+        b_title = request.POST.get('title1')
+        b_text = request.POST.get('content1')
+        b_locType1 = request.POST.get('sido1')
+        b_locType2 = request.POST.get('gugun1')
+        b_locType3 = request.POST.get('dong1')
+        b_theme = request.POST.get('theme1')
 
-        new_post = Posts(user_id=user_id, b_title=b_title, b_text=b_text)
+        print(b_title)
+        print(b_text)
+        print(b_locType1)
+        print(b_locType2)
+        print(b_locType3)
+        print(b_theme)
+
+        new_post = Posts(user_id=user_id, b_title=b_title, b_text=b_text,
+                         b_locType1=b_locType1, b_locType2=b_locType2, b_locType3=b_locType3,
+                         b_theme=b_theme)
 
         new_post.save()  # insert
-
+        print(request.FILES.keys())
         if request.FILES:
-            if 'imgs' in request.FILES.keys():
+            if 'file1' in request.FILES.keys():
                 # Photo 객체를 하나 생성한다.
                 photo = Photo()
                 # 외래키로 현재 생성한 Post의 기본키를 참조한다.
                 photo.post = new_post
-                photo.image = request.FILES['imgs']
-                request.FILES['imgs'].name = photo.get_file_path(request.FILES['imgs'].name)
-                photo.filename = request.FILES['imgs'].name
+                photo.image = request.FILES['file1']
+                request.FILES['file1'].name = photo.get_file_path(request.FILES['file1'].name)
+                photo.filename = request.FILES['file1'].name
                 # 데이터베이스에 저장
                 photo.save()
 
