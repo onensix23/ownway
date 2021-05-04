@@ -2,8 +2,11 @@
 {% load static %}
 
 {% block content %}
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqsYxJK8fV_IX5tRtrjlp5cmBd_RR_ceg&callback=initMap&libraries=&v=weekly" async></script>
 	<script type="text/javascript">
 		$('document').ready(function() {
+			initMap('map');
+
 		   	var area0 = ["시/도 선택","서울특별시","인천광역시","대전광역시","광주광역시","대구광역시","울산광역시","부산광역시","경기도","강원도","충청북도","충청남도","전라북도","전라남도","경상북도","경상남도","제주도"];
 			var area1 = ["강남구","강동구","강북구","강서구","관악구","광진구","구로구","금천구","노원구","도봉구","동대문구","동작구","마포구","서대문구","서초구","성동구","성북구","송파구","양천구","영등포구","용산구","은평구","종로구","중구","중랑구"];
 		   	var area2 = ["계양구","남동구","동구","미추홀구","부평구","서구","연수구","중구","강화군","옹진군"];
@@ -42,6 +45,10 @@
 				   });
 				  }
 			 });
+
+			 document.getElementById("submit").addEventListener("click", () => {
+				geocodeLatLng(geocoder, map, infowindow);
+			});
 		});
 
 
@@ -134,38 +141,62 @@
 		function writePost(){
 			var k = $("#fr").serialize()
 			console.log(k);
+		}
 
-
+		var loc;
+		function myLocation(){
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					(position) => {
+						const pos = {
+							lat: position.coords.latitude,
+							lng: position.coords.longitude,
+						};
+						loc = pos;
+						/* infoWindow.setPosition(pos);
+						infoWindow.setContent("Location found.");
+						infoWindow.open(map);
+						map.setCenter(pos); */
+					},
+					() => {
+						// handleLocationError(true, infoWindow, map.getCenter());
+					}
+				);
+				console.log(loc);
+			}
+			else {
+				// Browser doesn't support Geolocation
+				// handleLocationError(false, infoWindow, map.getCenter());
+			}
 		}
 
 	</script>
+
     <div class="container">
+		<div id="map" style="display:none;"></div>
         <div class="row">
             <h1 style="text-align:center; margin:auto;">글 쓰기</h1>
         </div>
 		<form action="{% url 'boardInsert' %}" method="POST" role="form" name="fr"  id="fr" enctype="multipart/form-data"> {% csrf_token %}
 		<div class="row" id="row1">
 			<h2>시/군.구 선택</h2>
-			<div class="mb-3">
+			<div class="col-6">
 				<select class="form-control" name="sido1" id="sido1"></select>
 				<select class="form-control" name="gugun1" id="gugun1"></select>
 				<select class="form-control" name="dong1" id="dong1">
 					<option value="1">전체</option>
 				</select>
 			</div>
-			<div class="mb-3">
+			<div class="col-3">
 				<input class="btn btn-info" type="button" value="다음" onclick="return checkLoc()">
 			</div>
-			<!--<form action="javascript: selectLoc()" name="fr" id="fr" role="form" method="post" onsubmit="return checkLoc()">
-
-			</form>-->
+			<div class="col-3">
+				<input type="button" value="위치"  id="ReverseGecode" onclick="myLocation()"/>
+			</div>
 		</div>
 
 		<div class="row" id="row2" style="display:none;">
 			<h2>장소 선택</h2>
-<!--			<form action="javascript: selectTheme()" role="form" method="post" onsubmit="return checkLoc()">
-
-			</form>-->
 			<div class="mb-3">
 				<select class="form-control" name="theme1" id="theme1">
 					<option value="장소 선택">장소 선택</option>
