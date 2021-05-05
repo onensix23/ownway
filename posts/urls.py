@@ -7,4 +7,5 @@ urlpatterns = [
     path('boardDetail/<int:b_id>', views.boardDetail, name="boardDetail"),
     path('boardEdit', views.boardEdit, name="boardEdit"),
     path('boardDelete', views.boardDelete, name="boardDelete"),
+    path('getAddress',  views.getAddress, name="ajaxGetAdd"),
 ]

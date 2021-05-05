@@ -123,3 +123,8 @@ def boardDelete(request):
         Posts.objects.get(b_id=b_id).delete()
         return redirect('boardOpen')
 
+def getAddress(request): 
+    if request.method == 'POST':
+        b_id = request.POST.get('b_id_d')
+        Posts.objects.get(b_id=b_id).delete()
+        return redirect('boardOpen')
