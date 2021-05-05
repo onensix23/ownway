@@ -3,10 +3,9 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqsYxJK8fV_IX5tRtrjlp5cmBd_RR_ceg&callback=initMap&libraries=&v=weekly" async></script>
         {% block css %}
         <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-        <script src="{% static 'js/common.js' %}"></script>
         <script src="{% static 'js/bootstrap.js' %}"></script>
         <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
         {% endblock %}
@@ -15,7 +14,7 @@
         {% block title %}
             SNS
         {% endblock title %}
-    </title>
+    </title> 
       <style>
           .container{
             text-align:center !important;

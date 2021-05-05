@@ -2,35 +2,181 @@
 {% load static %}
 
 {% block content %}
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqsYxJK8fV_IX5tRtrjlp5cmBd_RR_ceg&callback=initMap&libraries=&v=weekly" async></script>
+	<script src="{% static 'js/projectBasic.js' %}"></script>
 	<script type="text/javascript">
+
+
 		$('document').ready(function() {
-		   	var area0 = ["시/도 선택",
-			   			"서울특별시",
-						"인천광역시",
-						"대전광역시",
-						"광주광역시",
-						"대구광역시",
-						"울산광역시",
-						"부산광역시",
-						"경기도",
-						"강원도",
-						"충청북도",
-						"충청남도",
-						"전라북도",
-						"전라남도",
-						"경상북도",
-						"경상남도",
-						"제주도"];
+			initMap();
+			
+			initSelect();
 		});
 
+		var sidoArray;
+		var gunguArray;
+		var dongArray;
+
+		async function initSelect(){
+			await getSidoAddress();
+			await getGunguAddress();
+			await getDongAddress();
+		}
+
+		function getCookie(name) {
+			var cookieValue = null;
+			if (document.cookie && document.cookie !== '') {
+				var cookies = document.cookie.split(';');
+				for (var i = 0; i < cookies.length; i++) {
+					var cookie = cookies[i].trim();
+					// Does this cookie string begin with the name we want?
+					if (cookie.substring(0, name.length + 1) === (name + '=')) {
+						cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+						break;
+					}
+				}
+			}
+			return cookieValue;
+		}
+
+		var csrftoken = getCookie('csrftoken');
+
+		function csrfSafeMethod(method) {
+			// these HTTP methods do not require CSRF protection
+			return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+		}
+
+		$.ajaxSetup({
+			beforeSend: function(xhr, settings) {
+				if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+					xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				}
+			}
+		});
+
+		//시-도 가져오기
+		function getSidoAddress(){
+			
+			var url1 = 'getSido';
+			var tData = {
+				'title': 'tt',
+				'content' : 'tt3333',
+			}
+			tData = JSON.stringify(tData);
+			// console.log(tData);
+
+			$.ajax({
+				url : url1,
+				type : 'POST',
+				async : false,
+				data : tData,
+				dataType: "json",
+				success: function(data1){
+					sidoArray = data1;
+					//console.log(sidoArray);
+					setSido(data1);
+				},
+				error: function(){
+					//console.log('errte');
+				}
+			});
+		}
+
+		function getGunguAddress(){
+			var url1 = 'getGungu';
+			var selSido = $('#sido1 option:selected').val()
+			var tData = {
+				'sido_cd' : selSido
+			}
+			tData = JSON.stringify(tData);
+			//console.log(tData);
+
+			$.ajax({
+				url : url1,
+				type : 'POST',
+				data : tData,
+				async : false,
+				dataType: "json",
+				success: function(data1){
+					gunguArray = data1;
+					console.log(gunguArray);
+					setGunGu(data1);
+				},
+				error: function(){
+					//console.log('errte');
+				}
+			});
+		}
+
+		function getDongAddress(){
+			var url1 = 'getDong';
+			var selGungu = $('#gungu1 option:selected').val()
+			var tData = {
+				'sigungu_cd' : selGungu
+			}
+			tData = JSON.stringify(tData);
+			//console.log(tData);
+
+			$.ajax({
+				url : url1,
+				type : 'POST',
+				data : tData,
+				async : false,
+				dataType: "json",
+				success: function(data1){
+					dongArray = data1;
+					//console.log(dongArray);
+					setDong(data1);
+				},
+				error: function(){
+					//console.log('errte');
+				}
+			});
+		}
+
+		// ajax로 시-도 데이터 가져와서 set
+		function setSido(data1){
+			$("#sido1 option").remove();
+			for(var i = 0; i < data1.length; i++){                
+                var option = $("<option value="+data1[i].sido_cd +">"+data1[i].sido_nm+"</option>");
+                $('#sido1').append(option);
+            }
+			$("#sido1 option:eq(0)").prop("selected", true);
+		}
+
+		// ajax로 구-군 데이터 가져와서 set
+		function setGunGu(data1){
+			$("#gungu1 option").remove();
+			for(var i = 0; i < data1.length; i++){                
+                var option = $("<option value="+data1[i].sigungu_cd +">"+data1[i].sigungu_nm+"</option>");
+                $('#gungu1').append(option);
+            }
+		}
+
+		// ajax로 동 데이터 가져와서 set
+		function setDong(data1){
+			$("#dong1 option").remove();
+			for(var i = 0; i < data1.length; i++){ 
+				if(i==0){
+					var option = $("<option value='0'>전체</option>");
+					$('#dong1').append(option);
+				}               
+                var option = $("<option value="+data1[i].adm_dr_cd2 +">"+data1[i].adm_dr_nm+"</option>");
+                $('#dong1').append(option);
+            }
+		}
+
+		
+		let geocoder;
+		let infowindow;
+		// 지도
 		function initMap() {
 			const map = new google.maps.Map(document.getElementById('map'), {
 				zoom: 8,
 				center: { lat: 40.731, lng: -73.997 },
 			});
-			const geocoder = new google.maps.Geocoder();
-			const infowindow = new google.maps.InfoWindow();
+			geocoder = new google.maps.Geocoder();
+			infowindow = new google.maps.InfoWindow();
+
 		}
 
 
@@ -47,13 +193,11 @@
 			  	return true;
 		  	}
 		}
-
 		function selectLoc(){
 			data1.push($("#sido1").val());
-			data1.push($("#gugun1").val());
+			data1.push($("#gungu1").val());
 			console.log(data1);
 		}
-
 
 		function checkTheme() {
 			if($("#theme1 option:selected").val() == "장소 선택") {
@@ -67,7 +211,6 @@
 				return true;
 			}
 		}
-
 		function selectTheme(){
 			data1.push($("#theme1 option:selected").val());
 
@@ -85,14 +228,11 @@
 				return true;
 			}
 		}
-
 		function selectPhoto(){
 			data1.push($("#file1").val());
-
-
-
 			console.log(data1);
 		}
+		
 		function checkTitle(){
 			if($("#title1").val() == ""){
 			    alert("제목을 입력해주세요.");
@@ -114,18 +254,14 @@
 
 		function writeTitle(){
 			data1.push($("#title1").val());
-
-
 			console.log(data1);
 		}
-
 		function writePost(){
 			var k = $("#fr").serialize()
 			console.log(k);
 		}
 
 		var loc;
-
 		function myLocation(){
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
@@ -135,22 +271,65 @@
 							lng: position.coords.longitude,
 						};
 						loc = pos;
-					},
-					() => {
-						// handleLocationError(true, infoWindow, map.getCenter());
-					}
-				);
-				console.log(loc);
+						geocodeLatLng(geocoder, pos);
+				});
 			}
 			else {
-				// Browser doesn't support Geolocation
-				// handleLocationError(false, infoWindow, map.getCenter());
+				consoel.log('nope');
 			}
 		}
-		function getGuGun(){
-			var adm_dr_cd = $('#sido option:selected').val()
+
+		//function geocodeLatLng(geocoder, map, infowindow)
+		function geocodeLatLng(geocoder, loc) {
+			console.log(loc)
+			const latlng = {
+				lat: parseFloat(loc.lat),
+				lng: parseFloat(loc.lng),
+			};
+			geocoder.geocode({ location: latlng }, (results, status) => {
+				if (status === "OK") {
+					console.log(results)
+					if (results[2]) {
+						// 대한민국 경기도 군포시 궁내동
+						setMyLoc(results[2].formatted_address)
+						
+					} else {
+						window.alert("No results found");
+					}
+				} else {
+				window.alert("Geocoder failed due to: " + status);
+				}
+			});
+		}
+
+		function setMyLoc(addr){
+			var addrArr = addr.split(' ');
+			
+			var k = sidoArray.filter(function(e){
+				return e.sido_nm==addrArr[1];
+			})
+
+			$("#sido1").val(k[0].sido_cd).prop("selected", true);
+
+			getGunguAddress();
+
+			k = gunguArray.filter(function(e){
+				return e.sigungu_nm==addrArr[2];
+			});
+
+			$("#gungu1").val(k[0].sigungu_cd).prop("selected", true);
+
+			getDongAddress();
+			
+			k = dongArray.filter(function(e){
+				return e.adm_dr_nm==addrArr[3];
+			});
+
+			$("#dong1").val(k[0].adm_dr_cd2).prop("selected", true);
+
 
 		}
+
 	</script>
 
     <div class="container">
@@ -160,10 +339,12 @@
         </div>
 		<form action="{% url 'boardInsert' %}" method="POST" role="form" name="fr"  id="fr" enctype="multipart/form-data"> {% csrf_token %}
 		<div class="row" id="row1">
-			<h2>시/군.구 선택</h2>
+			<h2>현위치 선택</h2>
 			<div class="col-6">
-				<select class="form-control" name="sido1" id="sido1" onchange="getGuGun()"></select>
-				<select class="form-control" name="gugun1" id="gugun1"></select>
+				<select class="form-control" name="sido1" id="sido1" onchange="getGunguAddress()"></select>
+				<select class="form-control" name="gungu1" id="gungu1" onchange="getDongAddress()">
+					<option value="1">구/군</option>
+				</select>
 				<select class="form-control" name="dong1" id="dong1">
 					<option value="1">전체</option>
 				</select>
@@ -172,7 +353,7 @@
 				<input class="btn btn-info" type="button" value="다음" onclick="return checkLoc()">
 			</div>
 			<div class="col-3">
-				<input type="button" value="위치"  id="ReverseGecode" onclick="myLocation()"/>
+				<input type="button" value="위치"  id="myLoc" onclick="myLocation()"/>
 			</div>
 		</div>
 

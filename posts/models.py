@@ -38,3 +38,24 @@ class Photo(models.Model):
         ymd_path = datetime.now().strftime('%Y/%m/%d')
         uuid_name = uuid4().hex
         return '/'.join(['media/images/', ymd_path, '/', uuid_name])
+
+
+class KoreaDongPgTbl(models.Model):
+    adm_dr_cd = models.CharField(primary_key=True, max_length=7)
+    sido_nm = models.CharField(max_length=45)
+    sigungu_nm = models.CharField(max_length=45)
+    adm_dr_nm = models.CharField(max_length=45)
+    sido_nm_eng = models.CharField(max_length=45, blank=True, null=True)
+    sigungu_nm_eng = models.CharField(max_length=45, blank=True, null=True)
+    adm_dr_nm_eng = models.CharField(max_length=45, blank=True, null=True)
+    sido_nm_cn = models.CharField(max_length=45, blank=True, null=True)
+    sigungu_nm_cn = models.CharField(max_length=45, blank=True, null=True)
+    adm_dr_nm_cn = models.CharField(max_length=45, blank=True, null=True)
+    sido_cd = models.CharField(max_length=2)
+    sigungu_cd = models.CharField(max_length=5)
+    adm_dr_cd2 = models.CharField(max_length=11)
+    updated = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'korea_dong_pg_tbl'

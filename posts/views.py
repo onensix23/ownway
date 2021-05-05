@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import *
 from .forms import *
+import json
+from django.http import HttpResponse
+from django.core import serializers
+from .models import KoreaDongPgTbl
 
 # Create your views here.
 
@@ -30,7 +34,7 @@ def boardInsert(request):
         b_title = request.POST.get('title1')
         b_text = request.POST.get('content1')
         b_locType1 = request.POST.get('sido1')
-        b_locType2 = request.POST.get('gugun1')
+        b_locType2 = request.POST.get('gungu1')
         b_locType3 = request.POST.get('dong1')
         b_theme = request.POST.get('theme1')
 
@@ -128,3 +132,43 @@ def getAddress(request):
         b_id = request.POST.get('b_id_d')
         Posts.objects.get(b_id=b_id).delete()
         return redirect('boardOpen')
+
+
+def getSido(request):
+    if request.method == "POST":
+        jsonObject = json.loads(request.body)
+        # select distinct(sido_nm,sido_cd) from KoreaDongPgTbl
+        sido = KoreaDongPgTbl.objects.filter().distinct().values('sido_nm', 'sido_cd')
+        sido_list = json.dumps(list(sido))  # 시- 도 return
+
+        # print(sido_list)
+        return HttpResponse(sido_list, content_type="text/json-comment-filtered")
+
+
+def getGungu(request):
+    if request.method == "POST":
+        json_str = ((request.body).decode('utf-8'))
+        jsonObject = json.loads(json_str)
+
+        sel_sido_cd = jsonObject['sido_cd']
+
+        sigungu = KoreaDongPgTbl.objects.filter(sido_cd=sel_sido_cd).distinct().values('sigungu_nm', 'sigungu_cd')
+        sigungu_list = json.dumps(list(sigungu)) # 시- 도 return
+        # print(sigungu_list)
+
+        return HttpResponse(sigungu_list, content_type="text/json-comment-filtered")
+
+
+
+def getDong(request):
+    if request.method == "POST":
+        json_str = ((request.body).decode('utf-8'))
+        jsonObject = json.loads(json_str)
+
+        sel_sigungu_cd = jsonObject['sigungu_cd']
+
+        adm_dr = KoreaDongPgTbl.objects.filter(sigungu_cd=sel_sigungu_cd).distinct().values('adm_dr_nm', 'adm_dr_cd2')  # 동
+        adm_dr_list = json.dumps(list(adm_dr))  # 시- 도 return
+
+        return HttpResponse(adm_dr_list, content_type="text/json-comment-filtered")
+
