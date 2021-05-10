@@ -124,7 +124,7 @@
 				dataType: "json",
 				success: function(data1){
 					dongArray = data1;
-					//console.log(dongArray);
+					console.log(dongArray);
 					setDong(data1);
 				},
 				error: function(){
@@ -163,6 +163,7 @@
                 var option = $("<option value="+data1[i].adm_dr_cd2 +">"+data1[i].adm_dr_nm+"</option>");
                 $('#dong1').append(option);
             }
+			console.log()
 		}
 
 		

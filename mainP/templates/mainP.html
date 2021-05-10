@@ -14,11 +14,15 @@
         console.log("out");
             location.href="/user/logout"
         }
+        else if(a==3){
+            location.href="/search";
+        }
 
     }
 </script>
 
 <div class="container">
+    fasdfasdf
     {% if user.is_authenticated %}
         <div class="row">
             <a href="javascript:userClick(2)"><input class="button" type="button" value="sign out"></a>
@@ -35,7 +39,7 @@
         <h1>HI</h1>
    </div>
     <div class="row" style="text-align:center">
-        <a class="col-12"> search </a>
+        <a href="javascript:userClick(3)" class="col-12"> search </a>
    </div>
     <div id="floating-panel">
       <input id="latlng" type="text" value="40.714224,-73.961452" />

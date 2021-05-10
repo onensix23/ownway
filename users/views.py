@@ -29,7 +29,8 @@ def register(request):   #회원가입 페이지를 보여주기 위한 함수
             res_data['error3'] = '중복된 ID 입니다.'
         else:
             # username id ,
-            user = User.objects.create_user(username=id1, password=password,
+            m_password = make_password(password, None, 'pbkdf2_sha256')
+            user = User.objects.create_user(username=id1, password=m_password,
                                             first_name=nickname, email=email)
             res_data['success'] = "가입되었습니다."
 
@@ -44,13 +45,13 @@ def signin(request):
         login_username = request.POST.get('id', None)
         login_password = request.POST.get('password', None)
 
-
+        print(login_username, login_password)
         if not (login_username and login_password):
             response_data['error'] = "아이디와 비밀번호를 모두 입력해주세요."
         else:
             myuser = authenticate(username=login_username, password=login_password)
             # db에서 꺼내는 명령. Post로 받아온 username으로 , db의 username을 꺼내온다.
-
+            print(myuser)
             if myuser is not None:
                 login(request, myuser)
                 # request.session['user'] = myuser.username
@@ -74,6 +75,8 @@ def home(request):
 
 def signout(request):
     logout(request)
+    response = redirect('/')
+    response.delete_cookie('user_location')
     # request.session.pop('user')
     return redirect('/')
 

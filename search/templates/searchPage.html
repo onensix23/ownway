@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+
+<script>
+    const searchAjax = () => {
+        let searchParam = { 
+                            'searchThing': $("#searchThing").val()
+                          }
+
+                          
+    };
+
+</script>
+
+<div class="container">
+    {% if user.is_authenticated %}
+        <div class="row">
+            <a href="javascript:userClick(2)"><input class="button" type="button" value="sign out"></a>
+        </div>
+    {% else %}
+        <div class="row">
+            <a href="javascript:userClick(0)"><input class="button" type="button" value="sign up"></a>
+            <a href="javascript:userClick(1)"><input class="button" type="button" value="sign in"></a>
+        </div>
+    {% endif %}
+
+   <div class="row" style="text-align: center;">
+        <input type="text" value="" id="searchThing" name="searchThing">
+   </div>
+</div>
+{% endblock %}

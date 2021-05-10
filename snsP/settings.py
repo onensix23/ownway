@@ -45,7 +45,11 @@ INSTALLED_APPS = [
     'mainP',
     'posts',
     'users',
+    'search',
+    
 ]
+
+AUTHENTICATION_BACKENDS = ( 'django.contrib.auth.backends.ModelBackend', )
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -120,8 +124,8 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
 
+STATICFILES_DIRS = [
     os.path.join(BASE_DIR, '../mainP/static'),  # base_dir은 프로젝트 폴더
 ]
 
