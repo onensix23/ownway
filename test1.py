@@ -1,9 +1,68 @@
 from xlrd import open_workbook
 import pymysql
 
-from sns2.snsP import my_settings
+from snsP import my_settings
 
 mydict = {}
+
+nameArr = ['entrc_busan', 'entrc_chungbuk', 'entrc_chungnam',
+           'entrc_daegu', 'entrc_daejeon', 'entrc_gangwon',
+           'entrc_gwangju', 'entrc_gyeongbuk', 'entrc_gyeongnam',
+           'entrc_gyunggi', 'entrc_incheon', 'entrc_jeju',
+           'entrc_jeonbuk', 'entrc_jeonnam', 'entrc_sejong',
+           'entrc_seoul', 'entrc_ulsan']
+
+
+def openFileTxt():
+    cnt = 1
+    for i in range(0, len(nameArr)):
+        j = 0
+
+        path1 = 'F:\\project\\sns2\\address_data\\'
+        path1 = path1 + nameArr[i]+'.txt'
+        file1 = open(path1, 'r')
+        lines = file1.readlines()
+
+        for line in lines:
+            #print(line)
+
+            k = line.split('|')
+
+            for mlm in range(0,len(k)):
+                if (k[mlm].find('\n')) != -1:
+                    k[mlm] = k[mlm].replace('\n','')
+
+            mydict[j] = k
+
+            j = j + 1
+            cnt = cnt +1
+    print(cnt)
+
+
+def openFileTxt1():
+    cnt = 1
+    j = 0
+
+    path1 = 'F:\\project\\sns2\\address_data\\개선_도로명코드_전체분.txt'
+    file1 = open(path1, 'r')
+    lines = file1.readlines()
+
+    for line in lines:
+        # print(line)
+
+        k = line.split('|')
+
+        for mlm in range(0, len(k)):
+            if (k[mlm].find('\n')) != -1:
+                k[mlm] = k[mlm].replace('\n', '')
+
+        mydict[j] = k
+
+        j = j + 1
+        cnt = cnt + 1
+    print(mydict)
+    print(cnt)
+
 
 
 def import_xlsfile(xlsfilename):
@@ -139,20 +198,25 @@ def insert_into_mysql():
     conn = pymysql.connect(host='localhost', user=my_settings.db_id, password=my_settings.db_pw,
                             db=my_settings.db_name, charset='utf8')
     curs = conn.cursor()
-
+    lll = 1
     for key in mydict:
         arr = mydict[key]
         korea_nm = "\"%s\", \"%s\", \"%s\"" % (arr[0], arr[1], arr[2])
         eng_nm = "\"%s\", \"%s\", \"%s\"" % (arr[3], arr[4], arr[5])
         cn_nm = "\"%s\", \"%s\", \"%s\"" % (arr[6], arr[7], arr[8])
-        codes = "\"%s\", \"%s\", \"%s\"" % (arr[9], arr[10], arr[11])
-        sql = "INSERT INTO korea_dong_pg_tbl VALUES(\"%s\", %s, %s, %s, %s, now());" \
-              % (key, korea_nm, eng_nm, cn_nm, codes)
+        codes1 = "\"%s\", \"%s\", \"%s\"" % (arr[9], arr[10], arr[11])
+        codes2 = "\"%s\", \"%s\", \"%s\"" % (arr[12], arr[13], arr[14])
+        codes3 = "\"%s\", \"%s\"" % (arr[15], arr[16])
+        sql = "INSERT INTO entrc_sido VALUES( %s, %s, %s, %s, %s, %s);" \
+              % ( korea_nm, eng_nm, cn_nm, codes1, codes2, codes3)
         curs.execute(sql)
-
+        print('in : ' + str(lll))
+        lll = lll + 1
     conn.commit()
     conn.close()
 
 
-import_xlsfile("addData1.xls")
+#import_xlsfile("addData1.xls")
+#
+openFileTxt1()
 insert_into_mysql()
