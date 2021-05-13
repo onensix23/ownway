@@ -1,3 +1,4 @@
+from django.db.models.functions import Substr
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import *
@@ -5,7 +6,8 @@ from .forms import *
 import json
 from django.http import HttpResponse
 from django.core import serializers
-from .models import KoreaDongPgTbl
+from .models import KoreaDongPgTbl, EntrcSido
+from django.db.models import F
 
 # Create your views here.
 
@@ -138,10 +140,21 @@ def getSido(request):
     if request.method == "POST":
         jsonObject = json.loads(request.body)
         # select distinct(sido_nm,sido_cd) from KoreaDongPgTbl
-        sido = KoreaDongPgTbl.objects.filter().distinct().values('sido_nm', 'sido_cd')
-        sido_list = json.dumps(list(sido))  # 시- 도 return
+        # sido = KoreaDongPgTbl.objects.filter().distinct().values('sido_nm', 'sido_cd')
+        # sido = EntrcSido.objects.filter(sido_nm=F('sido_nm'),doro_cd=F(Substr('doro_cd', 1, 2))).distinct()
+        #sido = EntrcSido.objects.annotate(doro_cd1=(Substr('doro_cd', 1, 2))).values('sido_nm', 'doro_cd').distinct()
+        #sido = EntrcSido.objects.filter(sido_nm=F('sido_nm'), doro_cd=(Substr('doro_cd', 1, 2))).values('sido_nm', 'doro_cd').distinct()
+        #sido = EntrcSido.objects.raw('select l.sido_cd, l.sido_nm from ( select distinct(sido_nm) as sido_nm, substr(doro_cd,1,2) as sido_cd  from ownway.entrc_sido)l')
+        # sido = EntrcSido.objects.annotate(doro_cd1=(Substr('doro_cd', 1, 2))).distinct().values('sido_nm', 'doro_cd')
 
-        # print(sido_list)
+        sido = EntrcSido.objects.values('sido_nm').annotate(sido_cd=(Substr('doro_cd', 1, 2))).distinct()
+        # select distinct(sido_nm) as sido_nm, substr(doro_cd,1,2) as sido_cd from ownway.entrc_sido;
+
+        print(sido.query)
+        print(sido)
+        # = KoreaDongPgTbl.objects.filter().distinct().values('sido_nm', 'sido_cd')
+        sido_list = json.dumps(list(sido))  # 시- 도 return
+        #print(sido_list)
         return HttpResponse(sido_list, content_type="text/json-comment-filtered")
 
 

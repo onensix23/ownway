@@ -59,3 +59,28 @@ class KoreaDongPgTbl(models.Model):
     class Meta:
         managed = False
         db_table = 'korea_dong_pg_tbl'
+
+
+class EntrcSido(models.Model):
+    doro_cd = models.CharField(primary_key=True, max_length=12)
+    doro_nm = models.CharField(max_length=80, blank=True, null=True)
+    doro_roma = models.CharField(max_length=80, blank=True, null=True)
+    dong_one_cd = models.CharField(max_length=2)
+    sido_nm = models.CharField(max_length=40, blank=True, null=True)
+    sido_roma = models.CharField(max_length=40, blank=True, null=True)
+    sigungu_nm = models.CharField(max_length=40, blank=True, null=True)
+    sigungu_roma = models.CharField(max_length=40, blank=True, null=True)
+    dong_nm = models.CharField(max_length=40, blank=True, null=True)
+    dong_roma = models.CharField(max_length=40, blank=True, null=True)
+    dong_type = models.CharField(max_length=1, blank=True, null=True)
+    dong_cd = models.CharField(max_length=3, blank=True, null=True)
+    is_use = models.CharField(max_length=1, blank=True, null=True)
+    change_reason = models.CharField(max_length=1, blank=True, null=True)
+    change_content = models.CharField(max_length=14, blank=True, null=True)
+    from_date = models.CharField(max_length=8, blank=True, null=True)
+    to_date = models.CharField(max_length=8, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'entrc_sido'
+        unique_together = (('doro_cd', 'dong_one_cd'),)
