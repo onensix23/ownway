@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.core import serializers
 from .models import KoreaDongPgTbl, EntrcSido
 from django.db.models import F
+from django.db.models import Q
 
 # Create your views here.
 
@@ -150,8 +151,8 @@ def getSido(request):
         sido = EntrcSido.objects.values('sido_nm').annotate(sido_cd=(Substr('doro_cd', 1, 2))).distinct()
         # select distinct(sido_nm) as sido_nm, substr(doro_cd,1,2) as sido_cd from ownway.entrc_sido;
 
-        print(sido.query)
-        print(sido)
+        #print(sido.query)
+        #print(sido)
         # = KoreaDongPgTbl.objects.filter().distinct().values('sido_nm', 'sido_cd')
         sido_list = json.dumps(list(sido))  # 시- 도 return
         #print(sido_list)
@@ -165,23 +166,31 @@ def getGungu(request):
 
         sel_sido_cd = jsonObject['sido_cd']
 
-        sigungu = KoreaDongPgTbl.objects.filter(sido_cd=sel_sido_cd).distinct().values('sigungu_nm', 'sigungu_cd')
-        sigungu_list = json.dumps(list(sigungu)) # 시- 도 return
+        #sigungu = KoreaDongPgTbl.objects.filter(sido_cd=sel_sido_cd).distinct().values('sigungu_nm', 'sigungu_cd')
+
+        # SELECT DISTINCT(sigungu_nm) ,SUBSTR(doro_cd,3,3) FROM entrc_sido WHERE DORO_CD LIKE '11%';
+        sigungu = EntrcSido.objects.values('sigungu_nm').annotate(sigungu_cd=(Substr('doro_cd', 3, 3))).distinct().filter(doro_cd__startswith=sel_sido_cd)
+        sigungu_list = json.dumps(list(sigungu))  # 시- 도 return
         # print(sigungu_list)
-
+        # print(sigungu.query)
         return HttpResponse(sigungu_list, content_type="text/json-comment-filtered")
-
 
 
 def getDong(request):
     if request.method == "POST":
         json_str = ((request.body).decode('utf-8'))
         jsonObject = json.loads(json_str)
+        
+        sel_gun_do_cd = str(jsonObject['sido_cd'])+ str(jsonObject['sigungu_cd'])
 
-        sel_sigungu_cd = jsonObject['sigungu_cd']
+        print(sel_gun_do_cd)
+        #adm_dr = KoreaDongPgTbl.objects.filter(sigungu_cd=sel_sigungu_cd).distinct().values('adm_dr_nm', 'adm_dr_cd2')  # 동
+        #SELECT DISTINCT(dong_nm) ,SUBSTR(doro_cd,3,3) FROM entrc_sido WHERE DORO_CD LIKE '11110%' AND dong_one_cd != '00' order by doro_cd, dong_one_cd;
+        qes1 = ~Q(dong_one_cd='00')
+        dong = EntrcSido.objects.values('dong_nm','dong_cd').distinct().filter(doro_cd__startswith=sel_gun_do_cd).filter(qes1)
 
-        adm_dr = KoreaDongPgTbl.objects.filter(sigungu_cd=sel_sigungu_cd).distinct().values('adm_dr_nm', 'adm_dr_cd2')  # 동
-        adm_dr_list = json.dumps(list(adm_dr))  # 시- 도 return
-
-        return HttpResponse(adm_dr_list, content_type="text/json-comment-filtered")
+        dong_list = json.dumps(list(dong))  # 시- 도 return
+        print(dong.query)   
+        #rint(dong_list)
+        return HttpResponse(dong_list, content_type="text/json-comment-filtered")
 

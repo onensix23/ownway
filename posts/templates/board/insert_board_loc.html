@@ -109,9 +109,11 @@
 
 		function getDongAddress(){
 			var url1 = 'getDong';
+			var selSido = $('#sido1 option:selected').val()
 			var selGungu = $('#gungu1 option:selected').val()
 			var tData = {
-				'sigungu_cd' : selGungu
+				'sigungu_cd' : selGungu,
+				'sido_cd' : selSido
 			}
 			tData = JSON.stringify(tData);
 			//console.log(tData);
@@ -160,7 +162,7 @@
 					var option = $("<option value='0'>전체</option>");
 					$('#dong1').append(option);
 				}               
-                var option = $("<option value="+data1[i].adm_dr_cd2 +">"+data1[i].adm_dr_nm+"</option>");
+                var option = $("<option value="+data1[i].dong_cd +">"+data1[i].dong_nm+"</option>");
                 $('#dong1').append(option);
             }
 			console.log()
@@ -290,9 +292,9 @@
 			geocoder.geocode({ location: latlng }, (results, status) => {
 				if (status === "OK") {
 					console.log(results)
-					if (results[2]) {
+					if (results[1]) {
 						// 대한민국 경기도 군포시 궁내동
-						setMyLoc(results[2].formatted_address)
+						setMyLoc(results[1].formatted_address)
 						
 					} else {
 						window.alert("No results found");
@@ -323,10 +325,10 @@
 			getDongAddress();
 			
 			k = dongArray.filter(function(e){
-				return e.adm_dr_nm==addrArr[3];
+				return e.dong_nm==addrArr[3];
 			});
 
-			$("#dong1").val(k[0].adm_dr_cd2).prop("selected", true);
+			$("#dong1").val(k[0].dong_cd).prop("selected", true);
 
 
 		}
