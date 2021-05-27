@@ -1,5 +1,8 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+import snsP.urls
+from snsP.urls import router
+
 
 urlpatterns = [
     path('', views.boardOpen, name="boardOpen"),
@@ -11,4 +14,5 @@ urlpatterns = [
     path('getSido', views.getSido, name='getSido'),
     path('getGungu', views.getGungu, name='getGungu'),
     path('getDong', views.getDong, name='getDong'),
+    path('test', include('rest_framework.urls', namespace="rest_framework_category")),
 ]

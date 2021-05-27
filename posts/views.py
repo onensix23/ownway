@@ -6,12 +6,15 @@ from .forms import *
 import json
 from django.http import HttpResponse
 from django.core import serializers
-from .models import KoreaDongPgTbl, EntrcSido
 from django.db.models import F
 from django.db.models import Q
-
+from rest_framework import viewsets
+from .serializers import TestSerializer
 # Create your views here.
 
+class MovieViewSet(viewsets.ModelViewSet):
+    queryset = Posts.objects.all()
+    serializer_class = TestSerializer
 
 def boardOpen(request):
     all_board = Posts.objects.all().order_by('-b_id').values()

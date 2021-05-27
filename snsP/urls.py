@@ -18,7 +18,11 @@ from django.urls import path
 from django.conf.urls import include
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework import routers
+from posts import views
 
+router = routers.DefaultRouter()
+router.register(r'tests', views.MovieViewSet)
 
 urlpatterns = [
     path('', include('mainP.urls')),
@@ -26,5 +30,7 @@ urlpatterns = [
     path('user/', include('users.urls')),
     path('posts/', include('posts.urls')),
     path('search/', include('search.urls')),
+    path('api/', include(router.urls))
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
