@@ -30,6 +30,7 @@ urlpatterns = [
     path('user/', include('users.urls')),
     path('posts/', include('posts.urls')),
     path('search/', include('search.urls')),
+    path('myPage/', include('myPage.urls')),
     path('api/', include(router.urls))
 
 

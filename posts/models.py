@@ -23,6 +23,7 @@ class Posts(models.Model):
 
 
 class Photo(models.Model):
+    id = models.BigAutoField(primary_key=True)
     post = models.ForeignKey(Posts, on_delete=models.CASCADE, null=False)
     #image = models.ImageField(upload_to='images/', blank=False, null=False)
     image = ProcessedImageField(
@@ -31,7 +32,6 @@ class Photo(models.Model):
         format='JPEG',
         options={'quality': 90}
     )
-
     filename = models.CharField(max_length=64, null=True, verbose_name='첨부파일명')
 
     def get_file_path(instance, filename):

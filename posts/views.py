@@ -16,6 +16,7 @@ class MovieViewSet(viewsets.ModelViewSet):
     queryset = Posts.objects.all()
     serializer_class = TestSerializer
 
+
 def boardOpen(request):
     all_board = Posts.objects.all().order_by('-b_id').values()
 
@@ -184,13 +185,13 @@ def getDong(request):
         json_str = ((request.body).decode('utf-8'))
         jsonObject = json.loads(json_str)
         
-        sel_gun_do_cd = str(jsonObject['sido_cd'])+ str(jsonObject['sigungu_cd'])
+        sel_gun_do_cd = str(jsonObject['sido_cd']) + str(jsonObject['sigungu_cd'])
 
         print(sel_gun_do_cd)
         #adm_dr = KoreaDongPgTbl.objects.filter(sigungu_cd=sel_sigungu_cd).distinct().values('adm_dr_nm', 'adm_dr_cd2')  # 동
         #SELECT DISTINCT(dong_nm) ,SUBSTR(doro_cd,3,3) FROM entrc_sido WHERE DORO_CD LIKE '11110%' AND dong_one_cd != '00' order by doro_cd, dong_one_cd;
         qes1 = ~Q(dong_one_cd='00')
-        dong = EntrcSido.objects.values('dong_nm','dong_cd').distinct().filter(doro_cd__startswith=sel_gun_do_cd).filter(qes1)
+        dong = EntrcSido.objects.values('dong_nm', 'dong_cd').distinct().filter(doro_cd__startswith=sel_gun_do_cd).filter(qes1)
 
         dong_list = json.dumps(list(dong))  # 시- 도 return
         print(dong.query)   
