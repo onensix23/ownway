@@ -32,3 +32,7 @@
  - test1.py 
  - address_data/개선_도로명코드_전체분.txt
  - [데이터참고](https://www.juso.go.kr/addrlink/addressBuildDevNew.do?menu=match)
+
+
+
+놀고 먹은지 2달이 지난게 말이 되나,,, 나는 사람인가?
