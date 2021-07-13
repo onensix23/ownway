@@ -7,20 +7,9 @@
 </script>
 
 <div class="container">
-    {% if user.is_authenticated %}
-        <div class="row">
-            <a href="javascript:userClick(2)"><input class="button" type="button" value="sign out"></a>
-        </div>
-    {% else %}
-        <div class="row">
-            <a href="javascript:userClick(0)"><input class="button" type="button" value="sign up"></a>
-            <a href="javascript:userClick(1)"><input class="button" type="button" value="sign in"></a>
-        </div>
-    {% endif %}
-
     <div class="row" style="text-align: center;">
         <div class="col-lg-6" style="float:left; width:48%">
-            <table>
+            <table style="width:100%;">
                  {% for b in photo1 %}
                     <tr>
                         <td>
@@ -29,8 +18,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <img class="max-small" src="/media/{{b.image}}" style="object-fit:cover;"
-                            >
+                            <img class="max-small" src="/media/{{b.image}}" style="max-width:100%;">
                         </td>
                     </tr>
                     <tr>

@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class= "container">
+<!-- <div class= "container">
     <div class = "row mt-5">
         <div class = "col-12 text-center">
-            <h1>회원가입</h1>
+            <h1>SIGN UP</h1>
         </div>
     </div>
-</div>
+</div> -->
 <script>
            if("{{success}}" != ""){
             alert('가입되었습니다');
@@ -19,8 +19,12 @@
         <!--            폼 안에다가 입력해줘야한다. (안써주면 에러발생)
              csrf_token 폼의 경우에는 , 데이터를 서버에 전달하는 기능.이때 암호화된 키를 숨겨놓아 크로스도메인을 막기 위함. -->
     <!-- bootstrap -component - forms -->
-<div class= "container">
-    <div class = "row mt-5">
+<!-- <div class= "container"> -->
+    <div class = "row" style="height: 80%;">
+        <div class = "col-12 ">
+            <h3 style="text-align: center;">SIGN UP</h3>
+        </div>
+        
         <div class = "col-12 ">
             <p id="error1" style="color:red;">{{error1}}</p>
             <div class = "row mt-5">
@@ -83,6 +87,6 @@
                     </div>
                 </div>
             </div>
-        </div>
+        <!-- </div> -->
 
 {% endblock %}

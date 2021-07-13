@@ -22,16 +22,20 @@ from rest_framework import routers
 from posts import views
 
 router = routers.DefaultRouter()
-router.register(r'tests', views.MovieViewSet)
+# router.register(r'list', views.PostViewSet.as_view()) # board/list
+# router.register(r'detail', views.PostViewSet)
+
 
 urlpatterns = [
-    path('', include('mainP.urls')),
+    #path('', include('mainP.urls')),
     path('admin/', admin.site.urls),
     path('user/', include('users.urls')),
-    path('posts/', include('posts.urls')),
+    # path('posts/', include('posts.urls')),
     path('search/', include('search.urls')),
     path('myPage/', include('myPage.urls')),
-    path('api/', include(router.urls))
+    path('board/', views.PostViewSet.as_view(), name='boardList'),
+    #path('board/<int:b_id>', views.PostDetailViewSet.as_view(), name='boardDetail'),
+    path('board/<int:b_id>', views.PostDetailViewSet.as_view(), name='boardDetail'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

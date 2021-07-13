@@ -9,17 +9,33 @@ from django.core import serializers
 from django.db.models import F
 from django.db.models import Q
 from rest_framework import viewsets
-from .serializers import TestSerializer
+from rest_framework.generics import ListAPIView, RetrieveAPIView
+from .serializers import PostListSerializer, PostDetailSerializer
 # Create your views here.
 
-class MovieViewSet(viewsets.ModelViewSet):
+class MovieViewSet(ListAPIView):
     queryset = Posts.objects.all()
-    serializer_class = TestSerializer
+    serializer_class = PostListSerializer(many=True)
 
+class PostViewSet(ListAPIView):
+    queryset = Posts.objects.all()
+    serializer_class = PostDetailSerializer
+
+
+class PostDetailViewSet(RetrieveAPIView):
+    lookup_field = 'b_id'
+    queryset = Posts.objects.all()
+    serializer_class = PostDetailSerializer
 
 def boardOpen(request):
     all_board = Posts.objects.all().order_by('-b_id').values()
 
+    photo1 = Posts.objects.select_related().order_by(
+                '-b_id'
+            ).values('b_title','b_id','b_datetime','b_locType1', 'b_locType2', 'b_locType3')
+
+
+    print(all_board)
     return render(request, 'board/read_board.html', {'all_board':all_board})
 
 

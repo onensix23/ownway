@@ -12,5 +12,5 @@ class CreatePost(forms.ModelForm):
 class CreatePhoto(forms.ModelForm):
     class Meta:
         model = Photo
-        fields = ['image']
+        fields = ['p_image']
 

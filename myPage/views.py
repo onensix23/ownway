@@ -36,6 +36,7 @@ def myPageOpen(request):   #회원가입 페이지를 보여주기 위한 함수
             # photo1 = Photo.objects.select_related().filter(posts_posts__in=user).order_by('-post_id')
             #
             # print(photo1.query)
+
             # print(photo1)
             #a = Photo.objects.annotate(has_tag=FilteredRelation('post_id'),condition=Q(post__user_id=user)).order_by('-post_id')
             #print(a.query)

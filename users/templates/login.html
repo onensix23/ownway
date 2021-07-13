@@ -3,13 +3,11 @@
 {% load static %}
 
 {% block content %}
-<div class="container">
-    <div class = "row">
-        <div class = "col-12" >
-            <div class = "col-12 text-center">
-            <h1>로그인</h1>
-            <br><br>
 
+    <div class = "row" style="height: 80%;">
+        <div class = "col-12">
+            <div class = "col-12 text-center">
+                <h3>SIGN IN</h3>
             </div>
             <form method = "POST">
               {% csrf_token %}
@@ -35,5 +33,5 @@
             </form>
         </div>
     </div>
-</div>
+
 {% endblock %}

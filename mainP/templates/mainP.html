@@ -21,30 +21,22 @@
     }
 </script>
 
-<div class="container">
-    fasdfasdf
-    {% if user.is_authenticated %}
-        <div class="row">
-            <a href="javascript:userClick(2)"><input class="button" type="button" value="sign out"></a>
-        </div>
-    {% else %}
-        <div class="row">
-            <a href="javascript:userClick(0)"><input class="button" type="button" value="sign up"></a>
-            <a href="javascript:userClick(1)"><input class="button" type="button" value="sign in"></a>
-        </div>
-    {% endif %}
+<!-- <div class="container" style="position: relative; height: 100%;"> -->
+    
 
-   <div class="row">
-        <h1>HI</h1>
-        <h1>HI</h1>
+   <div class="row" style="position: static; height: 80%; justify-content:center; display: flex; align-items: center;">
+        <div class="col-12">
+            <h1 style="text-align: center; text-decoration: solid; text-shadow: 3px 2px 2px gray;">COOD</h1>
+        </div>
+        
    </div>
-    <div class="row" style="text-align:center">
+    <!-- <div class="row" style="text-align:center"  style="position: static;">
         <a href="javascript:userClick(3)" class="col-12"> search </a>
-   </div>
-    <div id="floating-panel">
+   </div> -->
+    <!-- <div id="floating-panel">
       <input id="latlng" type="text" value="40.714224,-73.961452" />
       <input id="submit" type="button" value="Reverse Geocode" />
-    </div>
-    <div id="map"></div>
-</div>
+    </div> -->
+    <!-- <div id="map"></div> -->
+<!-- </div> -->
 {% endblock %}

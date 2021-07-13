@@ -2,41 +2,43 @@
 {% load static %}
 
 {% block content %}
-    <div class="container">
+    <!-- <div class="container"> -->
         <br>
-        <div class="row" style="text-align:center;">
+        <div class="row" style="text-align:center">
 
             {% if user.is_authenticated %}
-            <div class="col-6">
+            <div class="col-1"></div>
+            <div class="col-1" style="float:left">
                 <form action="{% url 'boardInsert' %}" method="GET">
-                    <button type="submit" class="btn btn-primary btn-sm">Write</button>
+                    <a href="/posts/boardInsert">Write</a>
+                    <!-- <button type="submit" class="btn btn-primary btn-sm">Write</button> -->
                 </form>
             </div>
+            <div class="col-10"> </div>
+
             {% endif %}
         </div>
         <br>
-        <div class="row">
+        <div class="row" style="height: 80%;">
         <table class="table">
             <thead class="thread-light">
                 <tr>
                     <td>글 제목</td>
                     <td>글쓴이</td>
                     <td>작성일</td>
-                    <td>❤️</td>
                 </tr>
             </thead>
             <tbody>
             {% for b in all_board %}
                 <tr>
                     <td><a href="/posts/boardDetail/{{b.b_id}}">{{b.b_title}}</a></td>
-                    <td>{{b.m_id}}</td>
+                    <td>{{b.user_id}}</td>
                     <td>{{b.b_datetime}}</td>
-                    <td>{{b.b_like}}</td>
                 </tr>
             {% endfor %}
             </tbody>
 
         </table>
         </div>
-    </div>
+    <!-- </div> -->
 {% endblock %}

@@ -3,7 +3,6 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        
         {% block css %}
         <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
         <script src="{% static 'js/bootstrap.js' %}"></script>
@@ -12,24 +11,28 @@
 
     <title>
         {% block title %}
-            SNS
+            COOD
         {% endblock title %}
     </title> 
       <style>
           .container{
             text-align:center !important;
+            position: relative; 
+            height: 100%;
           }
 
       </style>
   </head>
   <body>
-    {% include 'navbar.html' %}
+      <div class="container">
+        {% include 'navbar.html' %}
 
-    {% block content %}
+        {% block content %}
 
-    {% endblock %}
+        {% endblock %}
 
-    {% include 'footer.html' %}
+        {% include 'footer.html' %}
+    </div>
 
   </body>
 </html>
