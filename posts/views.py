@@ -9,23 +9,79 @@ from django.core import serializers
 from django.db.models import F
 from django.db.models import Q
 from rest_framework import viewsets
-from rest_framework.generics import ListAPIView, RetrieveAPIView
-from .serializers import PostListSerializer, PostDetailSerializer
+from rest_framework.views import APIView, status
+from rest_framework.response import Response
+from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
+from .serializers import PostListSerializer, PostDetailSerializer, PostSerializer
 # Create your views here.
 
-class MovieViewSet(ListAPIView):
-    queryset = Posts.objects.all()
-    serializer_class = PostListSerializer(many=True)
+#GET
+# class PostViewSet(ListAPIView):
+#     queryset = Posts.objects.all()
+#     serializer_class = PostDetailSerializer
 
-class PostViewSet(ListAPIView):
-    queryset = Posts.objects.all()
-    serializer_class = PostDetailSerializer
+
+class PostViewSet(APIView):
+    """
+       POST /user
+       """
+
+    def post(self, request):
+        return Response("test ok", status=200)
+
+    """
+    GET /user
+    GET /user/{user_id}
+    """
+
+    def get(self, request,  **kwargs):
+        if(kwargs.get('b_id') is None):
+            get_queryset = Posts.objects.all()
+            get_serializer_class = PostDetailSerializer(get_queryset, many=True)
+            return Response(get_serializer_class.data, status=200)
+        else:
+            b_id = kwargs.get('b_id')
+            get_queryset = Posts.objects.get(b_id=b_id)
+            get_serializer_class = PostDetailSerializer(get_queryset)
+            return Response(get_serializer_class.data, status=200)
+    """
+        PUT /board/{b_id}
+    """
+    def put(self, request):
+        post_serializer = PostDetailSerializer(data=request.data)  # Request의 data를 Serializer로 변환
+        return Response(post_serializer.data, status=status.HTTP_201_CREATED)  # client에게 JSON response 전달
+
+    """
+    DELETE /user/{user_id}
+    """
+
+    def delete(self, request, **kwargs):
+
+        if(kwargs.get('b_id') is None):
+            return Response("nothing happend", status=200)
+        else:
+            b_id = kwargs.get('b_id')
+            queryset = Posts.objects.get(b_id=b_id)
+            queryset.b_del = 'Y'
+            queryset.save()
+            return Response("deleted", status=200)
 
 
 class PostDetailViewSet(RetrieveAPIView):
     lookup_field = 'b_id'
     queryset = Posts.objects.all()
     serializer_class = PostDetailSerializer
+
+
+class PostUpdateViewSet(UpdateAPIView):
+    queryset = Posts.objects.all()
+    serializer_class = PostDetailSerializer
+
+
+class PostDeleteViewSet(DestroyAPIView):
+    queryset = Posts.objects.all()
+    serializer_class = PostDetailSerializer
+
 
 def boardOpen(request):
     all_board = Posts.objects.all().order_by('-b_id').values()

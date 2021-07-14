@@ -35,7 +35,7 @@ urlpatterns = [
     path('myPage/', include('myPage.urls')),
     path('board/', views.PostViewSet.as_view(), name='boardList'),
     #path('board/<int:b_id>', views.PostDetailViewSet.as_view(), name='boardDetail'),
-    path('board/<int:b_id>', views.PostDetailViewSet.as_view(), name='boardDetail'),
+    path('board/<int:b_id>', views.PostViewSet.as_view(), name='boardDetail'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

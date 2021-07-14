@@ -14,6 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PostListSerializer(serializers.ModelSerializer):
+    id = UserSerializer(read_only=True)
     class Meta:
         model = Posts
         fields = ('b_id',
@@ -26,8 +27,7 @@ class PostListSerializer(serializers.ModelSerializer):
                   'b_datetime')
 
 
-class PostDetailSerializer(serializers.ModelSerializer):
-    #user_id = UserSerializer(read_only=True)
+class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Posts
         fields = ('b_id',
@@ -38,7 +38,8 @@ class PostDetailSerializer(serializers.ModelSerializer):
                   'b_theme',
                   'b_title',
                   'b_text',
-                  'b_datetime')
+                  'b_datetime',
+                  'p_id')
 
 
 class PhotoSerializer(serializers.ModelSerializer):
