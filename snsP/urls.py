@@ -19,7 +19,9 @@ from django.conf.urls import include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
-from posts import views
+
+import posts.views as postview
+import users.views as userview
 
 router = routers.DefaultRouter()
 # router.register(r'list', views.PostViewSet.as_view()) # board/list
@@ -33,9 +35,11 @@ urlpatterns = [
     # path('posts/', include('posts.urls')),
     path('search/', include('search.urls')),
     path('myPage/', include('myPage.urls')),
-    path('board/', views.PostViewSet.as_view(), name='boardList'),
-    #path('board/<int:b_id>', views.PostDetailViewSet.as_view(), name='boardDetail'),
-    path('board/<int:b_id>', views.PostViewSet.as_view(), name='boardDetail'),
+    path('board/', postview.PostViewSet.as_view(), name='boardList'),
+    path('board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
+    path('login/', userview.UserViewSet.as_view(), name='userLogin'),
+
+    # path('board/<int:b_id>', views.PostViewSet.as_view(), name='boardDetail'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

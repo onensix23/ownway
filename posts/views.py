@@ -26,24 +26,33 @@ class PostViewSet(APIView):
        POST /user
        """
 
-    def post(self, request):
-        return Response("test ok", status=200)
+    def post(self, request, **kwargs):
+        b_id = kwargs.get('b_id')
+        get_queryset = Posts.objects.get(b_id=b_id)
+        get_serializer_class = PostDetailSerializer(get_queryset)
+        return Response(get_serializer_class.data, status=200)
+        # return Response("test ok", status=200)
 
     """
     GET /user
     GET /user/{user_id}
     """
 
+    # def get(self, request,  **kwargs):
+    #     if(kwargs.get('b_id') is None):
+    #         get_queryset = Posts.objects.all()
+    #         get_serializer_class = PostDetailSerializer(get_queryset, many=True)
+    #         return Response(get_serializer_class.data, status=200)
+    #     else:
+    #         b_id = kwargs.get('b_id')
+    #         get_queryset = Posts.objects.get(b_id=b_id)
+    #         get_serializer_class = PostDetailSerializer(get_queryset)
+    #         return Response(get_serializer_class.data, status=200)
     def get(self, request,  **kwargs):
-        if(kwargs.get('b_id') is None):
-            get_queryset = Posts.objects.all()
-            get_serializer_class = PostDetailSerializer(get_queryset, many=True)
-            return Response(get_serializer_class.data, status=200)
-        else:
-            b_id = kwargs.get('b_id')
-            get_queryset = Posts.objects.get(b_id=b_id)
-            get_serializer_class = PostDetailSerializer(get_queryset)
-            return Response(get_serializer_class.data, status=200)
+        get_queryset = Posts.objects.all()
+        get_serializer_class = PostDetailSerializer(get_queryset, many=True)
+        return Response(get_serializer_class.data, status=200)
+
     """
         PUT /board/{b_id}
     """
