@@ -60,22 +60,14 @@ class Posts(models.Model):
         return self.b_title
 
 
-# class LikePost(models.Model):
-#     lp_id = models.BigAutoField(primary_key=True)
-#     b_id = models.ForeignKey(Posts, db_column='b_id', on_delete=models.CASCADE, null=False)
-#     #image = models.ImageField(upload_to='images/', blank=False, null=False)
-#     image = ProcessedImageField(
-#         upload_to='images/'+datetime.now().strftime('%Y%m%d')+'/',
-#         processors=[ResizeToFill(600,600)],
-#         format='JPEG',
-#         options={'quality': 90}
-#     )
-#     filename = models.CharField(max_length=64, null=True, verbose_name='첨부파일명')
-#
-#     def get_file_path(instance, filename):
-#         ymd_path = datetime.now().strftime('%Y/%m/%d')
-#         uuid_name = uuid4().hex
-#         return '/'.join(['media/images/', ymd_path, '/', uuid_name])
+class LikePost(models.Model):
+    lp_id = models.BigAutoField(primary_key=True)
+    id = models.ForeignKey(User, to_field="username", db_column='id', default='', on_delete=models.CASCADE,
+                           max_length=12, null=False)  # 작성자
+    b_id = models.ForeignKey(Posts, db_column='b_id', on_delete=models.CASCADE, null=False)
+    lp_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
+    lp_del = models.CharField(max_length=1, null=False, default='N')
+
 
 class KoreaDongPgTbl(models.Model):
     adm_dr_cd = models.CharField(primary_key=True, max_length=7)

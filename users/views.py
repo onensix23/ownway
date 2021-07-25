@@ -45,7 +45,7 @@ class UserViewSet(APIView):
             print(myuser)
             if myuser is not None:
                 login(request, myuser)
-                request.session['user'] = myuser.username
+                # request.session['user'] = myuser.username
                 #     # 세션도 딕셔너리 변수 사용과 똑같이 사용하면 된다.
                 #     # 세션 user라는 key에 방금 로그인한 id를 저장한것.
                 response_data['success'] = True

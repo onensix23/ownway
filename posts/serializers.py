@@ -1,5 +1,5 @@
 import rest_framework.serializers as serializers
-from .models import Posts, Photo
+from .models import Posts, Photo, LikePost
 from django.contrib.auth.models import User
 
 
@@ -67,6 +67,18 @@ class PostDetailSerializer(serializers.ModelSerializer):
                   'p_id')
 
 
+class LikePostSerializer(serializers.ModelSerializer):
+    id = UserSerializer(read_only=True)
+    b_id = PostSerializer(read_only=True)
+
+    class Meta:
+        model = LikePost
+        fields = ('lp_id',
+                  'lp_datetime',
+                  'id',
+                  'b_id',
+                  'lp_del',
+                  )
 
 
 

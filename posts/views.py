@@ -12,7 +12,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView, status
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
-from .serializers import PostListSerializer, PostDetailSerializer, PostSerializer
+from .serializers import PostListSerializer, PostDetailSerializer, LikePostSerializer
 # Create your views here.
 
 #GET
@@ -20,7 +20,7 @@ from .serializers import PostListSerializer, PostDetailSerializer, PostSerialize
 #     queryset = Posts.objects.all()
 #     serializer_class = PostDetailSerializer
 
-
+#
 class PostViewSet(APIView):
     """
        POST /board/<b_id>
@@ -63,7 +63,6 @@ class PostViewSet(APIView):
     """
 
     def delete(self, request, **kwargs):
-
         if(kwargs.get('b_id') is None):
             return Response("nothing happend", status=200)
         else:
@@ -72,6 +71,54 @@ class PostViewSet(APIView):
             queryset.b_del = 'Y'
             queryset.save()
             return Response("deleted", status=200)
+
+
+class LikePostViewSet(APIView):
+    """
+    GET /likepost/
+    """
+    def get(self, request,  **kwargs):
+        user_id = request.user
+        get_queryset = LikePost.objects.filter(id=user_id, lp_del='N')
+        get_serializer_class = LikePostSerializer(get_queryset, many=True)
+        return Response(get_serializer_class.data, status=200)
+
+    def post(self, request, **kwargs):
+        # insert
+        res_data = {
+            "success": True,
+            "error": None
+        }
+
+        user_id = request.data['id1']
+        b_id = request.data['b_id']
+
+        sel_post = Posts.objects.get(b_id=b_id)
+        sel_user = User.objects.get(username=user_id)
+
+        # new_likepost = LikePost(id=user_id, b_id=b_id)
+
+        LikePost.objects.create(
+            id=sel_user,
+            b_id=sel_post,
+        )
+        # new_likepost.save()
+
+        return Response(res_data, status=200)
+
+    def put(self, request, **kwargs):
+        res_data = {
+            "success": True,
+            "error": None
+        }
+
+        lp_id = request.data['lp_id']
+        lp_object = LikePost.objects.get(lp_id=lp_id)
+        lp_object.lp_del = 'Y'
+        lp_object.save()
+
+        return Response(res_data, status=status.HTTP_200_OK)
+
 
 
 class PostDetailViewSet(RetrieveAPIView):
