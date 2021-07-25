@@ -10,20 +10,33 @@ from rest_framework.views import APIView, status
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from .serializers import UserSerializer
+import json
 # Create your views here.
 
-
+#Login
 class UserViewSet(APIView):
     """
-       POST /user
-       """
-
+        POST /login/
+        description
+            - 로그인
+        param
+            - userId
+            - uesrPassword
+    """
     def post(self, request, **kwargs):
-        response_data = {}
-        login_username = request.POST.get('userId', None)
-        login_password = request.POST.get('userPassword', None)
+        request_d = request.data  # {"userId":"rohhj622","userPassword":"shgsuwls1!"}
 
-        print(login_username, login_password)
+        response_data = {
+            'success': False,
+            'error': None
+
+        }
+
+        login_username = request_d['userId']
+        login_password = request_d['userPassword']
+
+        # print(login_username, login_password)
+
         if not (login_username and login_password):
             response_data['error'] = "아이디와 비밀번호를 모두 입력해주세요."
         else:
@@ -32,73 +45,43 @@ class UserViewSet(APIView):
             print(myuser)
             if myuser is not None:
                 login(request, myuser)
-                # request.session['user'] = myuser.username
+                request.session['user'] = myuser.username
                 #     # 세션도 딕셔너리 변수 사용과 똑같이 사용하면 된다.
                 #     # 세션 user라는 key에 방금 로그인한 id를 저장한것.
-                return redirect('/')
+                response_data['success'] = True
             else:
                 response_data['error'] = "비밀번호를 틀렸습니다."
 
+        return Response(response_data, status=200)
 
-        b_id = kwargs.get('b_id')
-        get_queryset = UserSerializer.objects.get(username=login_username)
-        get_serializer_class = UserSerializer(get_queryset)
-        return Response(get_serializer_class.data, status=200)
 
+# ResigterUserViewSet
+class ResigterUserViewSet(APIView):
     """
-    GET /user
-    GET /user/{user_id}
+        POST /register/
+        description
+            - 회원가입
+        param
+            - id1, password, nickname, email, re_password
+            - uesrPassword
     """
+    def post(self, request, **kwargs):
+        request_d = request.data  # {"userId":"rohhj622","userPassword":"shgsuwls1!"}
 
-    # def get(self, request,  **kwargs):
-    #     if(kwargs.get('b_id') is None):
-    #         get_queryset = Posts.objects.all()
-    #         get_serializer_class = PostDetailSerializer(get_queryset, many=True)
-    #         return Response(get_serializer_class.data, status=200)
-    #     else:
-    #         b_id = kwargs.get('b_id')
-    #         get_queryset = Posts.objects.get(b_id=b_id)
-    #         get_serializer_class = PostDetailSerializer(get_queryset)
-    #         return Response(get_serializer_class.data, status=200)
-    # def get(self, request,  **kwargs):
-    #     get_queryset = Posts.objects.all()
-    #     get_serializer_class = PostDetailSerializer(get_queryset, many=True)
-    #     return Response(get_serializer_class.data, status=200)
+        response_data = {
+            'success': False,
+            'error': None
+        }
 
-    """
-        PUT /board/{b_id}
-    """
-    # def put(self, request):
-    #     post_serializer = PostDetailSerializer(data=request.data)  # Request의 data를 Serializer로 변환
-    #     return Response(post_serializer.data, status=status.HTTP_201_CREATED)  # client에게 JSON response 전달
+        id1 = request_d['id1']  # 딕셔너리형태
+        password = request_d['password']
+        nickname = request_d['nickname']
+        email = request_d['email']
+        re_password = request_d['re_password']
 
-    """
-    DELETE /user/{user_id}
-    """
-    # def delete(self, request, **kwargs):
-    #
-    #     if(kwargs.get('b_id') is None):
-    #         return Response("nothing happend", status=200)
-    #     else:
-    #         b_id = kwargs.get('b_id')
-    #         queryset = Posts.objects.get(b_id=b_id)
-    #         queryset.b_del = 'Y'
-    #         queryset.save()
-    #         return Response("deleted", status=200)
-
-
-
-def register(request):   #회원가입 페이지를 보여주기 위한 함수
-    if request.method == "GET":
-        return render(request, 'register.html')
-
-    elif request.method == "POST":
-        id1 = request.POST.get('id1')   #딕셔너리형태
-        password = request.POST.get('password')
-        nickname = request.POST.get('nickname')
-        email = request.POST.get('email')
-        re_password = request.POST.get('re_password')
-        res_data = {}
+        res_data = {
+            'success': False,
+        }
 
         if not (id1 and password and re_password and email and nickname):
             res_data['error1'] = "모든 값을 입력해야 합니다."
@@ -109,15 +92,30 @@ def register(request):   #회원가입 페이지를 보여주기 위한 함수
             res_data['error3'] = '중복된 ID 입니다.'
         else:
             # username id ,
-            m_password = make_password(password, None, 'pbkdf2_sha256')
-            user = User.objects.create_user(username=id1, password=m_password,
-                                            first_name=nickname, email=email)
+            #m_password = make_password(password, None, 'pbkdf2_sha256')
+            #user = User.objects.create_user(username=id1, password=m_password,first_name=nickname, email=email)
             res_data['success'] = "가입되었습니다."
 
-        return render(request, 'register.html', res_data) #register를 요청받으면 register.html 로 응답.
+        return Response(res_data, status=200)
 
 
-@csrf_exempt
+#Login
+class LogoutUserViewSet(APIView):
+    """
+        GET /logout/
+        description
+            - 로그아웃
+    """
+    def get(self, request):
+        res_data = {
+            'success': False,
+        }
+
+        logout(request)
+        res_data['success'] = True
+        return Response(res_data, status=200)
+
+
 def signin(request):
     response_data = {}
     if request.method == "GET":
@@ -145,32 +143,6 @@ def signin(request):
         return Response(response_data['error'], status=200)
         # return render(request, 'login.html', response_data)
 
-#
-# def signin(request):
-#     response_data = {}
-#     if request.method == "GET":
-#         return render(request, 'login.html')
-#     elif request.method == "POST":
-#         login_username = request.POST.get('id', None)
-#         login_password = request.POST.get('password', None)
-#
-#         print(login_username, login_password)
-#         if not (login_username and login_password):
-#             response_data['error'] = "아이디와 비밀번호를 모두 입력해주세요."
-#         else:
-#             myuser = authenticate(username=login_username, password=login_password)
-#             # db에서 꺼내는 명령. Post로 받아온 username으로 , db의 username을 꺼내온다.
-#             print(myuser)
-#             if myuser is not None:
-#                 login(request, myuser)
-#                 # request.session['user'] = myuser.username
-#                 #     # 세션도 딕셔너리 변수 사용과 똑같이 사용하면 된다.
-#                 #     # 세션 user라는 key에 방금 로그인한 id를 저장한것.
-#                 return redirect('/')
-#             else:
-#                 response_data['error'] = "비밀번호를 틀렸습니다."
-#
-#         return render(request, 'login.html', response_data)
 
 
 def home(request):
@@ -184,8 +156,8 @@ def home(request):
 
 def signout(request):
     logout(request)
-    response = redirect('/')
-    response.delete_cookie('user_location')
+    # response = redirect('/')
+    # response.delete_cookie('user_location')
     # request.session.pop('user')
     return redirect('/')
 

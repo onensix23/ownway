@@ -37,9 +37,11 @@ urlpatterns = [
     path('myPage/', include('myPage.urls')),
     path('board/', postview.PostViewSet.as_view(), name='boardList'),
     path('board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
-    path('login/', userview.UserViewSet.as_view(), name='userLogin'),
 
-    # path('board/<int:b_id>', views.PostViewSet.as_view(), name='boardDetail'),
+    # user login, logout, register
+    path('login/', userview.UserViewSet.as_view(), name='userLogin'),
+    path('logout/', userview.LogoutUserViewSet.as_view(), name='userLogout'),
+    path('register/', userview.ResigterUserViewSet.as_view(), name='userRegister'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -23,8 +23,8 @@ from .serializers import PostListSerializer, PostDetailSerializer, PostSerialize
 
 class PostViewSet(APIView):
     """
-       POST /user
-       """
+       POST /board/<b_id>
+    """
 
     def post(self, request, **kwargs):
         b_id = kwargs.get('b_id')
@@ -34,10 +34,8 @@ class PostViewSet(APIView):
         # return Response("test ok", status=200)
 
     """
-    GET /user
-    GET /user/{user_id}
+    GET /user/
     """
-
     # def get(self, request,  **kwargs):
     #     if(kwargs.get('b_id') is None):
     #         get_queryset = Posts.objects.all()
