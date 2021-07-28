@@ -29,25 +29,25 @@ router = routers.DefaultRouter()
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('user/', include('users.urls')),
-
-    path('search/', include('search.urls')),
-    path('myPage/', include('myPage.urls')),
+    path('admin', admin.site.urls),
+    # path('user', include('users.urls')),
+    #
+    # path('search', include('search.urls')),
+    # path('myPage', include('myPage.urls')),
 
     # board
-    path('board/', postview.PostViewSet.as_view(), name='boardList'),
+    path('board', postview.PostViewSet.as_view(), name='boardList'),
     path('board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
 
     # user login, logout, register
-    path('login/', userview.UserViewSet.as_view(), name='userLogin'),  # post
-    path('logout/', userview.LogoutUserViewSet.as_view(), name='userLogout'),  # get
-    path('register/', userview.ResigterUserViewSet.as_view(), name='userRegister'),  # post
+    path('login', userview.UserViewSet.as_view(), name='userLogin'),  # post
+    path('logout', userview.LogoutUserViewSet.as_view(), name='userLogout'),  # get
+    path('register', userview.ResigterUserViewSet.as_view(), name='userRegister'),  # post
 
     # likepost(get, post, put)
-    path('likepost/', postview.LikePostViewSet.as_view(), name='likePost'),
+    path('likepost', postview.LikePostViewSet.as_view(), name='likePost'),
 
     # myPage
-
+    path('mypage', postview.MyPageViewSet.as_view(), name='myPage'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

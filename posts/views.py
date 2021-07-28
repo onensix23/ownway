@@ -27,6 +27,37 @@ class PostViewSet(APIView):
     """
 
     def post(self, request, **kwargs):
+
+        user_id = request.user.get_username()
+        b_title = request.data['title1']
+        b_text = request.data['content1']
+        b_locType1 = request.data['sido1']
+        b_locType2 = request.data['gungu1']
+        b_locType3 = request.data['dong1']
+        b_theme = request.data['theme1']
+
+        print(b_title)
+        print(b_text)
+        print(b_locType1)
+        print(b_locType2)
+        print(b_locType3)
+        print(b_theme)
+
+        if request.FILES:
+            if 'file1' in request.FILES.keys():
+                # Photo 객체를 하나 생성한다.
+                photo = Photo()
+                photo.image = request.FILES['file1']
+                request.FILES['file1'].name = photo.get_file_path(request.FILES['file1'].name)
+                photo.filename = request.FILES['file1'].name
+                # 데이터베이스에 저장
+                photo.save()
+
+        new_post = Posts(user_id=user_id, b_title=b_title, b_text=b_text,
+                         b_locType1=b_locType1, b_locType2=b_locType2, b_locType3=b_locType3,
+                         b_theme=b_theme)
+
+        new_post.save()  # insert
         b_id = kwargs.get('b_id')
         get_queryset = Posts.objects.get(b_id=b_id)
         get_serializer_class = PostDetailSerializer(get_queryset)
@@ -119,6 +150,52 @@ class LikePostViewSet(APIView):
 
         return Response(res_data, status=status.HTTP_200_OK)
 
+
+class MyPageViewSet(APIView):
+    """
+    GET /mypage/
+    """
+    def get(self, request,  **kwargs):
+        user_id = request.user
+        get_queryset = Posts.objects.filter(id=user_id, b_del='N')
+        get_serializer_class = PostListSerializer(get_queryset, many=True)
+        return Response(get_serializer_class.data, status=200)
+
+    # def post(self, request, **kwargs):
+    #     # insert
+    #     res_data = {
+    #         "success": True,
+    #         "error": None
+    #     }
+    #
+    #     user_id = request.data['id1']
+    #     b_id = request.data['b_id']
+    #
+    #     sel_post = Posts.objects.get(b_id=b_id)
+    #     sel_user = User.objects.get(username=user_id)
+    #
+    #     # new_likepost = LikePost(id=user_id, b_id=b_id)
+    #
+    #     LikePost.objects.create(
+    #         id=sel_user,
+    #         b_id=sel_post,
+    #     )
+    #     # new_likepost.save()
+    #
+    #     return Response(res_data, status=200)
+    #
+    # def put(self, request, **kwargs):
+    #     res_data = {
+    #         "success": True,
+    #         "error": None
+    #     }
+    #
+    #     lp_id = request.data['lp_id']
+    #     lp_object = LikePost.objects.get(lp_id=lp_id)
+    #     lp_object.lp_del = 'Y'
+    #     lp_object.save()
+    #
+    #     return Response(res_data, status=status.HTTP_200_OK)
 
 
 class PostDetailViewSet(RetrieveAPIView):
