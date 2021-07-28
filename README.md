@@ -5,14 +5,9 @@
 - mysql
 
 ## 사용 IDE
-> pycharm에 js코드에 색이나 도움 안 주길래,,, html css js는 VS Code로 작업합니다,, pycharm에도 되는데 저만 모르는 거라면 알려주세요...
+> djagno REST Framework
 - pycharm
-- VS Code
 
-4/28 이미지 이름 변경해서 올리게 했으면서 commit 안 함.ㅋ
-
-요상한 점
-- static file을 snsP 아래에 넣어두면 찾질 못함. 다른 곳에 두면 찾음.
 
 현위치 불러오기
 - google geocoring api
