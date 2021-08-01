@@ -173,4 +173,7 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
 )
 
+CSRF_COOKIE_NAME = 'XSRF-TOKEN'
+CSRF_HEADER_NAME = 'X-XSRF-TOKEN'
+
 SITE_ID = 1

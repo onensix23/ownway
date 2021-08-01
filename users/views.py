@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 # 비밀번호 암호화 / 패스워드 체크(db에있는거와 일치성확인)
 from django.contrib.auth.hashers import make_password, check_password
+
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 from rest_framework.views import APIView, status
@@ -23,6 +25,8 @@ class UserViewSet(APIView):
             - userId
             - uesrPassword
     """
+
+    @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
         request_d = request.data  # {"userId":"rohhj622","userPassword":"shgsuwls1!"}
 
@@ -102,16 +106,17 @@ class ResigterUserViewSet(APIView):
 #Login
 class LogoutUserViewSet(APIView):
     """
-        GET /logout/
+        Post /logout/
         description
             - 로그아웃
     """
-    def get(self, request):
+    def post(self, request):
         res_data = {
             'success': False,
         }
 
         logout(request)
+        # response.delete_cookie('user_location')
         res_data['success'] = True
         return Response(res_data, status=200)
 
