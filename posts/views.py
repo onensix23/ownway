@@ -78,7 +78,7 @@ class PostViewSet(APIView):
     #         get_serializer_class = PostDetailSerializer(get_queryset)
     #         return Response(get_serializer_class.data, status=200)
     def get(self, request,  **kwargs):
-        get_queryset = Posts.objects.all()
+        get_queryset = Posts.objects.filter(b_del='N')
         get_serializer_class = PostDetailSerializer(get_queryset, many=True)
         return Response(get_serializer_class.data, status=200)
 
@@ -86,22 +86,52 @@ class PostViewSet(APIView):
         PUT /board/{b_id}
     """
     def put(self, request):
-        post_serializer = PostDetailSerializer(data=request.data)  # Request의 data를 Serializer로 변환
-        return Response(post_serializer.data, status=status.HTTP_201_CREATED)  # client에게 JSON response 전달
+        res_data = {
+            "success": True,
+            "error": None
+        }
+
+        if request.data['v_b_text'] == 990622:
+            print("eee")
+            b_id = request.data['b_id']
+            queryset = Posts.objects.get(b_id=b_id)
+            queryset.b_del = 'Y'
+            queryset.save()
+        else:
+            user_id = request.user.get_username()
+            user_id = request.data['userId']
+            b_id = request.data['b_id']
+            b_text = request.data['v_b_text']
+            b_title = request.data['v_b_title']
+
+            edit_board1 = Posts.objects.get(b_id=b_id)
+            edit_board1.b_title = b_title
+            edit_board1.b_text = b_text
+
+            edit_board1.save()
+
+
+        return Response(res_data, status=200)
 
     """
     DELETE /user/{user_id}
     """
 
-    def delete(self, request, **kwargs):
-        if(kwargs.get('b_id') is None):
-            return Response("nothing happend", status=200)
-        else:
-            b_id = kwargs.get('b_id')
-            queryset = Posts.objects.get(b_id=b_id)
-            queryset.b_del = 'Y'
-            queryset.save()
-            return Response("deleted", status=200)
+    # def delete(self, request, **kwargs):
+    #     print(request)
+    #     b_id = request.data['b_id']
+    #     queryset = Posts.objects.get(b_id=b_id)
+    #     queryset.b_del = 'Y'
+    #     queryset.save()
+    #     return Response("deleted", status=200)
+    #     # if(request.data['b_id'] is None):
+    #     #     return Response("nothing happend", status=200)
+    #     # else:
+    #     #     b_id = request.data['b_id']
+    #     #     queryset = Posts.objects.get(b_id=b_id)
+    #     #     queryset.b_del = 'Y'
+    #     #     queryset.save()
+    #     #     return Response("deleted", status=200)
 
 
 class LikePostViewSet(APIView):

@@ -110,6 +110,7 @@ class LogoutUserViewSet(APIView):
         description
             - 로그아웃
     """
+    @method_decorator(csrf_exempt)
     def post(self, request):
         res_data = {
             'success': False,
