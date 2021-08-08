@@ -1,5 +1,5 @@
 import rest_framework.serializers as serializers
-from .models import Posts, Photo, LikePost
+from .models import Posts, Photo, LikePost, EntrcSido
 from django.contrib.auth.models import User
 
 
@@ -80,5 +80,44 @@ class LikePostSerializer(serializers.ModelSerializer):
                   'lp_del',
                   )
 
+
+class EntrcSidoFirstSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EntrcSido
+        fields = (
+                  'sido_cd',
+                  'sido_nm',
+                  )
+
+
+class EntrcSidoSecondSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EntrcSido
+        fields = (
+                  'sigungu_cd',
+                  'sigungu_nm',
+                  )
+
+
+class EntrcSidoThirdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EntrcSido
+        fields = (
+                  'dong_cd',
+                  'dong_nm',
+                  )
+
+class EntrcSidoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EntrcSido
+        fields = ('doro_cd',
+                  'doro_nm',
+                  'sido_cd',
+                  'sido_nm',
+                  'sigungu_cd',
+                  'sigungu_nm',
+                  'dong_cd',
+                  'dong_nm',
+                  )
 
 

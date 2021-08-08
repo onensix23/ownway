@@ -12,7 +12,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView, status
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
-from .serializers import PostListSerializer, PostDetailSerializer, LikePostSerializer
+from .serializers import *
 # Create your views here.
 
 #GET
@@ -91,7 +91,8 @@ class PostViewSet(APIView):
             "error": None
         }
 
-        if request.data['v_b_text'] == 990622:
+        if request.data['v_b_text'] == 990622\
+                :
             print("eee")
             b_id = request.data['b_id']
             queryset = Posts.objects.get(b_id=b_id)
@@ -191,41 +192,47 @@ class MyPageViewSet(APIView):
         get_serializer_class = PostListSerializer(get_queryset, many=True)
         return Response(get_serializer_class.data, status=200)
 
-    # def post(self, request, **kwargs):
-    #     # insert
-    #     res_data = {
-    #         "success": True,
-    #         "error": None
-    #     }
-    #
-    #     user_id = request.data['id1']
-    #     b_id = request.data['b_id']
-    #
-    #     sel_post = Posts.objects.get(b_id=b_id)
-    #     sel_user = User.objects.get(username=user_id)
-    #
-    #     # new_likepost = LikePost(id=user_id, b_id=b_id)
-    #
-    #     LikePost.objects.create(
-    #         id=sel_user,
-    #         b_id=sel_post,
-    #     )
-    #     # new_likepost.save()
-    #
-    #     return Response(res_data, status=200)
-    #
-    # def put(self, request, **kwargs):
-    #     res_data = {
-    #         "success": True,
-    #         "error": None
-    #     }
-    #
-    #     lp_id = request.data['lp_id']
-    #     lp_object = LikePost.objects.get(lp_id=lp_id)
-    #     lp_object.lp_del = 'Y'
-    #     lp_object.save()
-    #
-    #     return Response(res_data, status=status.HTTP_200_OK)
+
+class GetSidoViewSet(APIView):
+    """
+    GET /mypage/
+    """
+    def get(self, request,  **kwargs):
+        sido = EntrcSido.objects.values('sido_nm').annotate(sido_cd=(Substr('doro_cd', 1, 2))).distinct()
+        sido_list = EntrcSidoFirstSerializer(sido, many=True)  # 시- 도 return
+        # print(sido_list)
+        return Response(sido_list.data, status=200)
+
+
+class GetSigunguViewSet(APIView):
+    """
+    POST /getSigungu
+    """
+    def post(self, request,  **kwargs):
+        sel_sido_cd = request.data['sido_cd']
+
+        sigungu = EntrcSido.objects.values('sigungu_nm').annotate(
+            sigungu_cd=(Substr('doro_cd', 3, 3))).distinct().filter(sido_cd=sel_sido_cd)
+
+        sigungu_list = EntrcSidoSecondSerializer(sigungu, many=True)  # 시- 도 return
+        # print(sido_list)
+        return Response(sigungu_list.data, status=200)
+
+
+class GetDongViewSet(APIView):
+    """
+    POST /getDong
+    """
+    def post(self, request,  **kwargs):
+        sel_sigungu_cd = request.data['sigungu_cd']
+
+        qes1 = ~Q(dong_one_cd='00')
+        dong = EntrcSido.objects.values('dong_nm', 'dong_cd').distinct().filter(sigungu_cd=sel_sigungu_cd).filter(qes1)
+        print(dong)
+        dong_list = EntrcSidoThirdSerializer(dong, many=True)  # 시- 도 return
+
+        return Response(dong_list.data, status=200)
+
 
 
 class PostDetailViewSet(RetrieveAPIView):
@@ -367,7 +374,7 @@ def boardDelete(request):
         Posts.objects.get(b_id=b_id).delete()
         return redirect('boardOpen')
 
-def getAddress(request): 
+def getAddress(request):
     if request.method == 'POST':
         b_id = request.POST.get('b_id_d')
         Posts.objects.get(b_id=b_id).delete()

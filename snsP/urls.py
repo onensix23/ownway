@@ -28,6 +28,7 @@ router = routers.DefaultRouter()
 # router.register(r'detail', views.PostViewSet)
 
 
+
 urlpatterns = [
     path('admin', admin.site.urls),
     # path('user', include('users.urls')),
@@ -49,5 +50,10 @@ urlpatterns = [
 
     # myPage
     path('mypage', postview.MyPageViewSet.as_view(), name='myPage'),
+
+    # myPage
+    path('getSido', postview.GetSidoViewSet.as_view(), name='getSido'),
+    path('getSigungu', postview.GetSigunguViewSet.as_view(), name='getSigungu'),
+    path('getDong', postview.GetDongViewSet.as_view(), name='getDong'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
