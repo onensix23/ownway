@@ -224,10 +224,11 @@ class GetDongViewSet(APIView):
     POST /getDong
     """
     def post(self, request,  **kwargs):
+        sel_sido_cd = request.data['sido_cd']
         sel_sigungu_cd = request.data['sigungu_cd']
 
-        qes1 = ~Q(dong_one_cd='00')
-        dong = EntrcSido.objects.values('dong_nm', 'dong_cd').distinct().filter(sigungu_cd=sel_sigungu_cd).filter(qes1)
+        dong = EntrcSido.objects.values('dong_nm', 'dong_cd').distinct().filter(sido_cd=sel_sido_cd, sigungu_cd=sel_sigungu_cd).exclude(dong_nm__exact='')
+
         print(dong)
         dong_list = EntrcSidoThirdSerializer(dong, many=True)  # 시- 도 return
 
