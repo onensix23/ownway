@@ -2,7 +2,6 @@ from django.db.models.functions import Substr
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import *
-from .forms import *
 import json
 from django.http import HttpResponse
 from django.core import serializers
@@ -13,6 +12,7 @@ from rest_framework.views import APIView, status
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from .serializers import *
+import json
 # Create your views here.
 
 #GET
@@ -25,17 +25,18 @@ class PostViewSet(APIView):
     """
        POST /board/<b_id>
     """
-
     def post(self, request, **kwargs):
+        user_id = request.data['user_id']
+        b_title = request.data['b_title']
+        b_text = request.data['b_text']
+        b_locType1 = request.data['b_locType1']
+        b_locType2 = request.data['b_locType2']
+        b_locType3 = request.data['b_locType3']
+        b_theme = request.data['b_theme']
+        file1 = request.data['file1']
 
-        user_id = request.user.get_username()
-        b_title = request.data['title1']
-        b_text = request.data['content1']
-        b_locType1 = request.data['sido1']
-        b_locType2 = request.data['gungu1']
-        b_locType3 = request.data['dong1']
-        b_theme = request.data['theme1']
-
+        print(file1)
+        print(user_id)
         print(b_title)
         print(b_text)
         print(b_locType1)
@@ -43,17 +44,37 @@ class PostViewSet(APIView):
         print(b_locType3)
         print(b_theme)
 
-        if request.FILES:
-            if 'file1' in request.FILES.keys():
-                # Photo 객체를 하나 생성한다.
-                photo = Photo()
-                photo.image = request.FILES['file1']
-                request.FILES['file1'].name = photo.get_file_path(request.FILES['file1'].name)
-                photo.filename = request.FILES['file1'].name
-                # 데이터베이스에 저장
-                photo.save()
+        # Photo 객체를 하나 생성한다.
+        print("!!!!!!!!!!!")
 
-        new_post = Posts(user_id=user_id, b_title=b_title, b_text=b_text,
+        photo = Photo()
+        print(file1[0].get('path'))
+        photo.p_image = file1[0].get('path')
+
+        cName = file1[0].get('path').split('/')
+        print(cName[-1])
+        cName1 = photo.get_file_path(cName[-1])
+        print(cName1)
+        photo.p_filename = photo.get_file_path(cName[-1])
+
+        photo.save()
+
+
+        # 데이터베이스에 저장
+        # photo.save()
+        # try:
+        #     photo = Photo()
+        #     photo.image = file1.path
+        #
+        #     cName = file1.path.split('/')
+        #
+        #     photo.filename = photo.get_file_path(cName[-1])
+        #     # 데이터베이스에 저장
+        #     photo.save()
+        # except:
+        #     print("EEEEEEEE")
+
+        new_post = Posts(id=user_id, b_title=b_title, b_text=b_text,
                          b_locType1=b_locType1, b_locType2=b_locType2, b_locType3=b_locType3,
                          b_theme=b_theme)
 
@@ -67,16 +88,6 @@ class PostViewSet(APIView):
     """
     GET /user/
     """
-    # def get(self, request,  **kwargs):
-    #     if(kwargs.get('b_id') is None):
-    #         get_queryset = Posts.objects.all()
-    #         get_serializer_class = PostDetailSerializer(get_queryset, many=True)
-    #         return Response(get_serializer_class.data, status=200)
-    #     else:
-    #         b_id = kwargs.get('b_id')
-    #         get_queryset = Posts.objects.get(b_id=b_id)
-    #         get_serializer_class = PostDetailSerializer(get_queryset)
-    #         return Response(get_serializer_class.data, status=200)
     def get(self, request,  **kwargs):
         get_queryset = Posts.objects.filter(b_del='N')
         get_serializer_class = PostDetailSerializer(get_queryset, many=True)
@@ -85,15 +96,13 @@ class PostViewSet(APIView):
     """
         PUT /board/{b_id}
     """
-    def put(self, request):
+    def put(self, request,  **kwargs):
         res_data = {
             "success": True,
             "error": None
         }
 
-        if request.data['v_b_text'] == 990622\
-                :
-            print("eee")
+        if request.data['v_b_text'] == 990622:
             b_id = request.data['b_id']
             queryset = Posts.objects.get(b_id=b_id)
             queryset.b_del = 'Y'
