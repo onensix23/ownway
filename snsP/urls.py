@@ -39,6 +39,7 @@ urlpatterns = [
     # board
     path('board', postview.PostViewSet.as_view(), name='boardList'),
     path('board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
+    path('uploadImage', postview.ImageViewSet.as_view(), name='uploadImage'),
 
     # user login, logout, register
     path('login', userview.UserViewSet.as_view(), name='userLogin'),  # post

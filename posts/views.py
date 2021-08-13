@@ -21,6 +21,43 @@ import json
 #     serializer_class = PostDetailSerializer
 
 #
+
+class ImageViewSet(APIView):
+    """
+       POST /board/<b_id>
+    """
+    def post(self, request, **kwargs):
+        #file1 = request.data['file1']
+        print(request.data)
+        print(request.FILES)
+        print(request.FILES.keys())
+
+        res_data = {
+            "success": True,
+            "error": None,
+            "fileName":''
+        }
+         # print(file1)
+
+        if request.FILES:
+            print("1")
+            if 'uploadFile' in request.FILES.keys():
+                print("2")
+                # Photo 객체를 하나 생성한다.
+                photo = Photo()
+                # 외래키로 현재 생성한 Post의 기본키를 참조한다.
+                # photo.post = new_post
+                photo.p_image = request.FILES['uploadFile']
+                request.FILES['uploadFile'].name = photo.get_file_path(request.FILES['uploadFile'].name)
+                photo.p_filename = request.FILES['uploadFile'].name
+                # 데이터베이스에 저장
+                photo.save()
+
+                res_data["fileName"] = request.FILES['uploadFile'].name
+
+        return Response(res_data, status=200)
+
+
 class PostViewSet(APIView):
     """
        POST /board/<b_id>
@@ -33,9 +70,9 @@ class PostViewSet(APIView):
         b_locType2 = request.data['b_locType2']
         b_locType3 = request.data['b_locType3']
         b_theme = request.data['b_theme']
-        file1 = request.data['file1']
+        fileNm = request.data['fileNm']
 
-        print(file1)
+        print(fileNm)
         print(user_id)
         print(b_title)
         print(b_text)
@@ -44,46 +81,22 @@ class PostViewSet(APIView):
         print(b_locType3)
         print(b_theme)
 
-        # Photo 객체를 하나 생성한다.
-        print("!!!!!!!!!!!")
-
-        photo = Photo()
-        print(file1[0].get('path'))
-        photo.p_image = file1[0].get('path')
-
-        cName = file1[0].get('path').split('/')
-        print(cName[-1])
-        cName1 = photo.get_file_path(cName[-1])
-        print(cName1)
-        photo.p_filename = photo.get_file_path(cName[-1])
-
-        photo.save()
+        userObj = User.objects.get(username=user_id)
+        picId = Photo.objects.get(p_filename=fileNm)
 
 
-        # 데이터베이스에 저장
-        # photo.save()
-        # try:
-        #     photo = Photo()
-        #     photo.image = file1.path
-        #
-        #     cName = file1.path.split('/')
-        #
-        #     photo.filename = photo.get_file_path(cName[-1])
-        #     # 데이터베이스에 저장
-        #     photo.save()
-        # except:
-        #     print("EEEEEEEE")
-
-        new_post = Posts(id=user_id, b_title=b_title, b_text=b_text,
+        new_post = Posts(id=userObj, b_title=b_title, b_text=b_text,
                          b_locType1=b_locType1, b_locType2=b_locType2, b_locType3=b_locType3,
-                         b_theme=b_theme)
+                         b_theme=b_theme,p_id=picId)
 
         new_post.save()  # insert
-        b_id = kwargs.get('b_id')
-        get_queryset = Posts.objects.get(b_id=b_id)
-        get_serializer_class = PostDetailSerializer(get_queryset)
-        return Response(get_serializer_class.data, status=200)
-        # return Response("test ok", status=200)
+
+        res_data = {
+            "success": True,
+            "error": None,
+            "fileName": ''
+        }
+        return Response(res_data, status=200)
 
     """
     GET /user/
