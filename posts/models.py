@@ -33,6 +33,7 @@ class Photo(models.Model):
         options={'quality': 90}
     )
     p_filename = models.CharField(max_length=64, null=True, verbose_name='첨부파일명')
+    p_datetime = models.DateTimeField(default=datetime.now)  # 날짜
 
     def get_file_path(instance, filename):
         ymd_path = datetime.now().strftime('%Y/%m/%d')
