@@ -159,36 +159,37 @@ class PostViewSet(APIView):
 
 class LikePostViewSet(APIView):
     """
-    GET /likepost/
+    GET,POST,PUT,DELETE /likepost/
     """
-    def get(self, request,  **kwargs):
-        user_id = request.user
-        get_queryset = LikePost.objects.filter(id=user_id, lp_del='N')
-        get_serializer_class = LikePostSerializer(get_queryset, many=True)
-        return Response(get_serializer_class.data, status=200)
-
     def post(self, request, **kwargs):
-        # insert
         res_data = {
             "success": True,
             "error": None
         }
+        if request.data['type'] == 0:
+            # select
+            user_id = request.data['userId']
+            get_queryset = LikePost.objects.filter(id=user_id, lp_del='N')
+            get_serializer_class = LikePostSerializer(get_queryset, many=True)
+            return Response(get_serializer_class.data, status=200)
 
-        user_id = request.data['id1']
-        b_id = request.data['b_id']
+        else:
+            # insert
+            user_id = request.data['userId']
+            b_id = request.data['b_id']
 
-        sel_post = Posts.objects.get(b_id=b_id)
-        sel_user = User.objects.get(username=user_id)
+            sel_post = Posts.objects.get(b_id=b_id)
+            sel_user = User.objects.get(username=user_id)
 
-        # new_likepost = LikePost(id=user_id, b_id=b_id)
-
-        LikePost.objects.create(
+            # new_likepost = LikePost(id=user_id, b_id=b_id)
+            LikePost.objects.create(
             id=sel_user,
             b_id=sel_post,
-        )
-        # new_likepost.save()
+            )
+            # new_likepost.save()
 
-        return Response(res_data, status=200)
+            return Response(res_data, status=200)
+
 
     def put(self, request, **kwargs):
         res_data = {
@@ -206,10 +207,10 @@ class LikePostViewSet(APIView):
 
 class MyPageViewSet(APIView):
     """
-    GET /mypage/
+    POST /mypage/
     """
-    def get(self, request,  **kwargs):
-        user_id = request.user
+    def post(self, request,  **kwargs):
+        user_id = request.data['userId']
         get_queryset = Posts.objects.filter(id=user_id, b_del='N')
         get_serializer_class = PostListSerializer(get_queryset, many=True)
         return Response(get_serializer_class.data, status=200)

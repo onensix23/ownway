@@ -69,6 +69,9 @@ class LikePost(models.Model):
     lp_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
     lp_del = models.CharField(max_length=1, null=False, default='N')
 
+    def __str__(self):
+        return self.lp_id
+
 
 class KoreaDongPgTbl(models.Model):
     adm_dr_cd = models.CharField(primary_key=True, max_length=7)
