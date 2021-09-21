@@ -41,6 +41,9 @@ urlpatterns = [
     path('board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
     path('uploadImage', postview.ImageViewSet.as_view(), name='uploadImage'),
 
+    # searchPost
+    path('searchPost', postview.SearchPostViewSet.as_view(), name='searchPost'),
+
     # user login, logout, register
     path('login', userview.UserViewSet.as_view(), name='userLogin'),  # post
     path('logout', userview.LogoutUserViewSet.as_view(), name='userLogout'),  # get

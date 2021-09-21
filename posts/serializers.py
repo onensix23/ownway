@@ -72,7 +72,7 @@ class LikePostSerializer(serializers.ModelSerializer):
     b_id = PostSerializer(read_only=True)
 
     class Meta:
-        model = LikePost
+        model = Posts
         fields = ('lp_id',
                   'lp_datetime',
                   'id',

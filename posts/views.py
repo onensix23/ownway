@@ -102,6 +102,7 @@ class PostViewSet(APIView):
     GET /user/
     """
     def get(self, request,  **kwargs):
+        print("get")
         get_queryset = Posts.objects.filter(b_del='N')
         get_serializer_class = PostDetailSerializer(get_queryset, many=True)
         return Response(get_serializer_class.data, status=200)
@@ -133,28 +134,20 @@ class PostViewSet(APIView):
 
             edit_board1.save()
 
-
         return Response(res_data, status=200)
 
-    """
-    DELETE /user/{user_id}
-    """
 
-    # def delete(self, request, **kwargs):
-    #     print(request)
-    #     b_id = request.data['b_id']
-    #     queryset = Posts.objects.get(b_id=b_id)
-    #     queryset.b_del = 'Y'
-    #     queryset.save()
-    #     return Response("deleted", status=200)
-    #     # if(request.data['b_id'] is None):
-    #     #     return Response("nothing happend", status=200)
-    #     # else:
-    #     #     b_id = request.data['b_id']
-    #     #     queryset = Posts.objects.get(b_id=b_id)
-    #     #     queryset.b_del = 'Y'
-    #     #     queryset.save()
-    #     #     return Response("deleted", status=200)
+class SearchPostViewSet(APIView):
+    """
+       POST /searchPost
+    """
+    def post(self, request, **kwargs):
+        search_text = request.data['search_text']
+        get_queryset = Posts.objects.filter(b_title__icontains=search_text)
+        get_serializer_class = PostDetailSerializer(get_queryset, many=True)
+
+        return Response(get_serializer_class.data, status=200)
+
 
 
 class LikePostViewSet(APIView):
@@ -222,9 +215,19 @@ class LikePostMpViewSet(APIView):
             user_id = request.data['userId']
             get_queryset = LikePost.objects.filter(id=user_id, lp_del='N')
 
-            get_serializer_class = LikePostSerializer(get_queryset, many=True)
+            print(get_queryset)
+            print(get_queryset.values_list())
+
+            lp_id_list = []
+            for vl in get_queryset.values_list():
+                lp_id_list.append(vl[2])
+
+            res_queryset = Posts.objects.filter(b_id__in=lp_id_list)
+
+            get_serializer_class = PostDetailSerializer(res_queryset, many=True)
             print(get_serializer_class.data)
             return Response(get_serializer_class.data, status=200)
+            # return  Response({"res": "hi"}, status=200)
 
 
 class MyPageViewSet(APIView):
