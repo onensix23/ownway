@@ -159,7 +159,7 @@ class PostViewSet(APIView):
 
 class LikePostViewSet(APIView):
     """
-    GET,POST,PUT,DELETE /likepost/
+    GET, POST /likepost/
     """
     def post(self, request, **kwargs):
         res_data = {
@@ -171,38 +171,60 @@ class LikePostViewSet(APIView):
             user_id = request.data['userId']
             get_queryset = LikePost.objects.filter(id=user_id, lp_del='N')
             get_serializer_class = LikePostSerializer(get_queryset, many=True)
+            # print(get_serializer_class.data)
             return Response(get_serializer_class.data, status=200)
 
         else:
-            # insert
             user_id = request.data['userId']
             b_id = request.data['b_id']
 
-            sel_post = Posts.objects.get(b_id=b_id)
-            sel_user = User.objects.get(username=user_id)
+            get_queryset = LikePost.objects.filter(id=user_id, b_id=b_id).count()
 
-            # new_likepost = LikePost(id=user_id, b_id=b_id)
-            LikePost.objects.create(
-            id=sel_user,
-            b_id=sel_post,
-            )
-            # new_likepost.save()
+            print(get_queryset)
+
+            if get_queryset == 0:
+                # insert
+                sel_post = Posts.objects.get(b_id=b_id)
+                sel_user = User.objects.get(username=user_id)
+
+                # new_likepost = LikePost(id=user_id, b_id=b_id)
+                LikePost.objects.create(
+                    id=sel_user,
+                    b_id=sel_post,
+                )
+
+            else:
+                # update
+                uLikePost = LikePost.objects.get(id=user_id, b_id=b_id)
+
+                if uLikePost.lp_del == "Y":
+                    uLikePost.lp_del = "N"
+                else:
+                    uLikePost.lp_del = "Y"
+
+                uLikePost.save()
 
             return Response(res_data, status=200)
 
 
-    def put(self, request, **kwargs):
+class LikePostMpViewSet(APIView):
+    """
+        POST /mplikepost/
+    """
+
+    def post(self, request, **kwargs):
         res_data = {
             "success": True,
             "error": None
         }
+        if request.data['type'] == 0:
+            # select
+            user_id = request.data['userId']
+            get_queryset = LikePost.objects.filter(id=user_id, lp_del='N')
 
-        lp_id = request.data['lp_id']
-        lp_object = LikePost.objects.get(lp_id=lp_id)
-        lp_object.lp_del = 'Y'
-        lp_object.save()
-
-        return Response(res_data, status=status.HTTP_200_OK)
+            get_serializer_class = LikePostSerializer(get_queryset, many=True)
+            print(get_serializer_class.data)
+            return Response(get_serializer_class.data, status=200)
 
 
 class MyPageViewSet(APIView):
@@ -213,6 +235,7 @@ class MyPageViewSet(APIView):
         user_id = request.data['userId']
         get_queryset = Posts.objects.filter(id=user_id, b_del='N')
         get_serializer_class = PostListSerializer(get_queryset, many=True)
+        # print(get_serializer_class.data)
         return Response(get_serializer_class.data, status=200)
 
 

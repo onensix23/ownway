@@ -46,8 +46,11 @@ urlpatterns = [
     path('logout', userview.LogoutUserViewSet.as_view(), name='userLogout'),  # get
     path('register', userview.ResigterUserViewSet.as_view(), name='userRegister'),  # post
 
-    # likepost(get, post, put)
+    # likepost(post)
     path('likepost', postview.LikePostViewSet.as_view(), name='likePost'),
+
+    # likepost(mypage, post)
+    path('mplikepost', postview.LikePostMpViewSet.as_view(), name='likePostMp'),
 
     # myPage
     path('mypage', postview.MyPageViewSet.as_view(), name='myPage'),
