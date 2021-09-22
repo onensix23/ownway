@@ -70,6 +70,8 @@ class PostViewSet(APIView):
         b_locType2 = request.data['b_locType2']
         b_locType3 = request.data['b_locType3']
         b_theme = request.data['b_theme']
+        b_hash_tag_1 = request.data['b_hash_tag_1']
+        b_hash_tag_2 = request.data['b_hash_tag_2']
         fileNm = request.data['fileNm']
 
         print(fileNm)
@@ -84,10 +86,9 @@ class PostViewSet(APIView):
         userObj = User.objects.get(username=user_id)
         picId = Photo.objects.get(p_filename=fileNm)
 
-
         new_post = Posts(id=userObj, b_title=b_title, b_text=b_text,
                          b_locType1=b_locType1, b_locType2=b_locType2, b_locType3=b_locType3,
-                         b_theme=b_theme,p_id=picId)
+                         b_theme=b_theme, b_hash_tag_1=b_hash_tag_1, b_hash_tag_2=b_hash_tag_2, p_id=picId)
 
         new_post.save()  # insert
 
@@ -96,6 +97,7 @@ class PostViewSet(APIView):
             "error": None,
             "fileName": ''
         }
+
         return Response(res_data, status=200)
 
     """
@@ -147,7 +149,6 @@ class SearchPostViewSet(APIView):
         get_serializer_class = PostDetailSerializer(get_queryset, many=True)
 
         return Response(get_serializer_class.data, status=200)
-
 
 
 class LikePostViewSet(APIView):

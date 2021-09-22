@@ -50,7 +50,9 @@ class Posts(models.Model):
     b_locType1 = models.CharField(max_length=12, null=False, default='')  # 시
     b_locType2 = models.CharField(max_length=12, null=False, default='')  # 구군
     b_locType3 = models.CharField(max_length=12, null=True, default='')  # 동
-    b_theme = models.CharField(max_length=12, null=True, default='') #장소 테마
+    b_theme = models.CharField(max_length=12, null=True, default='')  # 장소 테마
+    b_hash_tag_1 = models.CharField(max_length=50, null=True, default='')  # 해시태그1
+    b_hash_tag_2 = models.CharField(max_length=50, null=True, default='')  # 해시태그2
     b_title = models.CharField(max_length=15, null=False)  # 제목
     b_text = models.TextField()  # 내용
     b_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
