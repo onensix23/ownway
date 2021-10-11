@@ -268,7 +268,6 @@ class GetSigunguViewSet(APIView):
         # print(sido_list)
         return Response(sigungu_list.data, status=200)
 
-
 class GetDongViewSet(APIView):
     """
     POST /getDong
@@ -283,6 +282,53 @@ class GetDongViewSet(APIView):
         dong_list = EntrcSidoThirdSerializer(dong, many=True)  # 시- 도 return
 
         return Response(dong_list.data, status=200)
+
+
+class GetReSidoViewSet(APIView):
+    """
+    POST /mypage/
+    """
+    def post(self, request,  **kwargs):
+        # { "sido_nm":"경기도" }
+        sel_sido_nm = request.data['sido_nm']
+        print(sel_sido_nm)
+        sido = EntrcSido.objects.values('sido_cd','sido_nm').filter(sido_nm=sel_sido_nm).distinct() #
+        print(sido)
+        sido_list = EntrcSidoFirstSerializer(sido, many=True)  # 시- 도 return
+        # print(sido_list)
+        return Response(sido_list.data, status=200)
+
+
+class GetReSigunguViewSet(APIView):
+    """
+    POST /getSigungu
+    """
+    def post(self, request,  **kwargs):
+        sel_sido_cd = request.data['sido_cd']
+
+        sigungu = EntrcSido.objects.values('sigungu_nm').annotate(
+            sigungu_cd=(Substr('doro_cd', 3, 3))).distinct().filter(sido_cd=sel_sido_cd)
+
+        sigungu_list = EntrcSidoSecondSerializer(sigungu, many=True)  # 시- 도 return
+        # print(sido_list)
+        return Response(sigungu_list.data, status=200)
+
+
+class GetReDongViewSet(APIView):
+    """
+    POST /getDong
+    """
+    def post(self, request,  **kwargs):
+        sel_sido_cd = request.data['sido_cd']
+        sel_sigungu_cd = request.data['sigungu_cd']
+
+        dong = EntrcSido.objects.values('dong_nm', 'dong_cd').distinct().filter(sido_cd=sel_sido_cd, sigungu_cd=sel_sigungu_cd).exclude(dong_nm__exact='')
+
+        print(dong)
+        dong_list = EntrcSidoThirdSerializer(dong, many=True)  # 시- 도 return
+
+        return Response(dong_list.data, status=200)
+
 
 
 

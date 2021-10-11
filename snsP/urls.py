@@ -58,9 +58,14 @@ urlpatterns = [
     # myPage
     path('mypage', postview.MyPageViewSet.as_view(), name='myPage'),
 
-    # myPage
+    # getAddress
     path('getSido', postview.GetSidoViewSet.as_view(), name='getSido'),
     path('getSigungu', postview.GetSigunguViewSet.as_view(), name='getSigungu'),
     path('getDong', postview.GetDongViewSet.as_view(), name='getDong'),
+
+    # getReverseAddress
+    path('getReSido', postview.GetReSidoViewSet.as_view(), name='getReSido'),
+    path('getReSigungu', postview.GetReSigunguViewSet.as_view(), name='getReSigungu'),
+    path('getReDong', postview.GetReDongViewSet.as_view(), name='getReDong'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -164,5 +164,6 @@ Thumbs.db
 
 # 사진 폴더 무시
 media/
+.config/
 
 googleMapKey.js
