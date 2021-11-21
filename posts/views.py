@@ -292,7 +292,7 @@ class GetReSidoViewSet(APIView):
         # { "sido_nm":"경기도" }
         sel_sido_nm = request.data['sido_nm']
         print(sel_sido_nm)
-        sido = EntrcSido.objects.values('sido_cd','sido_nm').filter(sido_nm=sel_sido_nm).distinct() #
+        sido = EntrcSido.objects.values('sido_cd', 'sido_nm').filter(sido_nm=sel_sido_nm).distinct()
         print(sido)
         sido_list = EntrcSidoFirstSerializer(sido, many=True)  # 시- 도 return
         # print(sido_list)
@@ -306,11 +306,10 @@ class GetReSigunguViewSet(APIView):
     def post(self, request,  **kwargs):
         sel_sido_cd = request.data['sido_cd']
 
-        sigungu = EntrcSido.objects.values('sigungu_nm').annotate(
-            sigungu_cd=(Substr('doro_cd', 3, 3))).distinct().filter(sido_cd=sel_sido_cd)
-
+        sigungu = EntrcSido.objects.values('sigungu_nm').annotate(sigungu_cd=(Substr('doro_cd', 3, 3))).distinct().filter(sido_cd=sel_sido_cd)
+        print(sigungu)
         sigungu_list = EntrcSidoSecondSerializer(sigungu, many=True)  # 시- 도 return
-        # print(sido_list)
+        # print(sigungu_list)
         return Response(sigungu_list.data, status=200)
 
 
