@@ -15,12 +15,6 @@ from .serializers import *
 import json
 # Create your views here.
 
-#GET
-# class PostViewSet(ListAPIView):
-#     queryset = Posts.objects.all()
-#     serializer_class = PostDetailSerializer
-
-#
 
 class ImageViewSet(APIView):
     """
@@ -101,11 +95,10 @@ class PostViewSet(APIView):
         return Response(res_data, status=200)
 
     """
-    GET /user/
+    GET /board/
     """
     def get(self, request,  **kwargs):
-        print("get")
-        get_queryset = Posts.objects.filter(b_del='N')
+        get_queryset = Posts.objects.filter(b_del='N').order_by('-b_id')
         get_serializer_class = PostDetailSerializer(get_queryset, many=True)
         return Response(get_serializer_class.data, status=200)
 
@@ -163,8 +156,16 @@ class LikePostViewSet(APIView):
         if request.data['type'] == 0:
             # select
             user_id = request.data['userId']
-            get_queryset = LikePost.objects.filter(id=user_id, lp_del='N')
-            get_serializer_class = LikePostSerializer(get_queryset, many=True)
+            b_id = request.data['b_id']
+
+            # print('userId')
+            # print(user_id)
+            # print('b_id')
+            # print(b_id)
+
+            get_queryset = LikePost.objects.filter(id=user_id, b_id=b_id)
+            get_serializer_class = IsLikePostSerializer(get_queryset, many=True)
+
             # print(get_serializer_class.data)
             return Response(get_serializer_class.data, status=200)
 
@@ -205,7 +206,6 @@ class LikePostMpViewSet(APIView):
     """
         POST /mplikepost/
     """
-
     def post(self, request, **kwargs):
         res_data = {
             "success": True,
@@ -229,6 +229,45 @@ class LikePostMpViewSet(APIView):
             print(get_serializer_class.data)
             return Response(get_serializer_class.data, status=200)
             # return  Response({"res": "hi"}, status=200)
+
+
+class PostCommentViewSet(APIView):
+    """
+        GET /postcomment/
+    """
+    def get(self, request,  **kwargs):
+        b_id = request.GET.get('b_id')
+        get_queryset = PostComment.objects.filter(pc_del='N', b_id=b_id).order_by('-pc_comment')
+        get_serializer_class = PostCommentSerializer(get_queryset, many=True)
+        return Response(get_serializer_class.data, status=200)
+
+    """
+        POST /postcomment/
+    """
+    def post(self, request, **kwargs):
+
+        res_data = {
+            "success": True,
+            "error": None
+        }
+
+        # select
+        user_id = request.data['userId']
+        b_id = request.data['b_id']
+        pc_comment = request.data['pc_comment']
+
+        userObj = User.objects.get(username=user_id)
+        postId = Posts.objects.get(b_id=b_id)
+
+        new_Comment = PostComment(id=userObj,b_id=postId, pc_comment=pc_comment)
+        new_Comment.save()  # insert
+
+        res_data = {
+            "success": True,
+            "error": None
+        }
+
+        return Response(res_data, status=200)
 
 
 class MyPageViewSet(APIView):
@@ -267,6 +306,7 @@ class GetSigunguViewSet(APIView):
         sigungu_list = EntrcSidoSecondSerializer(sigungu, many=True)  # 시- 도 return
         # print(sido_list)
         return Response(sigungu_list.data, status=200)
+
 
 class GetDongViewSet(APIView):
     """
@@ -329,12 +369,17 @@ class GetReDongViewSet(APIView):
         return Response(dong_list.data, status=200)
 
 
-
-
+# RetrieveAPIView 하나만 불러오는 거
 class PostDetailViewSet(RetrieveAPIView):
     lookup_field = 'b_id'
     queryset = Posts.objects.all()
     serializer_class = PostDetailSerializer
+
+
+class PostCommentDetailViewSet(RetrieveAPIView):
+    lookup_field = 'b_id'
+    queryset = PostComment.objects.all().order_by('-pc_datetime')
+    serializer_class = PostCommentSerializer
 
 
 class PostUpdateViewSet(UpdateAPIView):

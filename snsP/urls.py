@@ -55,6 +55,10 @@ urlpatterns = [
     # likepost(mypage, post)
     path('mplikepost', postview.LikePostMpViewSet.as_view(), name='likePostMp'),
 
+    # postComment
+    path('postcomment', postview.PostCommentViewSet.as_view(), name='postComment'),
+    path('postcomment/<int:b_id>', postview.PostCommentDetailViewSet.as_view(), name='postCommentDetail'),
+
     # myPage
     path('mypage', postview.MyPageViewSet.as_view(), name='myPage'),
 

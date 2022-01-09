@@ -1,5 +1,5 @@
 import rest_framework.serializers as serializers
-from .models import Posts, Photo, LikePost, EntrcSido
+from .models import Posts, Photo, LikePost, EntrcSido, PostComment
 from django.contrib.auth.models import User
 
 
@@ -49,10 +49,9 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
-    #post_id = serializers.PrimaryKeyRelatedField(queryset=Posts.objects.all(),  many=True)
-    #user_id = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all(), write_only=True, many=False)
     p_id = PhotoSerializer(read_only=True)
     id = UserSerializer(read_only=True)
+
     class Meta:
         model = Posts
         fields = ('b_id',
@@ -67,12 +66,40 @@ class PostDetailSerializer(serializers.ModelSerializer):
                   'p_id')
 
 
+class PostCommentSerializer(serializers.ModelSerializer):
+    id = UserSerializer(read_only=True)
+
+    class Meta:
+        model = PostComment
+        fields = ('pc_id',
+                  'b_id',
+                  'id',
+                  'pc_comment',
+                  'pc_datetime',
+                  'pc_del'
+                  )
+
+
 class LikePostSerializer(serializers.ModelSerializer):
     id = UserSerializer(read_only=True)
     b_id = PostSerializer(read_only=True)
 
     class Meta:
         model = Posts
+        fields = ('lp_id',
+                  'lp_datetime',
+                  'id',
+                  'b_id',
+                  'lp_del',
+                  )
+
+
+class IsLikePostSerializer(serializers.ModelSerializer):
+    id = UserSerializer(read_only=True)
+    b_id = PostSerializer(read_only=True)
+
+    class Meta:
+        model = LikePost
         fields = ('lp_id',
                   'lp_datetime',
                   'id',

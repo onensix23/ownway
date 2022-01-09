@@ -72,6 +72,16 @@ class LikePost(models.Model):
     lp_del = models.CharField(max_length=1, null=False, default='N')
 
 
+class PostComment(models.Model):
+    pc_id = models.BigAutoField(primary_key=True)
+    b_id = models.ForeignKey(Posts, db_column='b_id', on_delete=models.CASCADE, null=False)
+    id = models.ForeignKey(User, to_field="username", db_column='id', default='', on_delete=models.CASCADE,
+                           max_length=12, null=False)  # 작성자
+    pc_comment = models.TextField()  # 내용
+    pc_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
+    pc_del = models.CharField(max_length=1, null=False, default='N')
+
+
 class KoreaDongPgTbl(models.Model):
     adm_dr_cd = models.CharField(primary_key=True, max_length=7)
     sido_nm = models.CharField(max_length=45)
