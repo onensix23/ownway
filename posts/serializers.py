@@ -12,7 +12,6 @@ class UserSerializer(serializers.ModelSerializer):
                   'email')
 
 
-
 class PostListSerializer(serializers.ModelSerializer):
     id = UserSerializer(read_only=True)
     class Meta:
@@ -24,7 +23,9 @@ class PostListSerializer(serializers.ModelSerializer):
                   'b_locType3',
                   'b_theme',
                   'b_title',
-                  'b_datetime')
+                  'b_datetime',
+                  'b_views',
+                  'p_id')
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -39,6 +40,7 @@ class PostSerializer(serializers.ModelSerializer):
                   'b_title',
                   'b_text',
                   'b_datetime',
+                  'b_views',
                   'p_id')
 
 
@@ -63,6 +65,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
                   'b_title',
                   'b_text',
                   'b_datetime',
+                  'b_views',
                   'p_id')
 
 

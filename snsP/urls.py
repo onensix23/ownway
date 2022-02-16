@@ -40,6 +40,7 @@ urlpatterns = [
     path('board', postview.PostViewSet.as_view(), name='boardList'),
     path('board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
     path('uploadImage', postview.ImageViewSet.as_view(), name='uploadImage'),
+    path('board/updateviews', postview.PostDetailUpdateViewSet.as_view(), name='boardDetail'),
 
     # searchPost
     path('searchPost', postview.SearchPostViewSet.as_view(), name='searchPost'),

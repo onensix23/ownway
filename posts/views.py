@@ -277,7 +277,7 @@ class MyPageViewSet(APIView):
     def post(self, request,  **kwargs):
         user_id = request.data['userId']
         get_queryset = Posts.objects.filter(id=user_id, b_del='N')
-        get_serializer_class = PostListSerializer(get_queryset, many=True)
+        get_serializer_class = PostDetailSerializer(get_queryset, many=True)
         # print(get_serializer_class.data)
         return Response(get_serializer_class.data, status=200)
 
@@ -369,11 +369,34 @@ class GetReDongViewSet(APIView):
         return Response(dong_list.data, status=200)
 
 
-# RetrieveAPIView 하나만 불러오는 거
+# # RetrieveAPIView 하나만 불러오는 거
 class PostDetailViewSet(RetrieveAPIView):
     lookup_field = 'b_id'
     queryset = Posts.objects.all()
     serializer_class = PostDetailSerializer
+
+
+class PostDetailUpdateViewSet(APIView):
+    """
+    POST /board/updateviews
+    """
+    def post(self, request,  **kwargs):
+        res_data = {
+            "success": True,
+            "error": None
+        }
+
+        b_id = request.data['b_id']
+        now_post = Posts.objects.get(b_id=b_id)
+
+        if now_post.b_views == '':
+            now_post.b_views = 1
+        else:
+            now_post.b_views = str(int(now_post.b_views) + 1)
+
+        now_post.save()
+
+        return Response(res_data, status=200)
 
 
 class PostCommentDetailViewSet(RetrieveAPIView):
@@ -514,6 +537,7 @@ def boardDelete(request):
         b_id = request.POST.get('b_id_d')
         Posts.objects.get(b_id=b_id).delete()
         return redirect('boardOpen')
+
 
 def getAddress(request):
     if request.method == 'POST':
