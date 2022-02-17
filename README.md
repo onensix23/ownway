@@ -2,7 +2,7 @@
 
 ## 개발환경
 - Django
-- mysql
+- postgreSQL
 
 ## 사용 IDE
 > djagno REST Framework
