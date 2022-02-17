@@ -44,8 +44,12 @@ INSTALLED_APPS = [
     'sslserver',
     'rest_framework',
     'rest_framework.authtoken',
+    'social_django',
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
     'rest_auth',
     'rest_auth.registration',
     'imagekit',
@@ -58,7 +62,14 @@ INSTALLED_APPS = [
     
 ]
 
-AUTHENTICATION_BACKENDS = ( 'django.contrib.auth.backends.ModelBackend', )
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.google.GoogleOAuth2', # Google
+    'social_core.backends.kakao.KakaoOAuth2',  # <-- 카카오톡
+    'social_core.backends.line.LineOAuth2',  # <-- 라인
+    'social_core.backends.facebook.FacebookOAuth2',  # <-- 페이스북
+    'social_core.backends.twitter.TwitterOAuth',  # <-- 트위터
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -73,6 +84,18 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'snsP.urls'
 
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -84,6 +107,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                # `allauth` needs this from django
+                'django.template.context_processors.request',
             ],
         },
     },
@@ -182,8 +208,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     )
 }
-
-
 
 SITE_ID = 1
 

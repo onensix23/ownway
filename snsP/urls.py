@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.conf.urls import include
+from django.conf.urls import include, url
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
+import django.contrib.auth.urls
 
 import posts.views as postview
 import users.views as userview
@@ -31,7 +32,7 @@ router = routers.DefaultRouter()
 
 urlpatterns = [
     path('admin', admin.site.urls),
-    # path('user', include('users.urls')),
+    path('user', include('users.urls')),
     #
     # path('search', include('search.urls')),
     # path('myPage', include('myPage.urls')),
@@ -73,4 +74,9 @@ urlpatterns = [
     path('getReSigungu', postview.GetReSigunguViewSet.as_view(), name='getReSigungu'),
     path('getReDong', postview.GetReDongViewSet.as_view(), name='getReDong'),
 
+    url(r'^accounts/', include('allauth.urls')),
+    path('rest-auth/facebook/', userview.FacebookLogin.as_view(), name='fb_login'),
+    path('rest-auth/google/', userview.GoogleLogin.as_view(), name='google_login')
+
+    # 회원가입이 완료된 화면
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,27 +1,21 @@
 from django.db.models.functions import Substr
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import *
-import json
-from django.http import HttpResponse
-from django.core import serializers
-from django.db.models import F
 from django.db.models import Q
-from rest_framework import viewsets
-from rest_framework.views import APIView, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.generics import RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from .serializers import *
 import json
-# Create your views here.
 
 
 class ImageViewSet(APIView):
     """
        POST /board/<b_id>
     """
+
     def post(self, request, **kwargs):
-        #file1 = request.data['file1']
+        # file1 = request.data['file1']
         print(request.data)
         print(request.FILES)
         print(request.FILES.keys())
@@ -29,9 +23,9 @@ class ImageViewSet(APIView):
         res_data = {
             "success": True,
             "error": None,
-            "fileName":''
+            "fileName": ''
         }
-         # print(file1)
+        # print(file1)
 
         if request.FILES:
             print("1")
@@ -56,6 +50,7 @@ class PostViewSet(APIView):
     """
        POST /board/<b_id>
     """
+
     def post(self, request, **kwargs):
         user_id = request.data['user_id']
         b_title = request.data['b_title']
@@ -97,7 +92,8 @@ class PostViewSet(APIView):
     """
     GET /board/
     """
-    def get(self, request,  **kwargs):
+
+    def get(self, request, **kwargs):
         get_queryset = Posts.objects.filter(b_del='N').order_by('-b_id')
         get_serializer_class = PostDetailSerializer(get_queryset, many=True)
         return Response(get_serializer_class.data, status=200)
@@ -105,7 +101,8 @@ class PostViewSet(APIView):
     """
         PUT /board/{b_id}
     """
-    def put(self, request,  **kwargs):
+
+    def put(self, request, **kwargs):
         res_data = {
             "success": True,
             "error": None
@@ -136,6 +133,7 @@ class SearchPostViewSet(APIView):
     """
        POST /searchPost
     """
+
     def post(self, request, **kwargs):
         search_text = request.data['search_text']
         get_queryset = Posts.objects.filter(b_title__icontains=search_text)
@@ -148,6 +146,7 @@ class LikePostViewSet(APIView):
     """
     GET, POST /likepost/
     """
+
     def post(self, request, **kwargs):
         res_data = {
             "success": True,
@@ -206,6 +205,7 @@ class LikePostMpViewSet(APIView):
     """
         POST /mplikepost/
     """
+
     def post(self, request, **kwargs):
         res_data = {
             "success": True,
@@ -235,7 +235,8 @@ class PostCommentViewSet(APIView):
     """
         GET /postcomment/
     """
-    def get(self, request,  **kwargs):
+
+    def get(self, request, **kwargs):
         b_id = request.GET.get('b_id')
         get_queryset = PostComment.objects.filter(pc_del='N', b_id=b_id).order_by('-pc_comment')
         get_serializer_class = PostCommentSerializer(get_queryset, many=True)
@@ -244,8 +245,8 @@ class PostCommentViewSet(APIView):
     """
         POST /postcomment/
     """
-    def post(self, request, **kwargs):
 
+    def post(self, request, **kwargs):
         res_data = {
             "success": True,
             "error": None
@@ -259,7 +260,7 @@ class PostCommentViewSet(APIView):
         userObj = User.objects.get(username=user_id)
         postId = Posts.objects.get(b_id=b_id)
 
-        new_Comment = PostComment(id=userObj,b_id=postId, pc_comment=pc_comment)
+        new_Comment = PostComment(id=userObj, b_id=postId, pc_comment=pc_comment)
         new_Comment.save()  # insert
 
         res_data = {
@@ -274,7 +275,8 @@ class MyPageViewSet(APIView):
     """
     POST /mypage/
     """
-    def post(self, request,  **kwargs):
+
+    def post(self, request, **kwargs):
         user_id = request.data['userId']
         get_queryset = Posts.objects.filter(id=user_id, b_del='N')
         get_serializer_class = PostDetailSerializer(get_queryset, many=True)
@@ -286,7 +288,8 @@ class GetSidoViewSet(APIView):
     """
     GET /mypage/
     """
-    def get(self, request,  **kwargs):
+
+    def get(self, request, **kwargs):
         sido = EntrcSido.objects.values('sido_nm').annotate(sido_cd=(Substr('doro_cd', 1, 2))).distinct()
         sido_list = EntrcSidoFirstSerializer(sido, many=True)  # 시- 도 return
         # print(sido_list)
@@ -297,7 +300,8 @@ class GetSigunguViewSet(APIView):
     """
     POST /getSigungu
     """
-    def post(self, request,  **kwargs):
+
+    def post(self, request, **kwargs):
         sel_sido_cd = request.data['sido_cd']
 
         sigungu = EntrcSido.objects.values('sigungu_nm').annotate(
@@ -312,11 +316,14 @@ class GetDongViewSet(APIView):
     """
     POST /getDong
     """
-    def post(self, request,  **kwargs):
+
+    def post(self, request, **kwargs):
         sel_sido_cd = request.data['sido_cd']
         sel_sigungu_cd = request.data['sigungu_cd']
 
-        dong = EntrcSido.objects.values('dong_nm', 'dong_cd').distinct().filter(sido_cd=sel_sido_cd, sigungu_cd=sel_sigungu_cd).exclude(dong_nm__exact='')
+        dong = EntrcSido.objects.values('dong_nm', 'dong_cd').distinct().filter(sido_cd=sel_sido_cd,
+                                                                                sigungu_cd=sel_sigungu_cd).exclude(
+            dong_nm__exact='')
 
         print(dong)
         dong_list = EntrcSidoThirdSerializer(dong, many=True)  # 시- 도 return
@@ -328,7 +335,8 @@ class GetReSidoViewSet(APIView):
     """
     POST /mypage/
     """
-    def post(self, request,  **kwargs):
+
+    def post(self, request, **kwargs):
         # { "sido_nm":"경기도" }
         sel_sido_nm = request.data['sido_nm']
         print(sel_sido_nm)
@@ -343,10 +351,12 @@ class GetReSigunguViewSet(APIView):
     """
     POST /getSigungu
     """
-    def post(self, request,  **kwargs):
+
+    def post(self, request, **kwargs):
         sel_sido_cd = request.data['sido_cd']
 
-        sigungu = EntrcSido.objects.values('sigungu_nm').annotate(sigungu_cd=(Substr('doro_cd', 3, 3))).distinct().filter(sido_cd=sel_sido_cd)
+        sigungu = EntrcSido.objects.values('sigungu_nm').annotate(
+            sigungu_cd=(Substr('doro_cd', 3, 3))).distinct().filter(sido_cd=sel_sido_cd)
         print(sigungu)
         sigungu_list = EntrcSidoSecondSerializer(sigungu, many=True)  # 시- 도 return
         # print(sigungu_list)
@@ -357,11 +367,14 @@ class GetReDongViewSet(APIView):
     """
     POST /getDong
     """
-    def post(self, request,  **kwargs):
+
+    def post(self, request, **kwargs):
         sel_sido_cd = request.data['sido_cd']
         sel_sigungu_cd = request.data['sigungu_cd']
 
-        dong = EntrcSido.objects.values('dong_nm', 'dong_cd').distinct().filter(sido_cd=sel_sido_cd, sigungu_cd=sel_sigungu_cd).exclude(dong_nm__exact='')
+        dong = EntrcSido.objects.values('dong_nm', 'dong_cd').distinct().filter(sido_cd=sel_sido_cd,
+                                                                                sigungu_cd=sel_sigungu_cd).exclude(
+            dong_nm__exact='')
 
         print(dong)
         dong_list = EntrcSidoThirdSerializer(dong, many=True)  # 시- 도 return
@@ -380,7 +393,8 @@ class PostDetailUpdateViewSet(APIView):
     """
     POST /board/updateviews
     """
-    def post(self, request,  **kwargs):
+
+    def post(self, request, **kwargs):
         res_data = {
             "success": True,
             "error": None
@@ -419,12 +433,11 @@ def boardOpen(request):
     all_board = Posts.objects.all().order_by('-b_id').values()
 
     photo1 = Posts.objects.select_related().order_by(
-                '-b_id'
-            ).values('b_title','b_id','b_datetime','b_locType1', 'b_locType2', 'b_locType3')
-
+        '-b_id'
+    ).values('b_title', 'b_id', 'b_datetime', 'b_locType1', 'b_locType2', 'b_locType3')
 
     print(all_board)
-    return render(request, 'board/read_board.html', {'all_board':all_board})
+    return render(request, 'board/read_board.html', {'all_board': all_board})
 
 
 def boardInsert(request):
@@ -474,7 +487,6 @@ def boardInsert(request):
                 # 데이터베이스에 저장
                 photo.save()
 
-
         # for img in request.FILES.getlist('imgs'):
         #     # Photo 객체를 하나 생성한다.
         #     photo = Photo()
@@ -487,7 +499,6 @@ def boardInsert(request):
         #
         #     # 데이터베이스에 저장
         #     photo.save()
-
 
         return redirect('boardOpen')
 
@@ -505,10 +516,10 @@ def boardDetail(request, b_id):
         # b_id = request.GET.get('b_id')
 
         # board_detail = Board.objects.filter(b_id=b_id)
-        #board_detail = Posts.objects.get(b_id=b_id)
+        # board_detail = Posts.objects.get(b_id=b_id)
         board_detail = Posts.objects.select_related().get(b_id=b_id)
         board_photo = Photo.objects.get(post_id=b_id)
-        return render(request, 'board/detail_board.html', {'board_detail':board_detail, 'board_photo':board_photo})
+        return render(request, 'board/detail_board.html', {'board_detail': board_detail, 'board_photo': board_photo})
 
 
 def boardEdit(request):
@@ -552,19 +563,19 @@ def getSido(request):
         # select distinct(sido_nm,sido_cd) from KoreaDongPgTbl
         # sido = KoreaDongPgTbl.objects.filter().distinct().values('sido_nm', 'sido_cd')
         # sido = EntrcSido.objects.filter(sido_nm=F('sido_nm'),doro_cd=F(Substr('doro_cd', 1, 2))).distinct()
-        #sido = EntrcSido.objects.annotate(doro_cd1=(Substr('doro_cd', 1, 2))).values('sido_nm', 'doro_cd').distinct()
-        #sido = EntrcSido.objects.filter(sido_nm=F('sido_nm'), doro_cd=(Substr('doro_cd', 1, 2))).values('sido_nm', 'doro_cd').distinct()
-        #sido = EntrcSido.objects.raw('select l.sido_cd, l.sido_nm from ( select distinct(sido_nm) as sido_nm, substr(doro_cd,1,2) as sido_cd  from ownway.entrc_sido)l')
+        # sido = EntrcSido.objects.annotate(doro_cd1=(Substr('doro_cd', 1, 2))).values('sido_nm', 'doro_cd').distinct()
+        # sido = EntrcSido.objects.filter(sido_nm=F('sido_nm'), doro_cd=(Substr('doro_cd', 1, 2))).values('sido_nm', 'doro_cd').distinct()
+        # sido = EntrcSido.objects.raw('select l.sido_cd, l.sido_nm from ( select distinct(sido_nm) as sido_nm, substr(doro_cd,1,2) as sido_cd  from ownway.entrc_sido)l')
         # sido = EntrcSido.objects.annotate(doro_cd1=(Substr('doro_cd', 1, 2))).distinct().values('sido_nm', 'doro_cd')
 
         sido = EntrcSido.objects.values('sido_nm').annotate(sido_cd=(Substr('doro_cd', 1, 2))).distinct()
         # select distinct(sido_nm) as sido_nm, substr(doro_cd,1,2) as sido_cd from ownway.entrc_sido;
 
-        #print(sido.query)
-        #print(sido)
+        # print(sido.query)
+        # print(sido)
         # = KoreaDongPgTbl.objects.filter().distinct().values('sido_nm', 'sido_cd')
         sido_list = json.dumps(list(sido))  # 시- 도 return
-        #print(sido_list)
+        # print(sido_list)
         return HttpResponse(sido_list, content_type="text/json-comment-filtered")
 
 
@@ -575,10 +586,11 @@ def getGungu(request):
 
         sel_sido_cd = jsonObject['sido_cd']
 
-        #sigungu = KoreaDongPgTbl.objects.filter(sido_cd=sel_sido_cd).distinct().values('sigungu_nm', 'sigungu_cd')
+        # sigungu = KoreaDongPgTbl.objects.filter(sido_cd=sel_sido_cd).distinct().values('sigungu_nm', 'sigungu_cd')
 
         # SELECT DISTINCT(sigungu_nm) ,SUBSTR(doro_cd,3,3) FROM entrc_sido WHERE DORO_CD LIKE '11%';
-        sigungu = EntrcSido.objects.values('sigungu_nm').annotate(sigungu_cd=(Substr('doro_cd', 3, 3))).distinct().filter(doro_cd__startswith=sel_sido_cd)
+        sigungu = EntrcSido.objects.values('sigungu_nm').annotate(
+            sigungu_cd=(Substr('doro_cd', 3, 3))).distinct().filter(doro_cd__startswith=sel_sido_cd)
         sigungu_list = json.dumps(list(sigungu))  # 시- 도 return
         # print(sigungu_list)
         # print(sigungu.query)
@@ -589,17 +601,17 @@ def getDong(request):
     if request.method == "POST":
         json_str = ((request.body).decode('utf-8'))
         jsonObject = json.loads(json_str)
-        
+
         sel_gun_do_cd = str(jsonObject['sido_cd']) + str(jsonObject['sigungu_cd'])
 
         print(sel_gun_do_cd)
-        #adm_dr = KoreaDongPgTbl.objects.filter(sigungu_cd=sel_sigungu_cd).distinct().values('adm_dr_nm', 'adm_dr_cd2')  # 동
-        #SELECT DISTINCT(dong_nm) ,SUBSTR(doro_cd,3,3) FROM entrc_sido WHERE DORO_CD LIKE '11110%' AND dong_one_cd != '00' order by doro_cd, dong_one_cd;
+        # adm_dr = KoreaDongPgTbl.objects.filter(sigungu_cd=sel_sigungu_cd).distinct().values('adm_dr_nm', 'adm_dr_cd2')  # 동
+        # SELECT DISTINCT(dong_nm) ,SUBSTR(doro_cd,3,3) FROM entrc_sido WHERE DORO_CD LIKE '11110%' AND dong_one_cd != '00' order by doro_cd, dong_one_cd;
         qes1 = ~Q(dong_one_cd='00')
-        dong = EntrcSido.objects.values('dong_nm', 'dong_cd').distinct().filter(doro_cd__startswith=sel_gun_do_cd).filter(qes1)
+        dong = EntrcSido.objects.values('dong_nm', 'dong_cd').distinct().filter(
+            doro_cd__startswith=sel_gun_do_cd).filter(qes1)
 
         dong_list = json.dumps(list(dong))  # 시- 도 return
-        print(dong.query)   
-        #rint(dong_list)
+        print(dong.query)
+        # rint(dong_list)
         return HttpResponse(dong_list, content_type="text/json-comment-filtered")
-
