@@ -1,26 +1,66 @@
+import json, requests
+
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 # 비밀번호 암호화 / 패스워드 체크(db에있는거와 일치성확인)
-from django.contrib.auth.hashers import make_password, check_password
-
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
+
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from rest_auth.registration.serializers import SocialLoginSerializer
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from rest_auth.registration.views import SocialLoginView
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+
+from snsP import settings, my_settings
 
 
-# Create your views here.
-class FacebookLogin(SocialLoginView):
-    adapter_class = FacebookOAuth2Adapter
+class SocialLoginViewSet(APIView):
+    @method_decorator(csrf_exempt)
+    def post(self, request, **kwargs):
+        request_d = request.data  # {"userId":"rohhj622","userPassword":"shgsuwls1!"}
 
+        if request_d['type'] == 'login':
+            url = 'https://graph.facebook.com/v3.0/me'
+            params = {
+                'fields': ','.join([
+                    'id',
+                    'name',
+                    'email',
+                    'first_name',
+                    'last_name',
+                    'picture',
+                ]),
+                # 'fields': 'id,name,first_name,last_name,picture',
+                'access_token': request_d['accessToken'],
+            }
+            response = requests.get(url, params)
+            response_dict = response.json()
 
-class GoogleLogin(SocialLoginView):
-    adapter_class = GoogleOAuth2Adapter
+            facebook_user_id = response_dict['id']
+            facebook_name = response_dict['name']
+            facebook_email = response_dict['email']
+
+            user, user_created = User.objects.get_or_create(username=facebook_user_id)
+
+            # 유저가 새로 생성되었다면
+            if user_created:
+                print(user_created)
+                user.first_name = facebook_name
+                user.email = facebook_email
+                user.save()
+
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+        return Response(response_dict, status=200)
 
 
 class UserViewSet(APIView):

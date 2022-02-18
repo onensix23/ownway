@@ -94,7 +94,7 @@ class PostViewSet(APIView):
     """
 
     def get(self, request, **kwargs):
-        get_queryset = Posts.objects.filter(b_del='N').order_by('-b_id')
+        get_queryset = Posts.objects.filter(b_del='N').order_by('-b_datetime')
         get_serializer_class = PostDetailSerializer(get_queryset, many=True)
         return Response(get_serializer_class.data, status=200)
 

@@ -20,6 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
 import django.contrib.auth.urls
+import social_django.urls
 
 import posts.views as postview
 import users.views as userview
@@ -51,6 +52,9 @@ urlpatterns = [
     path('logout', userview.LogoutUserViewSet.as_view(), name='userLogout'),  # get
     path('register', userview.ResigterUserViewSet.as_view(), name='userRegister'),  # post
 
+    # social login
+    path('social-login', userview.SocialLoginViewSet.as_view(), name='socialLogin'),  # post
+
     # likepost(post)
     path('likepost', postview.LikePostViewSet.as_view(), name='likePost'),
 
@@ -74,9 +78,7 @@ urlpatterns = [
     path('getReSigungu', postview.GetReSigunguViewSet.as_view(), name='getReSigungu'),
     path('getReDong', postview.GetReDongViewSet.as_view(), name='getReDong'),
 
-    url(r'^accounts/', include('allauth.urls')),
-    path('rest-auth/facebook/', userview.FacebookLogin.as_view(), name='fb_login'),
-    path('rest-auth/google/', userview.GoogleLogin.as_view(), name='google_login')
+    path('accounts/', include('allauth.urls')),
 
     # 회원가입이 완료된 화면
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
