@@ -27,8 +27,8 @@ class SocialLoginViewSet(APIView):
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
         request_d = request.data  # {"userId":"rohhj622","userPassword":"shgsuwls1!"}
-
-        if request_d['type'] == 'login':
+        
+        if request_d['socialType'] == 'login':
             url = 'https://graph.facebook.com/v3.0/me'
             params = {
                 'fields': ','.join([
@@ -40,7 +40,7 @@ class SocialLoginViewSet(APIView):
                     'picture',
                 ]),
                 # 'fields': 'id,name,first_name,last_name,picture',
-                'access_token': request_d['accessToken'],
+                'access_token': request_d['data']['accessToken']
             }
             response = requests.get(url, params)
             response_dict = response.json()
