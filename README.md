@@ -3,6 +3,7 @@
 ## 개발환경
 - Django
 - postgreSQL
+- AWS Ubuntu 20.04
 
 ## 사용 IDE
 > djagno REST Framework
