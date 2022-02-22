@@ -30,7 +30,7 @@ class SocialLoginViewSet(APIView):
         
         if request_d['socialType'] == 'login':
             url = 'https://graph.facebook.com/v3.0/me'
-            params = {
+            params =  {
                 'fields': ','.join([
                     'id',
                     'name',
