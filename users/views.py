@@ -27,7 +27,6 @@ class SocialLoginViewSet(APIView):
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
         request_d = request.data  # {"userId":"rohhj622","userPassword":"shgsuwls1!"}
-        
         if request_d['socialType'] == 'login':
             url = 'https://graph.facebook.com/v3.0/me'
             params =  {
