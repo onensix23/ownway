@@ -1,5 +1,19 @@
 from django.db import models
+from django.contrib.auth.models import User
+
 # Create your models here.
+
+class UserProfile(models.Model):
+    id = models.ForeignKey(User, to_field="username", db_column='id', default='', on_delete=models.CASCADE, max_length=12, null=False)  # 작성자
+    up_image = ProcessedImageField(
+        null=False, default='',
+        upload_to='images/'+datetime.now().strftime('%Y%m%d')+'/',
+        processors=[ResizeToFill(600,600)],
+        format='JPEG',
+        options={'quality': 90}
+    )
+    up_imagename = models.CharField(max_length=64, null=True, verbose_name='첨부파일명')
+    up_comment = models.CharField(max_length=15, null=True)
 
 
 class User(models.Model):
