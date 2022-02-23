@@ -24,6 +24,7 @@ from snsP import settings, my_settings
 
 
 class SocialLoginViewSet(APIView):
+    
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
         request_d = request.data  # {"userId":"rohhj622","userPassword":"shgsuwls1!"}
