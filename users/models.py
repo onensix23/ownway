@@ -1,10 +1,14 @@
+from datetime import datetime
 from django.db import models
+from uuid import uuid4
 from django.contrib.auth.models import User
 
+from imagekit.models import ProcessedImageField
+from imagekit.processors import ResizeToFill
 # Create your models here.
 
 class UserProfile(models.Model):
-    id = models.ForeignKey(User, to_field="username", db_column='id', default='', on_delete=models.CASCADE, max_length=12, null=False)  # 작성자
+    up_id = models.ForeignKey(User, to_field="username", db_column='up_id', on_delete=models.CASCADE, unique=True, max_length=12, null=False)  # 작성자
     up_image = ProcessedImageField(
         null=False, default='',
         upload_to='images/'+datetime.now().strftime('%Y%m%d')+'/',

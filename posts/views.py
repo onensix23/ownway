@@ -238,7 +238,7 @@ class PostCommentViewSet(APIView):
 
     def get(self, request, **kwargs):
         b_id = request.GET.get('b_id')
-        get_queryset = PostComment.objects.filter(pc_del='N', b_id=b_id).order_by('-pc_comment')
+        get_queryset = PostComment.objects.filter(pc_del='N', b_id=b_id).order_by('pc_datetime')
         get_serializer_class = PostCommentSerializer(get_queryset, many=True)
         return Response(get_serializer_class.data, status=200)
 
