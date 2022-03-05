@@ -26,10 +26,12 @@ SECRET_KEY = my_settings.SECRET
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
-    'ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com'
+    'ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com',
+    '172.30.1.44:8000',
+    '172.30.1.44'
 ]
 
 # Application definition
@@ -211,7 +213,8 @@ CORS_ALLOW_HEADERS = (
 )
 
 CORS_ORIGIN_WHITELIST = [
-    "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com"
+    "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com",
+    "http://172.30.1.44:8000"
 ]
 
 REST_FRAMEWORK = {
