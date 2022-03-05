@@ -29,7 +29,6 @@ SECRET_KEY = my_settings.SECRET
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com',
     'ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com'
 ]
 
@@ -192,16 +191,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ORIGIN_ALLOW_ALL=True
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_METHODS = (
+CORS_ALLOW_HEADERS = (
     'DELETE',
     'GET',
     'OPTIONS',
     'PATCH',
     'POST',
     'PUT',
-)
-
-CORS_ALLOW_HEADERS = (
     'accept',
     'accept-encoding',
     'authorization',
@@ -213,6 +209,10 @@ CORS_ALLOW_HEADERS = (
     'X-CSRFToken',
     'x-requested-with',
 )
+
+CORS_ORIGIN_WHITELIST = [
+    "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com"
+]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
