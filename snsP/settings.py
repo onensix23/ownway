@@ -25,10 +25,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = my_settings.SECRET
 
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = [
     # '.ownway.world',
     'ownway.world',
@@ -40,45 +36,49 @@ ALLOWED_HOSTS = [
     # '*',
 ]
 
-def is_ec2_linux():
-    """Detect if we are running on an EC2 Linux Instance
-       See http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/identify_ec2_instances.html
-    """
-    if os.path.isfile("/sys/hypervisor/uuid"):
-        with open("/sys/hypervisor/uuid") as f:
-            uuid = f.read()
-            return uuid.startswith("ec2")
-    return False
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
 
 
-def get_linux_ec2_private_ip():
-    """Get the private IP Address of the machine if running on an EC2 linux server"""
-    from urllib.request import urlopen
-    if not is_ec2_linux():
-        return None
-    try:
-        response = urlopen('http://169.254.169.254/latest/meta-data/local-ipv4')
-        ec2_ip = response.read().decode('utf-8')
-        if response:
-            response.close()
-        return ec2_ip
-    except Exception as e:
-        print(e)
-        return None
+# def is_ec2_linux():
+#     """Detect if we are running on an EC2 Linux Instance
+#        See http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/identify_ec2_instances.html
+#     """
+#     if os.path.isfile("/sys/hypervisor/uuid"):
+#         with open("/sys/hypervisor/uuid") as f:
+#             uuid = f.read()
+#             return uuid.startswith("ec2")
+#     return False
+
+
+# def get_linux_ec2_private_ip():
+#     """Get the private IP Address of the machine if running on an EC2 linux server"""
+#     from urllib.request import urlopen
+#     if not is_ec2_linux():
+#         return None
+#     try:
+#         response = urlopen('http://169.254.169.254/latest/meta-data/local-ipv4')
+#         ec2_ip = response.read().decode('utf-8')
+#         if response:
+#             response.close()
+#         return ec2_ip
+#     except Exception as e:
+#         print(e)
+#         return None
         
-private_ip = get_linux_ec2_private_ip()
-if private_ip:
-    ALLOWED_HOSTS.append(private_ip)
+# private_ip = get_linux_ec2_private_ip()
+# if private_ip:
+#     ALLOWED_HOSTS.append(private_ip)
 
-# Append ELB healthcheck hostname(internal ip address)
-# https://stackoverflow.com/questions/55718292/getting-400s-from-aws-elb-hostcheck-to-work-with-django-allowed-hosts-in-aws-ec
-if 'ECS_CONTAINER_METADATA_URI' in os.environ:
-    ELB_HEALTHCHECK_HOSTNAMES = [ip for network in
-                                 requests.get(os.environ['ECS_CONTAINER_METADATA_URI']).json()[
-                                     'Networks']
-                                 for ip in network['IPv4Addresses']]
-    print(f'Append ELB healthcheck hostname: {ELB_HEALTHCHECK_HOSTNAMES}')
-    ALLOWED_HOSTS += ELB_HEALTHCHECK_HOSTNAMES
+# # Append ELB healthcheck hostname(internal ip address)
+# # https://stackoverflow.com/questions/55718292/getting-400s-from-aws-elb-hostcheck-to-work-with-django-allowed-hosts-in-aws-ec
+# if 'ECS_CONTAINER_METADATA_URI' in os.environ:
+#     ELB_HEALTHCHECK_HOSTNAMES = [ip for network in
+#                                  requests.get(os.environ['ECS_CONTAINER_METADATA_URI']).json()[
+#                                      'Networks']
+#                                  for ip in network['IPv4Addresses']]
+#     print(f'Append ELB healthcheck hostname: {ELB_HEALTHCHECK_HOSTNAMES}')
+#     ALLOWED_HOSTS += ELB_HEALTHCHECK_HOSTNAMES
 
 # Application definition
 
