@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 from . import my_settings
 import os
+import requests
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +39,16 @@ ALLOWED_HOSTS = [
     '15.164.49.223',
     # '*',
 ]
+
+# Append ELB healthcheck hostname(internal ip address)
+# https://stackoverflow.com/questions/55718292/getting-400s-from-aws-elb-hostcheck-to-work-with-django-allowed-hosts-in-aws-ec
+if 'ECS_CONTAINER_METADATA_URI' in os.environ:
+    ELB_HEALTHCHECK_HOSTNAMES = [ip for network in
+                                 requests.get(os.environ['ECS_CONTAINER_METADATA_URI']).json()[
+                                     'Networks']
+                                 for ip in network['IPv4Addresses']]
+    print(f'Append ELB healthcheck hostname: {ELB_HEALTHCHECK_HOSTNAMES}')
+    ALLOWED_HOSTS += ELB_HEALTHCHECK_HOSTNAMES
 
 # Application definition
 
