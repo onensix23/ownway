@@ -90,7 +90,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'ebhealthcheck.apps.EBHealthCheckConfig',
+    # 'ebhealthcheck.apps.EBHealthCheckConfig',
     'sslserver',
     'rest_framework',
     'rest_framework.authtoken',
