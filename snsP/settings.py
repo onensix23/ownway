@@ -224,6 +224,7 @@ CORS_ORIGIN_WHITELIST = [
     # "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com",
     # "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com",
     # "http://172.30.1.44:8000"
+    "https://ownway.world"
 ]
 
 REST_FRAMEWORK = {
