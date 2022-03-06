@@ -30,9 +30,9 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     '.ownway.world',
+    '.ap-northeast-2.compute.amazonaws.com',
     '172.30.1.44:8000',
     '172.30.1.44',
-    '.ap-northeast-2.compute.amazonaws.com',
 ]
 
 # Application definition
@@ -85,6 +85,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'snsP.middleware.HealthCheckMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
 ]
 REST_USE_JWT = True
 ROOT_URLCONF = 'snsP.urls'
