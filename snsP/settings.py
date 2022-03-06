@@ -26,12 +26,13 @@ SECRET_KEY = my_settings.SECRET
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
-    'ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com',
+    '.ap-northeast-2.compute.amazonaws.com',
     '172.30.1.44:8000',
-    '172.30.1.44'
+    '172.30.1.44',
+    '.ownway.world'
 ]
 
 # Application definition
@@ -171,8 +172,8 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 #
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 #
 #
 # STATICFILES_DIRS = [
