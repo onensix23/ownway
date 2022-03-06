@@ -29,10 +29,11 @@ SECRET_KEY = my_settings.SECRET
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    '.ap-northeast-2.compute.amazonaws.com',
+    'ownway.world',
+    'www.ownway.world',
     '172.30.1.44:8000',
     '172.30.1.44',
-    '.ownway.world'
+    '.ap-northeast-2.compute.amazonaws.com',
 ]
 
 # Application definition
@@ -214,8 +215,9 @@ CORS_ALLOW_HEADERS = (
 )
 
 CORS_ORIGIN_WHITELIST = [
-    "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com",
-    "http://172.30.1.44:8000"
+    # "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com",
+    # "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com",
+    # "http://172.30.1.44:8000"
 ]
 
 REST_FRAMEWORK = {
