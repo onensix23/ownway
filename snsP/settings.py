@@ -28,6 +28,7 @@ SECRET_KEY = my_settings.SECRET
 ALLOWED_HOSTS = [
     # '.ownway.world',
     'ownway.world',
+    '172.31.45.98'
     # 'www.ownway.world',
     # '.ap-northeast-2.compute.amazonaws.com',
     # '172.30.1.44:8000',
