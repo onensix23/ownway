@@ -29,12 +29,14 @@ SECRET_KEY = my_settings.SECRET
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    # '.ownway.world',
+    '.ownway.world',
+    'ownway.world',
+    'www.ownway.world',
     # '.ap-northeast-2.compute.amazonaws.com',
     # '172.30.1.44:8000',
     # '172.30.1.44',
-    # '15.164.49.223',
-    '*',
+    '15.164.49.223',
+    # '*',
 ]
 
 # Application definition
