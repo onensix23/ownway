@@ -27,6 +27,7 @@ SECRET_KEY = my_settings.SECRET
 
 ALLOWED_HOSTS = [
     'ownway.world',
+    '.ownway.world',
     'www.ownway.world',
     'loaclhost',
     '172.31.45.98',
@@ -35,7 +36,7 @@ ALLOWED_HOSTS = [
 ]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 def is_ec2_linux():
@@ -79,6 +80,7 @@ if 'ECS_CONTAINER_METADATA_URI' in os.environ:
     ALLOWED_HOSTS += ELB_HEALTHCHECK_HOSTNAMES
 
 # Application definition
+print(ALLOWED_HOSTS)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -179,7 +181,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'snsP.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
