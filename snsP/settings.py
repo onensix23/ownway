@@ -29,7 +29,9 @@ ALLOWED_HOSTS = [
     'ownway.world',
     'www.ownway.world',
     'loaclhost',
-    '172.31.45.98'
+    '172.31.45.98',
+    '15.164.49.223'
+
 ]
 
 # SECURITY WARNING: don't run with debug turned on in production!
