@@ -26,16 +26,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = my_settings.SECRET
 
 ALLOWED_HOSTS = [
-    # '.ownway.world',
     'ownway.world',
+    'www.ownway.world',
     'loaclhost',
     '172.31.45.98'
-    # 'www.ownway.world',
-    # '.ap-northeast-2.compute.amazonaws.com',
-    # '172.30.1.44:8000',
-    # '172.30.1.44',
-    # '15.164.49.223',
-    # '*',
 ]
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -266,12 +260,13 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
 )
 
-CORS_ORIGIN_WHITELIST = [
-    # "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com",
-    # "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com",
-    # "http://172.30.1.44:8000"
-    "https://ownway.world"
-]
+# CORS_ORIGIN_WHITELIST = [
+#     # "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com",
+#     # "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com",
+#     # "http://172.30.1.44:8000"
+#     "https://ownway.world"
+#     'https:..'
+# ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
