@@ -30,7 +30,6 @@ ALLOWED_HOSTS = [
     '.ownway.world',
     'www.ownway.world',
     'loaclhost',
-    '172.31.45.98',
     '15.164.49.223'
 
 ]
@@ -80,7 +79,6 @@ if 'ECS_CONTAINER_METADATA_URI' in os.environ:
     ALLOWED_HOSTS += ELB_HEALTHCHECK_HOSTNAMES
 
 # Application definition
-print(ALLOWED_HOSTS)
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
