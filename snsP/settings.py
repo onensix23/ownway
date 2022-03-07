@@ -82,6 +82,9 @@ if 'ECS_CONTAINER_METADATA_URI' in os.environ:
 # Application definition
 print(ALLOWED_HOSTS)
 
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
