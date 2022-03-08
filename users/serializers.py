@@ -6,17 +6,18 @@ from .models import UserProfile
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = (
-                    'username',
-                    'firstname'
-                  )
+        fields = ('id',
+                  'username',
+                  'first_name',
+                  'email')
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    id = UserSerializer(read_only=True)
+    up_id = UserSerializer(read_only=True)
     class Meta:
         model = UserProfile
         fields = (
+                  'id',
                   'up_id',
                   'up_image',
                   'up_imagename',

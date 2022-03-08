@@ -63,14 +63,14 @@ class PostViewSet(APIView):
         b_hash_tag_2 = request.data['b_hash_tag_2']
         fileNm = request.data['fileNm']
 
-        print(fileNm)
-        print(user_id)
-        print(b_title)
-        print(b_text)
-        print(b_locType1)
-        print(b_locType2)
-        print(b_locType3)
-        print(b_theme)
+        # print(fileNm)
+        # print(user_id)
+        # print(b_title)
+        # print(b_text)
+        # print(b_locType1)
+        # print(b_locType2)
+        # print(b_locType3)
+        # print(b_theme)
 
         userObj = User.objects.get(username=user_id)
         picId = Photo.objects.get(p_filename=fileNm)
