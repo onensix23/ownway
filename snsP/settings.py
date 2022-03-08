@@ -31,12 +31,13 @@ ALLOWED_HOSTS = [
     'www.ownway.world',
     'loaclhost',
     '172.31.45.98',
-    '15.164.49.223'
+    '15.164.49.223',
+    '172.30.1.44',
 
 ]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 def is_ec2_linux():

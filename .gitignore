@@ -10,6 +10,8 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media
+settings.py
+
 # my_settings.py
 
 # If your build process includes running collectstatic, then you probably don't need or want to include static/
@@ -167,5 +169,6 @@ media/
 ownwayvenv/
 ownwatvenv/
 my_env/
+snsP/wsgi.py
 
 googleMapKey.js
