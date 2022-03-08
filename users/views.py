@@ -71,7 +71,7 @@ class UserProfileViewSet(APIView):
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
         request_d = request.data; #{"user_id":"1088384478597823"}
-        user_id = request_d['user_id']
+        user_id = request_d['userId']
         # userObj = User.objects.get(username=user_id)
         
         get_queryset, profilecreated = UserProfile.objects.get_or_create(up_id=user_id)
