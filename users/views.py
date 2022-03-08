@@ -53,10 +53,14 @@ class SocialLoginViewSet(APIView):
 
             # 유저가 새로 생성되었다면
             if user_created:
-                print(user_created)
+                # print(user_created)
+
                 user.first_name = facebook_name
                 user.email = facebook_email
                 user.save()
+
+                UserProfile.objects.create(up_id=facebook_user_id)
+
 
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
