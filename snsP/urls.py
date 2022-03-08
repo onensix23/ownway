@@ -71,6 +71,9 @@ urlpatterns = [
     # myPage
     path('mypage', postview.MyPageViewSet.as_view(), name='myPage'),
 
+    # followPage
+    path('followPost', postview.FollowPostViewSet.as_view(), name='followPost'),
+
     # getAddress
     path('getSido', postview.GetSidoViewSet.as_view(), name='getSido'),
     path('getSigungu', postview.GetSigunguViewSet.as_view(), name='getSigungu'),

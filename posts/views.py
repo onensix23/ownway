@@ -1,11 +1,12 @@
 from django.db.models.functions import Substr
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.db.models import Q
+from django.db.models import Q,Subquery
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from .serializers import *
+from users.models import UserFollow
 import json
 
 
@@ -230,7 +231,6 @@ class LikePostMpViewSet(APIView):
             return Response(get_serializer_class.data, status=200)
             # return  Response({"res": "hi"}, status=200)
 
-
 class PostCommentViewSet(APIView):
     """
         GET /postcomment/
@@ -283,6 +283,18 @@ class MyPageViewSet(APIView):
         # print(get_serializer_class.data)
         return Response(get_serializer_class.data, status=200)
 
+
+class FollowPostViewSet(APIView):
+    """
+    POST /followPost/
+    """
+    def post(self, request, **kwargs):
+        user_id = request.data['userId']
+
+        get_queryset = Posts.objects.filter(id__in=Subquery(UserFollow.objects.values('uf_reading').filter(uf_reader=user_id)), b_del='N') 
+        get_serializer_class = PostDetailSerializer(get_queryset, many=True)
+
+        return Response(get_serializer_class.data, status=200)
 
 class GetSidoViewSet(APIView):
     """
