@@ -31,13 +31,12 @@ ALLOWED_HOSTS = [
     'www.ownway.world',
     'loaclhost',
     '172.31.45.98',
-    '15.164.49.223',
-    '172.30.1.44',
+    '15.164.49.223'
 
 ]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 def is_ec2_linux():
@@ -265,6 +264,14 @@ CORS_ALLOW_HEADERS = (
     'X-CSRFToken',
     'x-requested-with',
 )
+
+# CORS_ORIGIN_WHITELIST = [
+#     # "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com",
+#     # "http://ec2-15-164-49-223.ap-northeast-2.compute.amazonaws.com",
+#     # "http://172.30.1.44:8000"
+#     "https://ownway.world"
+#     'https:..'
+# ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
