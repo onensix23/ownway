@@ -73,7 +73,8 @@ class UserProfileViewSet(APIView):
         request_d = request.data;
         user_id = request_d['user_id']
 
-        get_queryset = UserProfile.objects.get(up_id=user_id)
+        get_queryset, user_created = UserProfile.objects.get_or_create(up_id=user_id)
+
         get_serializer_class = UserProfileSerializer(get_queryset, many=True)
 
         return Response(get_serializer_class.data, status=200)
