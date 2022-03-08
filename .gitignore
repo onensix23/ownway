@@ -163,7 +163,7 @@ Thumbs.db
 
 
 # 사진 폴더 무시
-media/
+# media/
 ownwayvenv/
 ownwatvenv/
 my_env/
