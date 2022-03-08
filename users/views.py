@@ -22,7 +22,8 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 
 from .serializers import *
-from .models import UserProfile
+from .models import *
+from posts.models import Posts
 
 class SocialLoginViewSet(APIView):
     @method_decorator(csrf_exempt)
@@ -77,7 +78,20 @@ class UserProfileViewSet(APIView):
         get_queryset, profilecreated = UserProfile.objects.get_or_create(up_id=user_id)
         get_serializer_class = UserProfileSerializer(get_queryset, many=False)
 
-        return Response(get_serializer_class.data, status=200)
+        get_query_user_reader = UserFollow.objects.filter(uf_reader=user_id).count()
+        get_query_user_reading = UserFollow.objects.filter(uf_reading=user_id).count()
+        get_quert_user_message = Posts.objects.filter(id=user_id).count()
+
+        response_data = {
+            'result' : get_serializer_class.data,
+            'reader' : get_query_user_reader,
+            'reading' : get_query_user_reading,
+            'message' : get_quert_user_message
+        }
+
+        # print(response_data)
+
+        return Response(response_data, status=200)
 
 
 class UserViewSet(APIView):

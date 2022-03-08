@@ -20,6 +20,16 @@ class UserProfile(models.Model):
     up_comment = models.CharField(max_length=15, null=True)
 
 
+class UserFollow(models.Model):
+    uf_id = models.BigAutoField(primary_key=True)
+    uf_reader = models.ForeignKey(User, to_field="username", 
+                related_name='reader',
+                db_column='uf_reader', on_delete=models.CASCADE, max_length=12, null=False)  # 팔로워
+    uf_reading =  models.ForeignKey(User, to_field="username", 
+                related_name='reading',
+                db_column='uf_reading', on_delete=models.CASCADE, max_length=12, null=False)  # 팔로잉
+
+
 class User(models.Model):
     user_id = models.CharField(max_length=20, verbose_name='아이디')
     user_email = models.CharField(null=True, max_length=30, verbose_name='이메일')
