@@ -11,7 +11,7 @@ class UserProfile(models.Model):
     up_id = models.ForeignKey(User, to_field="username", db_column='up_id', on_delete=models.CASCADE, max_length=12, null=False)  # 작성자
     up_image = ProcessedImageField(
         null=False, default='',
-        upload_to='images/'+datetime.now().strftime('%Y%m%d')+'/',
+        upload_to='images/profile/'+datetime.now().strftime('%Y%m%d')+'/',
         processors=[ResizeToFill(600,600)],
         format='JPEG',
         options={'quality': 90}

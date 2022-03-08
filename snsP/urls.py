@@ -38,6 +38,7 @@ urlpatterns = [
     # path('search', include('search.urls')),
     # path('myPage', include('myPage.urls')),
 
+
     # board
     path('board', postview.PostViewSet.as_view(), name='boardList'),
     path('board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
@@ -48,12 +49,14 @@ urlpatterns = [
     path('searchPost', postview.SearchPostViewSet.as_view(), name='searchPost'),
 
     # user login, logout, register
-    path('login', userview.UserViewSet.as_view(), name='userLogin'),  # post
-    path('logout', userview.LogoutUserViewSet.as_view(), name='userLogout'),  # get
-    path('register', userview.ResigterUserViewSet.as_view(), name='userRegister'),  # post
 
     # social login
-    path('social-login', userview.SocialLoginViewSet.as_view(), name='socialLogin'),  # post
+    path('socialLogin', userview.SocialLoginViewSet.as_view(), name='socialLogin'),  # post
+    path('logout', userview.LogoutUserViewSet.as_view(), name='userLogout'),  # get
+    path('userProfile', userview.UserProfileViewSet.as_view(), name='userProfile'),
+
+    # path('register', userview.ResigterUserViewSet.as_view(), name='userRegister'),  # post
+    # path('login', userview.UserViewSet.as_view(), name='userLogin'),  # post
 
     # likepost(post)
     path('likepost', postview.LikePostViewSet.as_view(), name='likePost'),
@@ -78,7 +81,6 @@ urlpatterns = [
     path('getReSigungu', postview.GetReSigunguViewSet.as_view(), name='getReSigungu'),
     path('getReDong', postview.GetReDongViewSet.as_view(), name='getReDong'),
 
-    path('accounts/', include('allauth.urls')),
+    # path('accounts/', include('allauth.urls')),
 
-    # 회원가입이 완료된 화면
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
