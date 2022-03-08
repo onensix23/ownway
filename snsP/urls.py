@@ -32,8 +32,8 @@ router = routers.DefaultRouter()
 
 
 urlpatterns = [
-    path('admin', admin.site.urls),
-    path('user', include('users.urls')),
+    # path('admin', admin.site.urls),
+    # path('user', include('users.urls')),
     #
     # path('search', include('search.urls')),
     # path('myPage', include('myPage.urls')),
