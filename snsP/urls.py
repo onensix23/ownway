@@ -25,10 +25,11 @@ import social_django.urls
 import posts.views as postview
 import users.views as userview
 
-router = routers.DefaultRouter()
-# router.register(r'list', views.PostViewSet.as_view()) # board/list
-# router.register(r'detail', views.PostViewSet)
+# router = routers.DefaultRouter()
+router = routers.SimpleRouter()
 
+router.register(r'board', postview.PostViewSet.as_view(),  basename='boardList')
+# router.register(r'snapshot', snapshot.SnapshotViewSet, base_name='snapshot')
 
 
 urlpatterns = [
@@ -40,7 +41,7 @@ urlpatterns = [
 
 
     # board
-    path('board', postview.PostViewSet.as_view(), name='boardList'),
+    # path('board', postview.PostViewSet.as_view(), name='boardList'),
     path('board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
     path('uploadImage', postview.ImageViewSet.as_view(), name='uploadImage'),
     path('board/updateviews', postview.PostDetailUpdateViewSet.as_view(), name='boardDetail'),
