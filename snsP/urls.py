@@ -26,10 +26,9 @@ import posts.views as postview
 import users.views as userview
 
 # router = routers.DefaultRouter()
-router = routers.SimpleRouter()
+# router = routers.SimpleRouter()
 # router.register(r'list', views.PostViewSet.as_view()) # board/list
 # router.register(r'detail', views.PostViewSet)
-
 
 urlpatterns = [
     # path('admin', admin.site.urls),
@@ -37,7 +36,6 @@ urlpatterns = [
     #
     # path('search', include('search.urls')),
     # path('myPage', include('myPage.urls')),
-
 
     # board
     path('board', postview.PostViewSet.as_view(), name='boardList'),
