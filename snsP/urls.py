@@ -19,16 +19,9 @@ from django.conf.urls import include, url
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
-import django.contrib.auth.urls
-import social_django.urls
 
 import posts.views as postview
 import users.views as userview
-
-# router = routers.DefaultRouter()
-router = routers.SimpleRouter()
-# router.register(r'list', views.PostViewSet.as_view()) # board/list
-# router.register(r'detail', views.PostViewSet)
 
 
 urlpatterns = [
@@ -38,51 +31,50 @@ urlpatterns = [
     # path('search', include('search.urls')),
     # path('myPage', include('myPage.urls')),
 
-
     # board
-    path('board', postview.PostViewSet.as_view(), name='boardList'),
-    path('board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
-    path('uploadImage', postview.ImageViewSet.as_view(), name='uploadImage'),
-    path('board/updateviews', postview.PostDetailUpdateViewSet.as_view(), name='boardDetail'),
+    path('api/board', postview.PostViewSet.as_view(), name='boardList'),
+    path('api/board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
+    path('api/uploadImage', postview.ImageViewSet.as_view(), name='uploadImage'),
+    path('api/board/updateviews', postview.PostDetailUpdateViewSet.as_view(), name='boardDetail'),
 
     # searchPost
-    path('searchPost', postview.SearchPostViewSet.as_view(), name='searchPost'),
+    path('api/searchPost', postview.SearchPostViewSet.as_view(), name='searchPost'),
 
     # user login, logout, register
 
     # social login
-    path('socialLogin', userview.SocialLoginViewSet.as_view(), name='socialLogin'),  # post
-    path('logout', userview.LogoutUserViewSet.as_view(), name='userLogout'),  # get
-    path('userProfile', userview.UserProfileViewSet.as_view(), name='userProfile'),
+    path('api/socialLogin', userview.SocialLoginViewSet.as_view(), name='socialLogin'),  # post
+    path('api/logout', userview.LogoutUserViewSet.as_view(), name='userLogout'),  # get
+    path('api/userProfile', userview.UserProfileViewSet.as_view(), name='userProfile'),
 
-    # path('register', userview.ResigterUserViewSet.as_view(), name='userRegister'),  # post
-    # path('login', userview.UserViewSet.as_view(), name='userLogin'),  # post
+    # path('api/register', userview.ResigterUserViewSet.as_view(), name='userRegister'),  # post
+    # path('api/login', userview.UserViewSet.as_view(), name='userLogin'),  # post
 
     # likepost(post)
-    path('likepost', postview.LikePostViewSet.as_view(), name='likePost'),
+    path('api/likepost', postview.LikePostViewSet.as_view(), name='likePost'),
 
     # likepost(mypage, post)
-    path('mplikepost', postview.LikePostMpViewSet.as_view(), name='likePostMp'),
+    path('api/mplikepost', postview.LikePostMpViewSet.as_view(), name='likePostMp'),
 
     # postComment
-    path('postcomment', postview.PostCommentViewSet.as_view(), name='postComment'),
-    path('postcomment/<int:b_id>', postview.PostCommentDetailViewSet.as_view(), name='postCommentDetail'),
+    path('api/postcomment', postview.PostCommentViewSet.as_view(), name='postComment'),
+    path('api/postcomment/<int:b_id>', postview.PostCommentDetailViewSet.as_view(), name='postCommentDetail'),
 
     # myPage
-    path('mypage', postview.MyPageViewSet.as_view(), name='myPage'),
+    path('api/mypage', postview.MyPageViewSet.as_view(), name='myPage'),
 
     # followPage
-    path('followPost', postview.FollowPostViewSet.as_view(), name='followPost'),
+    path('api/followPost', postview.FollowPostViewSet.as_view(), name='followPost'),
 
     # getAddress
-    path('getSido', postview.GetSidoViewSet.as_view(), name='getSido'),
-    path('getSigungu', postview.GetSigunguViewSet.as_view(), name='getSigungu'),
-    path('getDong', postview.GetDongViewSet.as_view(), name='getDong'),
+    path('api/getSido', postview.GetSidoViewSet.as_view(), name='getSido'),
+    path('api/getSigungu', postview.GetSigunguViewSet.as_view(), name='getSigungu'),
+    path('api/getDong', postview.GetDongViewSet.as_view(), name='getDong'),
 
     # getReverseAddress
-    path('getReSido', postview.GetReSidoViewSet.as_view(), name='getReSido'),
-    path('getReSigungu', postview.GetReSigunguViewSet.as_view(), name='getReSigungu'),
-    path('getReDong', postview.GetReDongViewSet.as_view(), name='getReDong'),
+    path('api/getReSido', postview.GetReSidoViewSet.as_view(), name='getReSido'),
+    path('api/getReSigungu', postview.GetReSigunguViewSet.as_view(), name='getReSigungu'),
+    path('api/getReDong', postview.GetReDongViewSet.as_view(), name='getReDong'),
 
     # path('accounts/', include('allauth.urls')),
 
