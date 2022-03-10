@@ -19,6 +19,7 @@ from django.conf.urls import include, url
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
+from . import my_settings as ms
 
 import posts.views as postview
 import users.views as userview
@@ -32,49 +33,49 @@ urlpatterns = [
     # path('myPage', include('myPage.urls')),
 
     # board
-    path('api/board', postview.PostViewSet.as_view(), name='boardList'),
-    path('api/board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
-    path('api/uploadImage', postview.ImageViewSet.as_view(), name='uploadImage'),
-    path('api/board/updateviews', postview.PostDetailUpdateViewSet.as_view(), name='boardDetail'),
+    path('api/'+ms.API_SHA256_KEY+'board', postview.PostViewSet.as_view(), name='boardList'),
+    path('api/'+ms.API_SHA256_KEY+'board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
+    path('api/'+ms.API_SHA256_KEY+'uploadImage', postview.ImageViewSet.as_view(), name='uploadImage'),
+    path('api/'+ms.API_SHA256_KEY+'board/updateviews', postview.PostDetailUpdateViewSet.as_view(), name='boardDetail'),
 
     # searchPost
-    path('api/searchPost', postview.SearchPostViewSet.as_view(), name='searchPost'),
+    path('api/'+ms.API_SHA256_KEY+'searchPost', postview.SearchPostViewSet.as_view(), name='searchPost'),
 
     # user login, logout, register
 
     # social login
-    path('api/socialLogin', userview.SocialLoginViewSet.as_view(), name='socialLogin'),  # post
-    path('api/logout', userview.LogoutUserViewSet.as_view(), name='userLogout'),  # get
-    path('api/userProfile', userview.UserProfileViewSet.as_view(), name='userProfile'),
+    path('api/'+ms.API_SHA256_KEY+'socialLogin', userview.SocialLoginViewSet.as_view(), name='socialLogin'),  # post
+    path('api/'+ms.API_SHA256_KEY+'logout', userview.LogoutUserViewSet.as_view(), name='userLogout'),  # get
+    path('api/'+ms.API_SHA256_KEY+'userProfile', userview.UserProfileViewSet.as_view(), name='userProfile'),
 
-    # path('api/register', userview.ResigterUserViewSet.as_view(), name='userRegister'),  # post
-    # path('api/login', userview.UserViewSet.as_view(), name='userLogin'),  # post
+    # path('api/'+ms.API_SHA256_KEY+'register', userview.ResigterUserViewSet.as_view(), name='userRegister'),  # post
+    # path('api/'+ms.API_SHA256_KEY+'login', userview.UserViewSet.as_view(), name='userLogin'),  # post
 
     # likepost(post)
-    path('api/likepost', postview.LikePostViewSet.as_view(), name='likePost'),
+    path('api/'+ms.API_SHA256_KEY+'likepost', postview.LikePostViewSet.as_view(), name='likePost'),
 
     # likepost(mypage, post)
-    path('api/mplikepost', postview.LikePostMpViewSet.as_view(), name='likePostMp'),
+    path('api/'+ms.API_SHA256_KEY+'mplikepost', postview.LikePostMpViewSet.as_view(), name='likePostMp'),
 
     # postComment
-    path('api/postcomment', postview.PostCommentViewSet.as_view(), name='postComment'),
-    path('api/postcomment/<int:b_id>', postview.PostCommentDetailViewSet.as_view(), name='postCommentDetail'),
+    path('api/'+ms.API_SHA256_KEY+'postcomment', postview.PostCommentViewSet.as_view(), name='postComment'),
+    path('api/'+ms.API_SHA256_KEY+'postcomment/<int:b_id>', postview.PostCommentDetailViewSet.as_view(), name='postCommentDetail'),
 
     # myPage
-    path('api/mypage', postview.MyPageViewSet.as_view(), name='myPage'),
+    path('api/'+ms.API_SHA256_KEY+'mypage', postview.MyPageViewSet.as_view(), name='myPage'),
 
     # followPage
-    path('api/followPost', postview.FollowPostViewSet.as_view(), name='followPost'),
+    path('api/'+ms.API_SHA256_KEY+'followPost', postview.FollowPostViewSet.as_view(), name='followPost'),
 
     # getAddress
-    path('api/getSido', postview.GetSidoViewSet.as_view(), name='getSido'),
-    path('api/getSigungu', postview.GetSigunguViewSet.as_view(), name='getSigungu'),
-    path('api/getDong', postview.GetDongViewSet.as_view(), name='getDong'),
+    path('api/'+ms.API_SHA256_KEY+'getSido', postview.GetSidoViewSet.as_view(), name='getSido'),
+    path('api/'+ms.API_SHA256_KEY+'getSigungu', postview.GetSigunguViewSet.as_view(), name='getSigungu'),
+    path('api/'+ms.API_SHA256_KEY+'getDong', postview.GetDongViewSet.as_view(), name='getDong'),
 
     # getReverseAddress
-    path('api/getReSido', postview.GetReSidoViewSet.as_view(), name='getReSido'),
-    path('api/getReSigungu', postview.GetReSigunguViewSet.as_view(), name='getReSigungu'),
-    path('api/getReDong', postview.GetReDongViewSet.as_view(), name='getReDong'),
+    path('api/'+ms.API_SHA256_KEY+'getReSido', postview.GetReSidoViewSet.as_view(), name='getReSido'),
+    path('api/'+ms.API_SHA256_KEY+'getReSigungu', postview.GetReSigunguViewSet.as_view(), name='getReSigungu'),
+    path('api/'+ms.API_SHA256_KEY+'getReDong', postview.GetReDongViewSet.as_view(), name='getReDong'),
 
     # path('accounts/', include('allauth.urls')),
 
