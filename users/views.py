@@ -50,7 +50,7 @@ class SocialLoginViewSet(APIView):
             facebook_name = response_dict['name']
             facebook_email = response_dict['email']
 
-            user, user_created = User.objects.get_or_create(username=facebook_user_id)
+            user, user_created = User.objects.get_or_create(email=facebook_email)
 
             # 유저가 새로 생성되었다면
             if user_created:

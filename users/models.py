@@ -8,7 +8,7 @@ from imagekit.processors import ResizeToFill
 # Create your models here.
 
 class UserProfile(models.Model):
-    up_id = models.ForeignKey(User, to_field="username", db_column='up_id', on_delete=models.CASCADE, max_length=12, null=False)  # 작성자
+    up_id = models.ForeignKey(User, to_field="username", db_column='up_id', on_delete=models.CASCADE, max_length=20, null=False)  # 작성자
     up_image = ProcessedImageField(
         null=False, default='',
         upload_to='images/profile/'+datetime.now().strftime('%Y%m%d')+'/',
@@ -28,13 +28,3 @@ class UserFollow(models.Model):
     uf_reading =  models.ForeignKey(User, to_field="username", 
                 related_name='reading',
                 db_column='uf_reading', on_delete=models.CASCADE, max_length=12, null=False)  # 팔로잉
-
-
-class User(models.Model):
-    user_id = models.CharField(max_length=20, verbose_name='아이디')
-    user_email = models.CharField(null=True, max_length=30, verbose_name='이메일')
-    user_nickname = models.CharField(max_length=20, verbose_name='닉네임')
-    user_password = models.CharField(max_length=35, verbose_name='비밀번호')
-
-    def __str__(self):  # 이 함수 추가
-        return self.username  # User object 대신 나타낼 문자

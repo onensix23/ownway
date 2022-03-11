@@ -8,4 +8,4 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('user_id', 'user_password')
 
 
-admin.site.register(User, UserAdmin) #site에 등록
+# admin.site.register(User, UserAdmin) #site에 등록
