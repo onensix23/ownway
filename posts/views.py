@@ -96,7 +96,7 @@ class PostViewSet(APIView):
 
     def get(self, request, **kwargs):
 
-        get_queryset = Photo.objects.select_related('b_id')
+        get_queryset = Photo.objects.filter(p_isthumb='1').select_related('b_id')
         get_serializer_class = PhotoSerializer(get_queryset, many=True)
 
         # get_queryset = Posts.objects.select_related('id').get(b_id=4)

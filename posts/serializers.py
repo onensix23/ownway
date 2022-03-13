@@ -50,7 +50,7 @@ class PhotoSerializer(serializers.ModelSerializer):
     b_id = PostListSerializer(read_only=True)
     class Meta:
         model = Photo
-        fields = ('p_id','p_filename','p_image', 'b_id')
+        fields = ('p_id','p_filename','p_image', 'b_id', 'p_isthumb')
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
