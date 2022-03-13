@@ -14,6 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class PostListSerializer(serializers.ModelSerializer):
     id = UserSerializer(read_only=True)
+    
     class Meta:
         model = Posts
         fields = ('b_id',
@@ -26,7 +27,7 @@ class PostListSerializer(serializers.ModelSerializer):
                   'b_datetime',
                   'b_views',
                 #   'p_id'
-                  )
+                )
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -48,6 +49,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 class PhotoSerializer(serializers.ModelSerializer):
     b_id = PostListSerializer(read_only=True)
+
     class Meta:
         model = Photo
         fields = ('p_id','p_filename','p_image', 'b_id', 'p_isthumb')
@@ -55,7 +57,7 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 class PostDetailSerializer(serializers.ModelSerializer):
     # p_id = PhotoSerializer(read_only=True)
-    id = UserSerializer(read_only=True)
+    id = UserSerializer()
 
     class Meta:
         model = Posts
