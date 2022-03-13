@@ -18,14 +18,15 @@ class PostListSerializer(serializers.ModelSerializer):
         model = Posts
         fields = ('b_id',
                   'id',
-                  'b_locType1',
-                  'b_locType2',
-                  'b_locType3',
+                  'b_loctype1',
+                  'b_loctype2',
+                  'b_loctype3',
                   'b_theme',
                   'b_title',
                   'b_datetime',
                   'b_views',
-                  'p_id')
+                #   'p_id'
+                  )
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -33,40 +34,43 @@ class PostSerializer(serializers.ModelSerializer):
         model = Posts
         fields = ('b_id',
                   'id',
-                  'b_locType1',
-                  'b_locType2',
-                  'b_locType3',
+                  'b_loctype1',
+                  'b_loctype2',
+                  'b_loctype3',
                   'b_theme',
                   'b_title',
-                  'b_text',
+                #   'b_text',
                   'b_datetime',
                   'b_views',
-                  'p_id')
+                #   'p_id'
+                    )
 
 
 class PhotoSerializer(serializers.ModelSerializer):
+    b_id = PostListSerializer(read_only=True)
     class Meta:
         model = Photo
-        fields = ('p_id','p_filename','p_image')
+        fields = ('p_id','p_filename','p_image', 'b_id')
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
-    p_id = PhotoSerializer(read_only=True)
+    # p_id = PhotoSerializer(read_only=True)
     id = UserSerializer(read_only=True)
 
     class Meta:
         model = Posts
         fields = ('b_id',
                   'id',
-                  'b_locType1',
-                  'b_locType2',
-                  'b_locType3',
+                  'b_loctype1',
+                  'b_loctype2',
+                  'b_loctype3',
                   'b_theme',
                   'b_title',
-                  'b_text',
+                #   'b_text',
                   'b_datetime',
                   'b_views',
-                  'p_id')
+                #   'p_id'
+                  )
 
 
 class PostCommentSerializer(serializers.ModelSerializer):

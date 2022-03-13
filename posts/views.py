@@ -95,9 +95,18 @@ class PostViewSet(APIView):
     """
 
     def get(self, request, **kwargs):
-        get_queryset = Posts.objects.filter(b_del='N').order_by('-b_datetime')
-        get_serializer_class = PostDetailSerializer(get_queryset, many=True)
+
+        get_queryset = Photo.objects.select_related('b_id')
+        get_serializer_class = PhotoSerializer(get_queryset, many=True)
+
+        # get_queryset = Posts.objects.select_related('id').get(b_id=4)
+        # get_serializer_class = PostDetailSerializer(get_queryset, many=False)
+        # get_queryset = Posts.objects.filter(b_del='N').order_by('-b_datetime')
+        # get_serializer_class = PostDetailSerializer(get_queryset, many=True)
+        # print(get_serializer_class)
         return Response(get_serializer_class.data, status=200)
+
+        # return Response(get_serializer_class.data, status=200)
 
     """
         PUT /board/{b_id}
@@ -238,7 +247,8 @@ class PostCommentViewSet(APIView):
 
     def get(self, request, **kwargs):
         b_id = request.GET.get('b_id')
-        get_queryset = PostComment.objects.filter(pc_del='N', b_id=b_id).order_by('pc_datetime')
+        pc_type = request.GET.get('pc_type')
+        get_queryset = PostComment.objects.filter(pc_del='N', b_id=b_id, pc_type=pc_type).order_by('pc_datetime')
         get_serializer_class = PostCommentSerializer(get_queryset, many=True)
         return Response(get_serializer_class.data, status=200)
 
