@@ -95,16 +95,12 @@ class PostViewSet(APIView):
     """
 
     def get(self, request, **kwargs):
+        get_queryset = Posts.objects.prefetch_related('photo_b_id').filter(Q(
+            Q(photo_b_id__p_isthumb='1') | Q(photo_b_id=None)
+        )).select_related('id')
 
-        get_queryset = Photo.objects.filter(p_isthumb='1').select_related('b_id')
-        get_serializer_class = PhotoSerializer(get_queryset, many=True)
+        get_serializer_class = PostSerializer(get_queryset, many=True)
 
-        # get_queryset = Posts.objects.select_related('id').get(b_id=4)
-        # get_serializer_class = PostDetailSerializer(get_queryset, many=False)
-        # get_queryset = Posts.objects.filter(b_del='N').order_by('-b_datetime')
-        # get_serializer_class = PostDetailSerializer(get_queryset, many=True)
-        # print(get_serializer_class)
-        print(get_serializer_class.data)
         return Response(get_serializer_class.data, status=200)
 
         # return Response(get_serializer_class.data, status=200)

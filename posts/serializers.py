@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class PostListSerializer(serializers.ModelSerializer):
     id = UserSerializer(read_only=True)
-    
+
     class Meta:
         model = Posts
         fields = ('b_id',
@@ -30,29 +30,37 @@ class PostListSerializer(serializers.ModelSerializer):
                 )
 
 
-class PostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Posts
-        fields = ('b_id',
-                  'id',
-                  'b_loctype1',
-                  'b_loctype2',
-                  'b_loctype3',
-                  'b_theme',
-                  'b_title',
-                #   'b_text',
-                  'b_datetime',
-                  'b_views',
-                #   'p_id'
-                    )
-
 
 class PhotoSerializer(serializers.ModelSerializer):
-    b_id = PostListSerializer(read_only=True)
+    # photo_b_id = PostListSerializer(read_only=True)
 
     class Meta:
         model = Photo
+        # fields = "__all__"
         fields = ('p_id','p_filename','p_image', 'b_id', 'p_isthumb')
+
+
+
+class PostSerializer(serializers.ModelSerializer):
+    # p_id = PhotoSerializer(read_only=True)
+    photo_b_id = PhotoSerializer(read_only=True, many=True)
+    id = UserSerializer(read_only=True)
+    
+    class Meta:
+        model = Posts
+        fields = "__all__"
+        # fields = ('b_id',
+        #           'id',
+        #           'b_loctype1',
+        #           'b_loctype2',
+        #           'b_loctype3',
+        #           'b_theme',
+        #           'b_title',
+        #         #   'b_text',
+        #           'b_datetime',
+        #           'b_views',
+        #         #   'p_id'
+        #             )
 
 
 class PostDetailSerializer(serializers.ModelSerializer):

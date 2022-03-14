@@ -52,7 +52,7 @@ class Photo(models.Model):
         format='JPEG',
         options={'quality': 90}
     )
-    b_id  = models.ForeignKey(Posts, db_column='b_id', default='', max_length=12, null=False, blank=True, on_delete=models.CASCADE)
+    b_id  = models.ForeignKey(Posts, db_column='b_id', related_name='photo_b_id',default='', max_length=12, null=False, blank=True, on_delete=models.CASCADE)
     p_filename = models.CharField(max_length=64, null=True)
     p_isthumb = models.CharField(max_length=2,null=False,  default='0')
     p_datetime = models.DateTimeField(default=datetime.now)  # 날짜
