@@ -40,10 +40,25 @@ class PhotoSerializer(serializers.ModelSerializer):
         fields = ('p_id','p_filename','p_image', 'b_id', 'p_isthumb')
 
 
+class PostCommentSerializer(serializers.ModelSerializer):
+    # id = UserSerializer(read_only=True)
+    class Meta:
+        model = PostComment
+        fields = "__all__"
+        # fields = ('pc_id',
+        #           'b_id',
+        #           'id',
+        #           'pc_comment',
+        #           'pc_datetime',
+        #           'pc_del'
+        #           )
+
+
 
 class PostSerializer(serializers.ModelSerializer):
     # p_id = PhotoSerializer(read_only=True)
     photo_b_id = PhotoSerializer(read_only=True, many=True)
+    postcomment_b_id = PostCommentSerializer(read_only=True, many=True)
     id = UserSerializer(read_only=True)
     
     class Meta:
@@ -76,25 +91,9 @@ class PostDetailSerializer(serializers.ModelSerializer):
                   'b_loctype3',
                   'b_theme',
                   'b_title',
-                #   'b_text',
                   'b_datetime',
                   'b_views',
-                #   'p_id'
-                  )
-
-
-class PostCommentSerializer(serializers.ModelSerializer):
-    id = UserSerializer(read_only=True)
-
-    class Meta:
-        model = PostComment
-        fields = ('pc_id',
-                  'b_id',
-                  'id',
-                  'pc_comment',
-                  'pc_datetime',
-                  'pc_del'
-                  )
+                )
 
 
 class LikePostSerializer(serializers.ModelSerializer):
