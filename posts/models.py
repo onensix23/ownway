@@ -32,8 +32,6 @@ class Posts(models.Model):
     b_views = models.CharField(max_length=12, null=True, default='0') 
     b_title = models.CharField(max_length=15, null=True) 
     b_place_id = models.CharField(max_length=50, null=True)
-    b_longtitude = models.CharField(max_length=25, null=True)
-    b_latitude = models.CharField(max_length=25, null=True)
     b_datetime = models.DateTimeField(default=datetime.now, null=False)
     b_del = models.CharField(max_length=1, null=False, default='N')
 

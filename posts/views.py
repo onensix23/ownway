@@ -17,12 +17,8 @@ class ImageViewSet(APIView):
 
     def post(self, request, **kwargs):
         # file1 = request.data['file1']
-        print('1')
         print(request.data)
         print(request.data['type'])
-        # print(request.data['type'][0])
-        # print(request.FILES)
-        print('2')
         print(request.FILES.keys())
 
         res_data = {
@@ -31,18 +27,20 @@ class ImageViewSet(APIView):
             "fileName": ''
         }
 
-        # if request.FILES:
-        #     if 'uploadFile' in request.FILES.keys():
-        #         photo = Photo()
-        #         # 외래키로 현재 생성한 Post의 기본키를 참조한다.
-        #         # photo.post = new_post
-        #         photo.p_image = request.FILES['uploadFile']
-        #         request.FILES['uploadFile'].name = photo.get_file_path(request.FILES['uploadFile'].name)
-        #         photo.p_filename = request.FILES['uploadFile'].name
-        #         # 데이터베이스에 저장
-        #         photo.save()
+        if request.FILES:
+            if 'uploadFile' in request.FILES.keys():
+                photo = Photo()
+                # 외래키로 현재 생성한 Post의 기본키를 참조한다.
+                # photo.post = new_post
+                photo.p_image = request.FILES['uploadFile']
+                request.FILES['uploadFile'].name = photo.get_file_path(request.FILES['uploadFile'].name)
+                photo.p_filename = request.FILES['uploadFile'].name
+                photo.p_isthumb = request.data['type']
 
-        #         res_data["fileName"] = request.FILES['uploadFile'].name
+                # 데이터베이스에 저장
+                photo.save()
+
+                res_data["fileName"] = request.FILES['uploadFile'].name
 
         return Response(res_data, status=200)
 
@@ -55,32 +53,30 @@ class PostViewSet(APIView):
     def post(self, request, **kwargs):
         user_id = request.data['user_id']
         b_title = request.data['b_title']
-        b_text = request.data['b_text']
-        b_locType1 = request.data['b_locType1']
-        b_locType2 = request.data['b_locType2']
-        b_locType3 = request.data['b_locType3']
+        b_address = request.data['b_address']
         b_theme = request.data['b_theme']
         b_hash_tag_1 = request.data['b_hash_tag_1']
         b_hash_tag_2 = request.data['b_hash_tag_2']
-        fileNm = request.data['fileNm']
+        b_place_id = request.data['b_place_id']
 
-        # print(fileNm)
-        # print(user_id)
-        # print(b_title)
-        # print(b_text)
-        # print(b_locType1)
-        # print(b_locType2)
-        # print(b_locType3)
-        # print(b_theme)
+        b_text = request.data['b_text']
 
-        userObj = User.objects.get(username=user_id)
-        picId = Photo.objects.get(p_filename=fileNm)
+        print(request.data)
 
-        new_post = Posts(id=userObj, b_title=b_title, b_text=b_text,
-                         b_locType1=b_locType1, b_locType2=b_locType2, b_locType3=b_locType3,
-                         b_theme=b_theme, b_hash_tag_1=b_hash_tag_1, b_hash_tag_2=b_hash_tag_2, p_id=picId)
+        # userObj = User.objects.get(username=user_id)
 
-        new_post.save()  # insert
+        # new_post = Posts(
+        #         id=userObj, 
+        #         b_title=b_title, 
+        #         b_address=b_address,  
+        #         b_theme=b_theme, 
+        #         b_hash_tag_1=b_hash_tag_1, b_hash_tag_2=b_hash_tag_2, 
+        #         b_place_id=b_place_id
+        # )
+
+        # new_post.save()  # insert
+        
+        # print(new_post.b_id)
 
         res_data = {
             "success": True,
