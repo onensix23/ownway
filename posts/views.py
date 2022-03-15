@@ -17,9 +17,9 @@ class ImageViewSet(APIView):
 
     def post(self, request, **kwargs):
         # file1 = request.data['file1']
-        print(request.data)
-        print(request.data['type'])
-        print(request.FILES.keys())
+        # print(request.data)
+        # print(request.data['b_id'])
+        # print(request.FILES.keys())
 
         res_data = {
             "success": True,
@@ -27,24 +27,24 @@ class ImageViewSet(APIView):
             "fileName": ''
         }
 
-        print(request.FILES.keys())
+        postObj = Posts.objects.get(b_id=request.data['b_id'])
+
+        # print(request.FILES.keys())
         if request.FILES:
             for k in request.FILES.keys():
                 if k.find('uploadFile') != -1:
-                    print(k)
-            # if 'uploadFile' in request.FILES.keys():
-            #     photo = Photo()
-            #     # 외래키로 현재 생성한 Post의 기본키를 참조한다.
-            #     # photo.post = new_post
-            #     photo.p_image = request.FILES['uploadFile']
-            #     request.FILES['uploadFile'].name = photo.get_file_path(request.FILES['uploadFile'].name)
-            #     photo.p_filename = request.FILES['uploadFile'].name
-            #     photo.p_isthumb = request.data['type']
+                    photo = Photo()
 
-            #     # 데이터베이스에 저장
-            #     photo.save()
+                    photo.b_id = postObj
+                    photo.p_image = request.FILES[k]
+                    request.FILES[k].name = photo.get_file_path(request.FILES[k].name)
+                    photo.p_filename = request.FILES[k].name
+                    photo.p_isthumb = request.data['type']
 
-            #     res_data["fileName"] = request.FILES['uploadFile'].name
+                    # 데이터베이스에 저장
+                    photo.save()
+
+                    res_data[k] = request.FILES[k].name
 
         return Response(res_data, status=200)
 
