@@ -51,6 +51,11 @@ class PostViewSet(APIView):
     """
 
     def post(self, request, **kwargs):
+        res_data = {
+            'post_success': False,
+            'postcomment_success': False,
+        }
+
         user_id = request.data['user_id']
         b_title = request.data['b_title']
         b_address = request.data['b_address']
@@ -59,30 +64,41 @@ class PostViewSet(APIView):
         b_hash_tag_2 = request.data['b_hash_tag_2']
         b_place_id = request.data['b_place_id']
 
-        b_text = request.data['b_text']
+        pc_comment = request.data['pc_comment']
 
         print(request.data)
 
-        # userObj = User.objects.get(username=user_id)
+        userObj = User.objects.get(username=user_id)
 
-        # new_post = Posts(
-        #         id=userObj, 
-        #         b_title=b_title, 
-        #         b_address=b_address,  
-        #         b_theme=b_theme, 
-        #         b_hash_tag_1=b_hash_tag_1, b_hash_tag_2=b_hash_tag_2, 
-        #         b_place_id=b_place_id
-        # )
+        new_post = Posts(
+                id=userObj, 
+                b_title=b_title, 
+                b_address=b_address,  
+                b_theme=b_theme, 
+                b_hash_tag_1=b_hash_tag_1, b_hash_tag_2=b_hash_tag_2, 
+                b_place_id=b_place_id
+        )
 
-        # new_post.save()  # insert
-        
-        # print(new_post.b_id)
+        k = new_post.save()  # insert
+        print(k)
+        res_data['post_success']=True
+        print(new_post)
+        print(new_post.b_id)
+        res_data['b_id'] = new_post.b_id
+        postObj = Posts.objects.get(b_id=new_post.b_id)
+        print(postObj)
 
-        res_data = {
-            "success": True,
-            "error": None,
-            "fileName": ''
-        }
+        if pc_comment != '':
+            new_postcomment = PostComment(
+                b_id=postObj,
+                id=userObj,
+                pc_comment=pc_comment,
+                pc_type='1'
+            )
+
+            new_postcomment.save()
+            res_data['postcomme']=True
+
 
         return Response(res_data, status=200)
 
