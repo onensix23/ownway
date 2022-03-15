@@ -19,7 +19,8 @@ class ImageViewSet(APIView):
         # file1 = request.data['file1']
         print('1')
         print(request.data)
-        print(request.FILES['type'])
+        print(request.data['type'])
+        # print(request.data['type'][0])
         # print(request.FILES)
         print('2')
         print(request.FILES.keys())
