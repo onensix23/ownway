@@ -17,8 +17,10 @@ class ImageViewSet(APIView):
 
     def post(self, request, **kwargs):
         # file1 = request.data['file1']
+        print('1')
         print(request.data)
-        print(request.FILES)
+        # print(request.FILES)
+        print('2')
         print(request.FILES.keys())
 
         res_data = {
@@ -26,13 +28,9 @@ class ImageViewSet(APIView):
             "error": None,
             "fileName": ''
         }
-        # print(file1)
 
         # if request.FILES:
-        #     print("1")
         #     if 'uploadFile' in request.FILES.keys():
-        #         print("2")
-        #         # Photo 객체를 하나 생성한다.
         #         photo = Photo()
         #         # 외래키로 현재 생성한 Post의 기본키를 참조한다.
         #         # photo.post = new_post
