@@ -56,6 +56,8 @@ class PostViewSet(APIView):
             'postcomment_success': False,
         }
 
+        print(request.data)
+        
         user_id = request.data['user_id']
         b_title = request.data['b_title']
         b_address = request.data['b_address']
