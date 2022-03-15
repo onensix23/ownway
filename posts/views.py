@@ -18,8 +18,8 @@ class ImageViewSet(APIView):
     def post(self, request, **kwargs):
         # file1 = request.data['file1']
         print('1')
-        print(request.data['data'])
-        print(request.data['type'])
+        print(request.data)
+        print(request.FILES['type'])
         # print(request.FILES)
         print('2')
         print(request.FILES.keys())
