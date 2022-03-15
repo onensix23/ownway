@@ -53,53 +53,52 @@ class PostViewSet(APIView):
     def post(self, request, **kwargs):
         res_data = {
             'post_success': False,
-            'postcomment_success': False,
+            'postcomment_success': 'no comment',
+            'b_id': 6
         }
 
-        print(request.data)
-        
-        user_id = request.data['user_id']
-        b_title = request.data['b_title']
-        b_address = request.data['b_address']
-        b_theme = request.data['b_theme']
-        b_hash_tag_1 = request.data['b_hash_tag_1']
-        b_hash_tag_2 = request.data['b_hash_tag_2']
-        b_place_id = request.data['b_place_id']
+        # print(request.data)
 
-        pc_comment = request.data['pc_comment']
+        # user_id = request.data['user_id']
+        # b_title = request.data['b_title']
+        # b_address = request.data['b_address']
+        # b_theme = request.data['b_theme']
+        # b_hash_tag_1 = request.data['b_hash_tag_1']
+        # b_hash_tag_2 = request.data['b_hash_tag_2']
+        # b_place_id = request.data['b_place_id']
 
-        print(request.data)
+        # pc_comment = request.data['pc_comment']
 
-        userObj = User.objects.get(username=user_id)
+        # print(request.data)
 
-        new_post = Posts(
-                id=userObj, 
-                b_title=b_title, 
-                b_address=b_address,  
-                b_theme=b_theme, 
-                b_hash_tag_1=b_hash_tag_1, b_hash_tag_2=b_hash_tag_2, 
-                b_place_id=b_place_id
-        )
+        # userObj = User.objects.get(username=user_id)
 
-        k = new_post.save()  # insert
-        print(k)
-        res_data['post_success']=True
-        print(new_post)
-        print(new_post.b_id)
-        res_data['b_id'] = new_post.b_id
-        postObj = Posts.objects.get(b_id=new_post.b_id)
-        print(postObj)
+        # new_post = Posts(
+        #         id=userObj, 
+        #         b_title=b_title, 
+        #         b_address=b_address,  
+        #         b_theme=b_theme, 
+        #         b_hash_tag_1=b_hash_tag_1, b_hash_tag_2=b_hash_tag_2, 
+        #         b_place_id=b_place_id
+        # )
 
-        if pc_comment != '':
-            new_postcomment = PostComment(
-                b_id=postObj,
-                id=userObj,
-                pc_comment=pc_comment,
-                pc_type='1'
-            )
+        # new_post.save()  # insert
+        # res_data['post_success']=True
+        # print(new_post.b_id)
+        # res_data['b_id'] = new_post.b_id
+        # postObj = Posts.objects.get(b_id=new_post.b_id)
+        # print(postObj)
 
-            new_postcomment.save()
-            res_data['postcomme']=True
+        # if pc_comment != '':
+        #     new_postcomment = PostComment(
+        #         b_id=postObj,
+        #         id=userObj,
+        #         pc_comment=pc_comment,
+        #         pc_type='1'
+        #     )
+
+        #     new_postcomment.save()
+        #     res_data['postcommet_success']=True
 
 
         return Response(res_data, status=200)
