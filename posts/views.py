@@ -27,21 +27,24 @@ class ImageViewSet(APIView):
             "fileName": ''
         }
 
-        # print(request.FILES.keys())
-        # if request.FILES:
-        #     if 'uploadFile' in request.FILES.keys():
-        #         photo = Photo()
-        #         # 외래키로 현재 생성한 Post의 기본키를 참조한다.
-        #         # photo.post = new_post
-        #         photo.p_image = request.FILES['uploadFile']
-        #         request.FILES['uploadFile'].name = photo.get_file_path(request.FILES['uploadFile'].name)
-        #         photo.p_filename = request.FILES['uploadFile'].name
-        #         photo.p_isthumb = request.data['type']
+        print(request.FILES.keys())
+        if request.FILES:
+            for k in request.FILES.keys():
+                if k.find('uploadFile') != -1:
+                    print(k)
+            # if 'uploadFile' in request.FILES.keys():
+            #     photo = Photo()
+            #     # 외래키로 현재 생성한 Post의 기본키를 참조한다.
+            #     # photo.post = new_post
+            #     photo.p_image = request.FILES['uploadFile']
+            #     request.FILES['uploadFile'].name = photo.get_file_path(request.FILES['uploadFile'].name)
+            #     photo.p_filename = request.FILES['uploadFile'].name
+            #     photo.p_isthumb = request.data['type']
 
-        #         # 데이터베이스에 저장
-        #         photo.save()
+            #     # 데이터베이스에 저장
+            #     photo.save()
 
-        #         res_data["fileName"] = request.FILES['uploadFile'].name
+            #     res_data["fileName"] = request.FILES['uploadFile'].name
 
         return Response(res_data, status=200)
 
