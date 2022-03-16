@@ -33,7 +33,6 @@ class ImageViewSet(APIView):
             for k in request.FILES.keys():
                 if k.find('uploadFile') != -1:
                     photo = Photo()
-
                     photo.b_id = postObj
                     photo.p_image = request.FILES[k]
                     request.FILES[k].name = photo.get_file_path(request.FILES[k].name)
