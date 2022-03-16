@@ -69,33 +69,49 @@ class UserProfileViewSet(APIView):
 
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
+        response_data = {
+            'result' : [],
+            'reader' : [],
+            'reading' : [],
+            'message' : []
+        }
+
         request_d = request.data; #{"user_id":"1088384478597823"}
         user_id = request_d['userId']
-        
-        print('user_id')
-        print(user_id)
 
         # userObj = User.objects.get(username=user_id)
         print(UserProfile.objects.get_or_create(up_id=user_id))
         
-        get_queryset, profilecreated = UserProfile.objects.get_or_create(up_id=user_id)
+        isExistProfile = UserProfile.objects.filter(up_id=user_id).count()
+
+        # if :
+        #     get_queryset = UserProfile.objects.get(up_id=user_id)
+        #     get_serializer_class = UserProfileSerializer(get_queryset, many=False)
+        #     response_data['result'] = get_serializer_class.data
+        if isExistProfile == 0:
+            userObj = UserProfile()
+            userObj.up_id = user_id
+            userObj.save()
+
+
+        get_queryset = UserProfile.objects.get(up_id=user_id)
+        get_serializer_class = UserProfileSerializer(get_queryset, many=False)
+        response_data['result'] = get_serializer_class.data
+        
         print('profilecreated')
-        print(profilecreated)
+        print(isExistProfile)
 
         get_serializer_class = UserProfileSerializer(get_queryset, many=False)
 
         get_query_user_reader = UserFollow.objects.filter(uf_reader=user_id).count()
         get_query_user_reading = UserFollow.objects.filter(uf_reading=user_id).count()
-        get_quert_user_message = Posts.objects.filter(id=user_id).count()
+        get_query_user_message = Posts.objects.filter(id=user_id).count()
 
-        response_data = {
-            'result' : get_serializer_class.data,
-            'reader' : get_query_user_reader,
-            'reading' : get_query_user_reading,
-            'message' : get_quert_user_message
-        }
+        response_data['reader'] = get_query_user_reader
+        response_data['reading'] = get_query_user_reading
+        response_data['quert_user_message'] = get_query_user_message
 
-        # print(response_data)
+        print(response_data)
 
         return Response(response_data, status=200)
 
