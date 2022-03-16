@@ -66,17 +66,22 @@ class SocialLoginViewSet(APIView):
 
 
 class UserProfileViewSet(APIView):
+
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
         request_d = request.data; #{"user_id":"1088384478597823"}
         user_id = request_d['userId']
-        print(request_d)
+        
+        print('user_id')
+        print(user_id)
+
         # userObj = User.objects.get(username=user_id)
+        print(UserProfile.objects.get_or_create(up_id=user_id))
         
         get_queryset, profilecreated = UserProfile.objects.get_or_create(up_id=user_id)
         print('profilecreated')
         print(profilecreated)
-        
+
         get_serializer_class = UserProfileSerializer(get_queryset, many=False)
 
         get_query_user_reader = UserFollow.objects.filter(uf_reader=user_id).count()
