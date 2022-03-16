@@ -74,6 +74,9 @@ class UserProfileViewSet(APIView):
         # userObj = User.objects.get(username=user_id)
         
         get_queryset, profilecreated = UserProfile.objects.get_or_create(up_id=user_id)
+        print('profilecreated')
+        print(profilecreated)
+        
         get_serializer_class = UserProfileSerializer(get_queryset, many=False)
 
         get_query_user_reader = UserFollow.objects.filter(uf_reader=user_id).count()
