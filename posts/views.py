@@ -124,7 +124,7 @@ class PostViewSet(APIView):
             # print('2')
             get_queryset = Posts.objects.prefetch_related('photo_b_id').filter(Q(
                 Q(photo_b_id__p_isthumb='1') | Q(photo_b_id=None)
-            )).select_related('id')
+            )).select_related('id').order_by('-b_datetime')
 
             get_serializer_class = PostSerializer(get_queryset, many=True)
 
