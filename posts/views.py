@@ -115,11 +115,6 @@ class PostViewSet(APIView):
         detail (b_id)
     """
     def get(self, request, **kwargs):
-
-        res_data = {
-            "result" : '',
-            "save_count" : ''
-        }
         if(len(request.GET) > 0): #detail
             # print('1')
             get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').filter(Q(
@@ -127,20 +122,15 @@ class PostViewSet(APIView):
             )).select_related('id')
             get_serializer_class = PostSerializer(get_queryset, many=True)
 
-            # res_data['save_count'] = SavePost.objects.filter(sp_b_id=request.GET['b_id']).count()
-
         else:
             # print('2')
-            get_queryset = Posts.objects.prefetch_related('photo_b_id').filter(Q(
+            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('savepost_b_id').filter(Q(
                 Q(photo_b_id__p_isthumb='1') | Q(photo_b_id=None)
             )).select_related('id').order_by('-b_datetime')
 
             get_serializer_class = PostSerializer(get_queryset, many=True)
-            # res_data['save_count'] = SavePost.objects.filter(sp_b_id=request.GET['b_id']).count()
 
-        res_data['result'] = get_serializer_class.data
-
-        return Response(res_data, status=200)
+        return Response(get_serializer_class.data, status=200)
 
     """
         PUT /board/{b_id}
