@@ -1,5 +1,5 @@
 import rest_framework.serializers as serializers
-from .models import Posts, Photo, LikePost, EntrcSido, PostComment
+from .models import *
 from django.contrib.auth.models import User
 
 
@@ -53,10 +53,23 @@ class PostCommentSerializer(serializers.ModelSerializer):
         #           'pc_del'
         #           )
 
+class SavePostSerializer(serializers.ModelSerializer):
+    # id = UserSerializer(read_only=True)
+    class Meta:
+        model = SavePost
+        # fields = "__all__"
+        fields = ('sp_id',
+                  'b_id',
+                  'id',
+                  'sp_datetime',
+                #   'pc_datetime',
+                #   'pc_del'
+                  )
 
 
 class PostSerializer(serializers.ModelSerializer):
     # p_id = PhotoSerializer(read_only=True)
+    savepost_b_id = SavePostSerializer(read_only=True , many=True)
     photo_b_id = PhotoSerializer(read_only=True, many=True)
     postcomment_b_id = PostCommentSerializer(read_only=True, many=True)
     id = UserSerializer(read_only=True)

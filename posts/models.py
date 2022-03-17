@@ -68,6 +68,19 @@ class LikePost(models.Model):
     lp_del = models.CharField(max_length=1, null=False, default='N')
 
 
+class SavePost(models.Model):
+    sp_id = models.BigAutoField(primary_key=True)
+    id = models.ForeignKey(User, to_field="username",
+                                related_name='savepost_username',
+                                db_column='id', default='', on_delete=models.CASCADE,
+                           max_length=12, null=False)  # 작성자
+    b_id = models.ForeignKey(Posts, db_column='b_id', 
+                                related_name='savepost_b_id',
+                                on_delete=models.CASCADE, null=False)
+    sp_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
+    # lp_del = models.CharField(max_length=1, null=False, default='N')
+
+
 class PostComment(models.Model):
     pc_id = models.BigAutoField(primary_key=True)
     b_id = models.ForeignKey(Posts, db_column='b_id', related_name='postcomment_b_id', on_delete=models.CASCADE, null=False)

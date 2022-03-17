@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from .serializers import *
+from .models import *
 from users.models import UserFollow
 import json
 
@@ -53,13 +54,14 @@ class PostViewSet(APIView):
     """
 
     def post(self, request, **kwargs):
+
         res_data = {
             'post_success': False,
             'postcomment_success': 'no comment',
             'b_id': 6
         }
 
-        print(request.data)
+        # print(request.data)
 
         user_id = request.data['user_id']
         b_title = request.data['b_title']
@@ -71,7 +73,7 @@ class PostViewSet(APIView):
 
         pc_comment = request.data['pc_comment']
 
-        print(request.data)
+        # print(request.data)
 
         userObj = User.objects.get(username=user_id)
 
@@ -85,13 +87,14 @@ class PostViewSet(APIView):
         )
 
         new_post.save()  # insert
+        
         res_data['post_success']=True
         
-        print(new_post.b_id)
+        # print(new_post.b_id)
 
         res_data['b_id'] = new_post.b_id
         postObj = Posts.objects.get(b_id=new_post.b_id)
-        print(postObj)
+        # print(postObj)
 
         if pc_comment != '':
             new_postcomment = PostComment(
@@ -113,12 +116,18 @@ class PostViewSet(APIView):
     """
     def get(self, request, **kwargs):
 
+        res_data = {
+            "result" : '',
+            "save_count" : ''
+        }
         if(len(request.GET) > 0): #detail
             # print('1')
-            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').filter(Q(
+            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').filter(Q(
                 Q(b_id=request.GET['b_id'])
             )).select_related('id')
             get_serializer_class = PostSerializer(get_queryset, many=True)
+
+            # res_data['save_count'] = SavePost.objects.filter(sp_b_id=request.GET['b_id']).count()
 
         else:
             # print('2')
@@ -127,8 +136,11 @@ class PostViewSet(APIView):
             )).select_related('id').order_by('-b_datetime')
 
             get_serializer_class = PostSerializer(get_queryset, many=True)
+            # res_data['save_count'] = SavePost.objects.filter(sp_b_id=request.GET['b_id']).count()
 
-        return Response(get_serializer_class.data, status=200)
+        res_data['result'] = get_serializer_class.data
+
+        return Response(res_data, status=200)
 
     """
         PUT /board/{b_id}
@@ -181,19 +193,18 @@ class LikePostViewSet(APIView):
     def post(self, request, **kwargs):
         res_data = {
             "success": True,
-            "error": None
+            "error": None,
+            "result":''
         }
 
         # {"type":"0","userId":"1142995766470027","b_id":"10"}
         if request.data['type'] == '0': # 좋아요 눌려있는지 확인
-            # select
             user_id = request.data['userId']
             b_id = request.data['b_id']
             
             get_queryset = LikePost.objects.filter(id=user_id, b_id=b_id)
             get_serializer_class = IsLikePostSerializer(get_queryset, many=True)
 
-            # print(get_serializer_class.data)
             return Response(get_serializer_class.data, status=200)
 
         else: # 좋아요 실질적인 데이터 변경
@@ -201,8 +212,6 @@ class LikePostViewSet(APIView):
             b_id = request.data['b_id']
 
             get_queryset = LikePost.objects.filter(id=user_id, b_id=b_id).count()
-
-            # print(get_queryset)
 
             if get_queryset == 0:
                 # insert
@@ -215,14 +224,18 @@ class LikePostViewSet(APIView):
                     b_id=sel_post,
                 )
 
+                res_data["result"] = 'N'
+
             else:
                 # update
                 uLikePost = LikePost.objects.get(id=user_id, b_id=b_id)
 
                 if uLikePost.lp_del == "Y":
                     uLikePost.lp_del = "N"
+                    res_data["result"] = 'N'
                 else:
                     uLikePost.lp_del = "Y"
+                    res_data["result"] = 'Y'
 
                 uLikePost.save()
 
