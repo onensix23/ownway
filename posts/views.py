@@ -310,7 +310,7 @@ class MyPageViewSet(APIView):
     def post(self, request, **kwargs):
         user_id = request.data['userId']
         get_queryset = Posts.objects.filter(id=user_id, b_del='N')
-        get_serializer_class = PostDetailSerializer(get_queryset, many=True)
+        get_serializer_class = PostSerializer(get_queryset, many=True)
         # print(get_serializer_class.data)
         return Response(get_serializer_class.data, status=200)
 

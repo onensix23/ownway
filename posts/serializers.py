@@ -84,16 +84,17 @@ class PostDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Posts
-        fields = ('b_id',
-                  'id',
-                  'b_loctype1',
-                  'b_loctype2',
-                  'b_loctype3',
-                  'b_theme',
-                  'b_title',
-                  'b_datetime',
-                  'b_views',
-                )
+        fields = "__all__"
+        # fields = ('b_id',
+        #           'id',
+        #           'b_loctype1',
+        #           'b_loctype2',
+        #           'b_loctype3',
+        #           'b_theme',
+        #           'b_title',
+        #           'b_datetime',
+        #           'b_views',
+        #         )
 
 
 class LikePostSerializer(serializers.ModelSerializer):
