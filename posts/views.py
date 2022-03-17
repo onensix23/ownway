@@ -183,29 +183,26 @@ class LikePostViewSet(APIView):
             "success": True,
             "error": None
         }
-        if request.data['type'] == 0:
+
+        # {"type":"0","userId":"1142995766470027","b_id":"10"}
+        if request.data['type'] == '0': # 좋아요 눌려있는지 확인
             # select
             user_id = request.data['userId']
             b_id = request.data['b_id']
-
-            # print('userId')
-            # print(user_id)
-            # print('b_id')
-            # print(b_id)
-
+            
             get_queryset = LikePost.objects.filter(id=user_id, b_id=b_id)
             get_serializer_class = IsLikePostSerializer(get_queryset, many=True)
 
             # print(get_serializer_class.data)
             return Response(get_serializer_class.data, status=200)
 
-        else:
+        else: # 좋아요 실질적인 데이터 변경
             user_id = request.data['userId']
             b_id = request.data['b_id']
 
             get_queryset = LikePost.objects.filter(id=user_id, b_id=b_id).count()
 
-            print(get_queryset)
+            # print(get_queryset)
 
             if get_queryset == 0:
                 # insert
