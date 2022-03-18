@@ -25,14 +25,19 @@ class ImageViewSet(APIView):
         res_data = {
             "success": True,
             "error": None,
-            "fileName": ''
+            "fileName": '',
+            "image_cnt":0
         }
 
         postObj = Posts.objects.get(b_id=request.data['b_id'])
 
+        cnt = 0
+
         if request.FILES:
             for k in request.FILES.keys():
                 if k.find('uploadFile') != -1:
+                    cnt = cnt + 1
+
                     photo = Photo()
                     photo.b_id = postObj
                     photo.p_image = request.FILES[k]
@@ -44,7 +49,8 @@ class ImageViewSet(APIView):
                     photo.save()
 
                     res_data[k] = request.FILES[k].name
-
+                    
+        res_data['image_cnt'] = cnt
         return Response(res_data, status=200)
 
 
