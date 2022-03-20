@@ -1,10 +1,13 @@
 from django.db.models.functions import Substr
 from django.shortcuts import render, redirect
+from snsP.my_settings import *
 from django.http import HttpResponse
 from django.db.models import Q,Subquery
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, DestroyAPIView
+from posts.storages import FileUpload, s3_client
+import boto3
 from .serializers import *
 from .models import *
 from users.models import UserFollow
@@ -40,9 +43,9 @@ class ImageViewSet(APIView):
 
                     photo = Photo()
                     photo.b_id = postObj
-                    photo.p_image = request.FILES[k]
-                    request.FILES[k].name = photo.get_file_path(request.FILES[k].name)
-                    photo.p_filename = request.FILES[k].name
+                    photo.p_image = 'null'
+                    # request.FILES[k].name = photo.get_file_path(request.FILES[k].name)
+                    photo.p_filename = FileUpload(s3_client).upload(request.FILES[k])
                     photo.p_isthumb = request.data['type']
 
                     # 데이터베이스에 저장
