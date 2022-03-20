@@ -7,7 +7,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from posts.storages import FileUpload, s3_client
-import boto3
 from .serializers import *
 from .models import *
 from users.models import UserFollow
