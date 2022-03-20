@@ -1,4 +1,3 @@
-
 import boto3
 import uuid
 from snsP.my_settings import *
