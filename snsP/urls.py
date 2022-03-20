@@ -35,7 +35,8 @@ urlpatterns = [
     # board
     path('api/'+ms.API_SHA256_KEY+'board', postview.PostViewSet.as_view(), name='boardList'),
     path('api/'+ms.API_SHA256_KEY+'board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
-    path('api/'+ms.API_SHA256_KEY+'uploadImage', postview.ImageViewSet.as_view(), name='uploadImage'),
+    path('api/'+ms.API_SHA256_KEY+'uploadImage', postview.UploadImageViewSet.as_view(), name='uploadImage'),
+    path('api/'+ms.API_SHA256_KEY+'deleteImage', postview.DeleteImageViewSet.as_view(), name='deleteImage'),
     path('api/'+ms.API_SHA256_KEY+'board/updateviews', postview.PostDetailUpdateViewSet.as_view(), name='boardDetail'),
 
     # searchPost

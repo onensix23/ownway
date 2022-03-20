@@ -44,12 +44,8 @@ class MyS3Client:
 
     def upload(self, file):
         try: 
-            print('hi')
-            print(datetime.now())
             now_date = datetime.now().strftime('%Y%m%d')
-            print(now_date)
             file_id = 'media/images/'+now_date+'/'+str(uuid.uuid4())
-            print(file_id)
             extra_args = { 'ContentType' : file.content_type }
 
             im = Image.open(file)
@@ -67,6 +63,12 @@ class MyS3Client:
             return f'https://{self.bucket_name}.s3.ap-northeast-2.amazonaws.com/{file_id}'
         except:
             return None
+
+    
+    def delete(self, filename):
+        key = filename.split('https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/')[1]
+        print(key)
+        # self.s3_client.delete_object(Bucket=self.bucket_name, Key=key)
 
 
 # MyS3Client instance

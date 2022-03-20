@@ -13,17 +13,11 @@ from users.models import UserFollow
 import json
 
 
-class ImageViewSet(APIView):
+class UploadImageViewSet(APIView):
     """
-       POST /board/<b_id>
+       POST /uploadImage
     """
-
     def post(self, request, **kwargs):
-        # file1 = request.data['file1']
-        # print(request.data)
-        # print(request.data['b_id'])
-        # print(request.FILES.keys())
-
         res_data = {
             "success": True,
             "error": None,
@@ -52,6 +46,33 @@ class ImageViewSet(APIView):
                     
         res_data['image_cnt'] = cnt
         return Response(res_data, status=200)
+
+
+class DeleteImageViewSet(APIView):
+    """
+       POST /deleteImage
+    """
+    def post(self, request, **kwargs):
+        res_data = {
+            "success": True,
+            "error": None,
+            "fileName": '',
+            "image_cnt":0
+        }
+        # b_id=request.data['b_id']
+        # p_id=request.data['p_id']
+        print(request.data)
+        # photoObj = Photo.objects.get(b_id=b_id,p_id=p_id)
+
+        try:
+            FileUpload(s3_client).delete('https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/media/images/20220320/40c985ca-aa67-4b99-a711-ad4b88501275')
+            # photoObj.delete()
+        except:
+            print('except')
+            # return Response(res_data, status=200)
+        
+        return Response(res_data, status=200)
+
 
 
 class PostViewSet(APIView):
