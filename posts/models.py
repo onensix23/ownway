@@ -41,15 +41,8 @@ class Posts(models.Model):
 
 class Photo(models.Model):
     p_id = models.BigAutoField(primary_key=True)
-    p_image = ProcessedImageField(
-        null=False, default='',
-        upload_to='images/'+datetime.now().strftime('%Y%m%d')+'/',
-        processors=[ResizeToFill(600,600)],
-        format='JPEG',
-        options={'quality': 90}
-    )
     b_id  = models.ForeignKey(Posts, db_column='b_id', related_name='photo_b_id',default='', max_length=12, null=False, blank=True, on_delete=models.CASCADE)
-    p_filename = models.CharField(max_length=64, null=True)
+    p_filename = models.CharField(max_length=256, null=True)
     p_isthumb = models.CharField(max_length=2,null=False,  default='0')
     p_datetime = models.DateTimeField(default=datetime.now)  # 날짜
 

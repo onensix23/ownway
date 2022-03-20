@@ -1,6 +1,9 @@
 import uuid
+from datetime import datetime
 from snsP.my_settings import *
 from boto3 import *
+from PIL import Image   # 이미지 리사이징에 필요한 Pillow
+from io  import BytesIO # Pillow로 리사이징한 이미지를 다시 Bytes화
 from storages.backends.s3boto3 import S3Boto3Storage
 
 __all__ = (
@@ -41,11 +44,22 @@ class MyS3Client:
 
     def upload(self, file):
         try: 
-            file_id    = str(uuid.uuid4())
+            print('hi')
+            print(datetime.now())
+            now_date = datetime.now().strftime('%Y%m%d')
+            print(now_date)
+            file_id = 'media/images/'+now_date+'/'+str(uuid.uuid4())
+            print(file_id)
             extra_args = { 'ContentType' : file.content_type }
 
+            im = Image.open(file)
+            im = im.resize((400, 400))
+            buffer = BytesIO()
+            im.save(buffer, "JPEG")
+            buffer.seek(0)
+
             self.s3_client.upload_fileobj(
-                    file,
+                    buffer, #file,
                     self.bucket_name,
                     file_id,
                     ExtraArgs = extra_args

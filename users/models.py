@@ -9,14 +9,7 @@ from imagekit.processors import ResizeToFill
 
 class UserProfile(models.Model):
     up_id = models.ForeignKey(User, to_field="username", db_column='up_id', on_delete=models.CASCADE, max_length=20, null=False)  # 작성자
-    up_image = ProcessedImageField(
-        null=False, default='',
-        upload_to='images/profile/'+datetime.now().strftime('%Y%m%d')+'/',
-        processors=[ResizeToFill(600,600)],
-        format='JPEG',
-        options={'quality': 90}
-    )
-    up_imagename = models.CharField(max_length=64, null=True, verbose_name='첨부파일명')
+    up_imagename = models.CharField(max_length=256, null=True, verbose_name='첨부파일명')
     up_comment = models.CharField(max_length=15, null=True)
 
 

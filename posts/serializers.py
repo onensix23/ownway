@@ -36,8 +36,8 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        # fields = "__all__"
-        fields = ('p_id','p_filename','p_image', 'b_id', 'p_isthumb')
+        fields = "__all__"
+        # fields = ('p_id','p_filename','p_image', 'b_id', 'p_isthumb')
 
 
 class PostCommentSerializer(serializers.ModelSerializer):

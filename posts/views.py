@@ -42,8 +42,6 @@ class ImageViewSet(APIView):
 
                     photo = Photo()
                     photo.b_id = postObj
-                    photo.p_image = 'null'
-                    # request.FILES[k].name = photo.get_file_path(request.FILES[k].name)
                     photo.p_filename = FileUpload(s3_client).upload(request.FILES[k])
                     photo.p_isthumb = request.data['type']
 
