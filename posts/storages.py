@@ -1,6 +1,6 @@
-import boto3
 import uuid
 from snsP.my_settings import *
+from boto3 import *
 
 class FileUpload:
     def __init__(self, client):
@@ -12,7 +12,7 @@ class FileUpload:
 
 class MyS3Client:
     def __init__(self, access_key, secret_key, bucket_name):
-        boto3_s3 = boto3.client(
+        boto3_s3 = client(
             's3',
             aws_access_key_id     = access_key,
             aws_secret_access_key = secret_key
