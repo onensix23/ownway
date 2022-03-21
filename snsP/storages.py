@@ -31,6 +31,9 @@ class FileUpload:
     def upload(self, file):
         return self.client.upload(file)
 
+    def delete(self, file):
+        return self.client.delete(file)
+
 
 class MyS3Client:
     def __init__(self, access_key, secret_key, bucket_name):
@@ -67,7 +70,14 @@ class MyS3Client:
     
     def delete(self, filename):
         key = filename.split('https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/')[1]
-        print(key)
+
+        try:
+            self.s3_client.delete_object(Bucket=self.bucket_name, Key=key)
+            return 1
+        except:
+            return 0
+       
+
         # self.s3_client.delete_object(Bucket=self.bucket_name, Key=key)
 
 
