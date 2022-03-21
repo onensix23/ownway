@@ -330,6 +330,8 @@ class PostCommentViewSet(APIView):
         return Response(res_data, status=200)
 
 
+
+
 class MyPageViewSet(APIView):
     """
     POST /mypage/
@@ -484,10 +486,24 @@ class PostDetailUpdateViewSet(APIView):
         return Response(res_data, status=200)
 
 
-class PostCommentDetailViewSet(RetrieveAPIView):
-    lookup_field = 'b_id'
-    queryset = PostComment.objects.all().order_by('-pc_datetime')
-    serializer_class = PostCommentSerializer
+class PostCommentDetailViewSet(APIView):
+    def delete(self, request, pc_id):
+        res_data = {
+            "success": True,
+            "error": None
+        }
+
+        try:    
+            postcommentObj = PostComment.objects.get(pc_id=pc_id)
+            postcommentObj.delete()
+
+            return Response(res_data, status=200)
+        except Exception as e: 
+            res_data['error'] = e
+            
+            return Response(res_data, status=200)
+
+
 
 
 class PostUpdateViewSet(UpdateAPIView):
