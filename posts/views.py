@@ -61,12 +61,16 @@ class DeleteImageViewSet(APIView):
         }
         b_id=request.data['b_id']
         p_id=request.data['p_id']
+        p_filename = request.data['p_filename']
+        
         print(request.data)
+
         photoObj = Photo.objects.get(b_id=b_id,p_id=p_id)
 
         try:
-            # FileUpload(s3_client).delete('https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/media/images/20220320/40c985ca-aa67-4b99-a711-ad4b88501275')
-            # photoObj.delete()
+            FileUpload(s3_client).delete(p_filename)
+            photoObj.delete()
+
             print('hi')
         except:
             print('except')
