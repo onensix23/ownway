@@ -29,7 +29,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = (
                   'id',
                   'up_id',
-                  'up_image',
                   'up_imagename',
                   'up_comment'
                   )
