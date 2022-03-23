@@ -45,10 +45,14 @@ class SocialLoginViewSet(APIView):
             }
             response = requests.get(url, params)
             response_dict = response.json()
-
+            print(response_dict)
             facebook_user_id = response_dict['id']
             facebook_name = response_dict['name']
-            facebook_email = response_dict['email']
+
+            if 'email' in response_dict.keys():
+                facebook_email = response_dict['email']
+            else:
+                facebook_email = ''
 
             user, user_created = User.objects.get_or_create(email=facebook_email)
 
@@ -58,7 +62,7 @@ class SocialLoginViewSet(APIView):
                 user.email = facebook_email
                 user.save()
 
-                UserProfile.objects.create(up_id=facebook_user_id)
+                UserProfile.objects.create(up_id=user)
 
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
