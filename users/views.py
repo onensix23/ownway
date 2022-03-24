@@ -54,7 +54,7 @@ class SocialLoginViewSet(APIView):
             else:
                 facebook_email = ''
 
-            user, user_created = User.objects.get_or_create(email=facebook_email)
+            user, user_created = User.objects.get_or_create(username=facebook_user_id)
 
             # 유저가 새로 생성되었다면
             if user_created:
@@ -76,10 +76,16 @@ class UserProfileViewSet(APIView):
         
         request_d = request.data; #{"user_id":"1088384478597823"}
         user_id = request_d['userId']
+        print('user_id')
+        print(user_id)
 
         userObj = User.objects.get(username=user_id)
 
         userProfile, user_created = UserProfile.objects.get_or_create(up_id=userObj)
+        print('userProfile')
+        print(userProfile)
+        print('user_created')
+        print(user_created)
 
         get_queryset = UserProfile.objects.get(up_id=user_id)
         get_serializer_class = UserProfileSerializer(get_queryset, many=False)
