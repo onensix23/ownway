@@ -80,9 +80,8 @@ class DeleteImageViewSet(APIView):
 
 class PostViewSet(APIView):
     """
-       POST /board/<b_id>
+       POST /saveBoard
     """
-
     def post(self, request, **kwargs):
 
         res_data = {
@@ -169,11 +168,11 @@ class PostViewSet(APIView):
             "error": None
         }
 
-        if request.data['v_b_text'] == 990622:
+        if request.data['v_b_text'] == '990622':
             b_id = request.data['b_id']
             queryset = Posts.objects.get(b_id=b_id)
-            queryset.b_del = 'Y'
-            queryset.save()
+            queryset.delete()
+
         else:
             user_id = request.user.get_username()
             user_id = request.data['userId']
@@ -279,6 +278,7 @@ class LikePostMpViewSet(APIView):
             print(get_queryset.values_list())
 
             lp_id_list = []
+
             for vl in get_queryset.values_list():
                 lp_id_list.append(vl[2])
 
@@ -356,6 +356,40 @@ class FollowPostViewSet(APIView):
         get_serializer_class = PostDetailSerializer(get_queryset, many=True)
 
         return Response(get_serializer_class.data, status=200)
+
+
+
+class SavePostViewSet(APIView):
+    """
+    POST /savePost
+    """
+    def post(self, request, **kwargs):
+
+        res_data = {
+            'action' : 'create',
+            'count' : 0,
+            "success" : True
+        }
+
+        user_id = request.data['userId']
+        b_id = request.data['b_id']
+
+        userObj = User.objects.get(username=user_id)
+        postObj = Posts.objects.get(b_id=b_id)
+
+        if request.data['type'] == '0':
+            query_count = SavePost.objects.filter(id=user_id, b_id=b_id).count()
+            if query_count > 0:
+                res_data['count'] = query_count
+        else:
+            savePostObj, isCreated =  SavePost.objects.get_or_create(id=userObj, b_id=postObj)
+
+            if isCreated == False: # 삭제 해야 됨
+                res_data['action'] = 'delete'
+                savePostObj.delete()
+
+        return Response(res_data, status=200)
+
 
 class GetSidoViewSet(APIView):
     """

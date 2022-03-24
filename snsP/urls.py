@@ -39,10 +39,10 @@ urlpatterns = [
     path('api/'+ms.API_SHA256_KEY+'deleteImage', postview.DeleteImageViewSet.as_view(), name='deleteImage'),
     path('api/'+ms.API_SHA256_KEY+'board/updateviews', postview.PostDetailUpdateViewSet.as_view(), name='boardDetail'),
 
+    path('api/'+ms.API_SHA256_KEY+'savePost', postview.SavePostViewSet.as_view(), name='savePost'),
+
     # searchPost
     path('api/'+ms.API_SHA256_KEY+'searchPost', postview.SearchPostViewSet.as_view(), name='searchPost'),
-
-    # user login, logout, register
 
     # social login
     path('api/'+ms.API_SHA256_KEY+'socialLogin', userview.SocialLoginViewSet.as_view(), name='socialLogin'),  # post
