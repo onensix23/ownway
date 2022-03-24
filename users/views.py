@@ -45,7 +45,7 @@ class SocialLoginViewSet(APIView):
             }
             response = requests.get(url, params)
             response_dict = response.json()
-            print(response_dict)
+            # print(response_dict)
             facebook_user_id = response_dict['id']
             facebook_name = response_dict['name']
 
@@ -76,16 +76,9 @@ class UserProfileViewSet(APIView):
         
         request_d = request.data; #{"user_id":"1088384478597823"}
         user_id = request_d['userId']
-        print('user_id')
-        print(user_id)
-
         userObj = User.objects.get(username=user_id)
 
         userProfile, user_created = UserProfile.objects.get_or_create(up_id=userObj)
-        print('userProfile')
-        print(userProfile)
-        print('user_created')
-        print(user_created)
 
         get_queryset = UserProfile.objects.get(up_id=user_id)
         get_serializer_class = UserProfileSerializer(get_queryset, many=False)
@@ -143,7 +136,7 @@ class UserViewSet(APIView):
 
             myuser = authenticate(username=login_username, password=login_password)
             # db에서 꺼내는 명령. Post로 받아온 username으로 , db의 username을 꺼내온다.
-            print(myuser)
+            # print(myuser)
             if myuser is not None:
                 login(request, myuser)
                 # request.session['user'] = myuser.username
@@ -202,7 +195,7 @@ class ResigterUserViewSet(APIView):
         nickname = request_d['nickname']
         email = request_d['email']
 
-        print("password:"+password);
+        # print("password:"+password);
 
         res_data = {
             'success': False,
