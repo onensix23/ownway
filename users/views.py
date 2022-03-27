@@ -25,6 +25,22 @@ from .serializers import *
 from .models import *
 from posts.models import Posts
 
+class ResignUserViewSet(APIView):
+    @method_decorator(csrf_exempt)
+    def post(self, request, **kwargs):
+
+        res_data = {
+            "action" : "create",
+            "count" : 0,
+            "is_following" : True,
+            "success" : True
+        }
+        user_id = request.data['userId']
+
+        userObj = User.objects.get(username=user_id)
+        userObj.delete()
+
+
 class SocialLoginViewSet(APIView):
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):

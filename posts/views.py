@@ -358,32 +358,16 @@ class FollowPostViewSet(APIView):
         return Response(get_serializer_class.data, status=200)
 
 
-
 class SavePostViewSet(APIView):
     """
-    POST /savePost
+    /savePost
+    GET  param userId
+    POST param userId, b_id
     """
     def get(self, request, **kwargs):
-
         user_id = request.GET['userId']
 
-        userObj = User.objects.get(username=user_id)
-
-        """
-            select * from posts_posts
-            where posts_posts.b_id in (select b_id from posts_savepost wherer id = userid)
-        """
-
-
-        # get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').filter(Q(
-        #         Q(b_id=request.GET['b_id'])
-        #     )).select_related('id')
-
-        get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').select_related('id')
-        # get_queryset.filter(b_id__in=Subquery(SavePost.objects.values('b_id').filter(id=user_id)))
-        
         get_queryset = Posts.objects.filter(b_id__in=Subquery(SavePost.objects.values('b_id').filter(id=user_id))).prefetch_related('photo_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_datetime')
-
         get_serializer_class = PostSerializer(get_queryset, many=True)
 
         return Response(get_serializer_class.data, status=200)
