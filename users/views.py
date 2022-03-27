@@ -69,6 +69,36 @@ class SocialLoginViewSet(APIView):
         return Response(response_dict, status=200)
 
 
+# class FollowUserViewSet(APIView):
+    # @method_decorator(csrf_exempt)
+    # def post(self, request, **kwargs):
+    #     res_data = {
+    #         'action' : 'create',
+    #         'count' : 0,
+    #         "success" : True
+    #     }
+
+    #     user_id = request.data['userId']
+    #     b_id = request.data['b_id']
+
+    #     userObj = User.objects.get(username=user_id)
+    #     postObj = Posts.objects.get(b_id=b_id)
+
+    #     if request.data['type'] == '0':
+    #         query_count = SavePost.objects.filter(id=user_id, b_id=b_id).count()
+    #         if query_count > 0:
+    #             res_data['count'] = query_count
+    #     else:
+    #         savePostObj, isCreated =  SavePost.objects.get_or_create(id=userObj, b_id=postObj)
+
+    #         if isCreated == False: # 삭제 해야 됨
+    #             res_data['action'] = 'delete'
+    #             savePostObj.delete()
+
+    #     return Response(res_data, status=200)
+
+
+
 class UserProfileViewSet(APIView):
 
     @method_decorator(csrf_exempt)

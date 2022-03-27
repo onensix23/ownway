@@ -68,7 +68,6 @@ class SavePostSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    # p_id = PhotoSerializer(read_only=True)
     savepost_b_id = SavePostSerializer(read_only=True , many=True)
     photo_b_id = PhotoSerializer(read_only=True, many=True)
     postcomment_b_id = PostCommentSerializer(read_only=True, many=True)
@@ -77,18 +76,6 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Posts
         fields = "__all__"
-        # fields = ('b_id',
-        #           'id',
-        #           'b_loctype1',
-        #           'b_loctype2',
-        #           'b_loctype3',
-        #           'b_theme',
-        #           'b_title',
-        #         #   'b_text',
-        #           'b_datetime',
-        #           'b_views',
-        #         #   'p_id'
-        #             )
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
