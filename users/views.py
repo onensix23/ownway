@@ -69,33 +69,42 @@ class SocialLoginViewSet(APIView):
         return Response(response_dict, status=200)
 
 
-# class FollowUserViewSet(APIView):
-    # @method_decorator(csrf_exempt)
-    # def post(self, request, **kwargs):
-    #     res_data = {
-    #         'action' : 'create',
-    #         'count' : 0,
-    #         "success" : True
-    #     }
+class FollowUserViewSet(APIView):
+    @method_decorator(csrf_exempt)
+    def post(self, request, **kwargs):
 
-    #     user_id = request.data['userId']
-    #     b_id = request.data['b_id']
+        res_data = {
+            "action" : "create",
+            "count" : 0,
+            "is_following" : True,
+            "success" : True
+        }
 
-    #     userObj = User.objects.get(username=user_id)
-    #     postObj = Posts.objects.get(b_id=b_id)
+        user_id = request.data['userId']
+        page_host_id = request.data['myPageHost']
+        
+        print(user_id)
+        print(page_host_id)
 
-    #     if request.data['type'] == '0':
-    #         query_count = SavePost.objects.filter(id=user_id, b_id=b_id).count()
-    #         if query_count > 0:
-    #             res_data['count'] = query_count
-    #     else:
-    #         savePostObj, isCreated =  SavePost.objects.get_or_create(id=userObj, b_id=postObj)
+        readerObj = User.objects.get(username=page_host_id) # 따라오게 하는 사람
+        readingObj = User.objects.get(username=user_id) # 따라가는 사람
 
-    #         if isCreated == False: # 삭제 해야 됨
-    #             res_data['action'] = 'delete'
-    #             savePostObj.delete()
+        if request.data['type'] == '0': # 체크용
+            query_count = UserFollow.objects.filter(uf_reader=page_host_id, uf_reading=user_id).count()
 
-    #     return Response(res_data, status=200)
+            if query_count == 0:
+                res_data['count'] = query_count
+                res_data["is_following"] = False
+            else:
+                res_data["count"] = 0
+        else:
+            userFollowObj, isCreated =  UserFollow.objects.get_or_create(uf_reader=readerObj, uf_reading=readingObj)
+
+            if isCreated == False: # 삭제 해야 됨
+                res_data['action'] = 'delete'
+                userFollowObj.delete()
+
+        return Response(res_data, status=200)
 
 
 
