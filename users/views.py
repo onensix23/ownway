@@ -31,6 +31,8 @@ class ResignUserViewSet(APIView):
     def get(self, request, **kwargs):
         print(request.GET.get('fbclid'))
 
+        return Response({"test":"Test"}, status=200)
+
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
         print(request.data)
@@ -48,7 +50,7 @@ class ResignUserViewSet(APIView):
         # userObj = User.objects.get(username=user_id)
         # userObj.delete()
 
-        return Response(response_dict, status=200)
+        return Response({"test":"Test"}, status=200)
 
 
 class SocialLoginViewSet(APIView):
