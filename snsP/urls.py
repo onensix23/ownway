@@ -88,7 +88,5 @@ urlpatterns = [
 
     path('api/'+ms.API_SHA256_KEY+'terms/howtodeletedata', termsview.HowToViewSet.as_view(), name='howtodeletedata'), 
 
-
-
 ] 
 # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

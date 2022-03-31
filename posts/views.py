@@ -146,7 +146,7 @@ class PostViewSet(APIView):
     def get(self, request, **kwargs):
         if(len(request.GET) > 0): #detail
             # print('1')
-            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id', queryset=PostComment.objects.order_by('pc_datetime')).prefetch_related('savepost_b_id').filter(Q(
+            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').filter(Q(
                 Q(b_id=request.GET['b_id'])
             )).select_related('id')
             get_serializer_class = PostSerializer(get_queryset, many=True)
