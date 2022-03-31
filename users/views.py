@@ -26,13 +26,7 @@ from .models import *
 from posts.models import Posts
 
 class ResignUserViewSet(APIView):
-
-    # \print(request.GET.get('fbclid'))\
-    def get(self, request, **kwargs):
-        print(request.GET.get('fbclid'))
-
-        return Response({"test":"Test"}, status=200)
-
+    
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
         print(request.data)

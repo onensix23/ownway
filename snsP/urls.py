@@ -47,10 +47,6 @@ urlpatterns = [
 
     # social login 
     path('api/'+ms.API_SHA256_KEY+'socialLogin', userview.SocialLoginViewSet.as_view(), name='socialLogin'), 
-
-    path('api/'+ms.API_SHA256_KEY+'terms/privacypolicy', termsview.PrivacyPolicyViewSet.as_view(), name='privacypolicy'), 
-    path('api/'+ms.API_SHA256_KEY+'terms/service', termsview.ServiceViewSet.as_view(), name='termsOfService'), 
-
     path('api/'+ms.API_SHA256_KEY+'logout', userview.LogoutUserViewSet.as_view(), name='userLogout'), 
     path('api/'+ms.API_SHA256_KEY+'resignUser', userview.ResignUserViewSet.as_view(), name='resignUser'), 
 
@@ -86,7 +82,13 @@ urlpatterns = [
     path('api/'+ms.API_SHA256_KEY+'getReSigungu', postview.GetReSigunguViewSet.as_view(), name='getReSigungu'),
     path('api/'+ms.API_SHA256_KEY+'getReDong', postview.GetReDongViewSet.as_view(), name='getReDong'),
 
-    # path('accounts/', include('allauth.urls')),
+    # terms
+    path('api/'+ms.API_SHA256_KEY+'terms/privacypolicy', termsview.PrivacyPolicyViewSet.as_view(), name='privacypolicy'), 
+    path('api/'+ms.API_SHA256_KEY+'terms/service', termsview.ServiceViewSet.as_view(), name='termsOfService'), 
+
+    path('api/'+ms.API_SHA256_KEY+'terms/howtodeletedata', termsview.HowToViewSet.as_view(), name='howtodeletedata'), 
+
+
 
 ] 
 # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
