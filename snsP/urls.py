@@ -23,6 +23,7 @@ from . import my_settings as ms
 
 import posts.views as postview
 import users.views as userview
+import terms.views as termsview
 
 
 urlpatterns = [
@@ -46,6 +47,9 @@ urlpatterns = [
 
     # social login 
     path('api/'+ms.API_SHA256_KEY+'socialLogin', userview.SocialLoginViewSet.as_view(), name='socialLogin'), 
+
+    path('api/'+ms.API_SHA256_KEY+'terms/privacypolicy', termsview.PrivacyPolicyViewSet.as_view(), name='privacypolicy'), 
+    path('api/'+ms.API_SHA256_KEY+'terms/service', termsview.ServiceViewSet.as_view(), name='termsOfService'), 
 
     path('api/'+ms.API_SHA256_KEY+'logout', userview.LogoutUserViewSet.as_view(), name='userLogout'), 
     path('api/'+ms.API_SHA256_KEY+'resignUser', userview.ResignUserViewSet.as_view(), name='resignUser'), 
