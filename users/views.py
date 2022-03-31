@@ -28,17 +28,22 @@ from posts.models import Posts
 class ResignUserViewSet(APIView):
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
+        print(request.data)
+        # res_data = {
+        #     "action" : "create",
+        #     "count" : 0,
+        #     "is_following" : True,
+        #     "success" : True
+        # }
 
-        res_data = {
-            "action" : "create",
-            "count" : 0,
-            "is_following" : True,
-            "success" : True
-        }
-        user_id = request.data['userId']
+        # { url: '<url>', confirmation_code: '<code>' }
 
-        userObj = User.objects.get(username=user_id)
-        userObj.delete()
+        # user_id = request.data['id']
+
+        # userObj = User.objects.get(username=user_id)
+        # userObj.delete()
+
+        return Response(response_dict, status=200)
 
 
 class SocialLoginViewSet(APIView):
@@ -52,9 +57,9 @@ class SocialLoginViewSet(APIView):
                     'id',
                     'name',
                     'email',
-                    'first_name',
-                    'last_name',
-                    'picture',
+                    # 'first_name',
+                    # 'last_name',
+                    # 'picture',
                 ]),
                 # 'fields': 'id,name,first_name,last_name,picture',
                 'access_token': request_d['data']['accessToken']
