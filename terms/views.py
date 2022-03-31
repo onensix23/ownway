@@ -13,7 +13,7 @@ class ServiceViewSet(APIView):
             "success": True,
             "error": None
         }
-        print(request.GET.get('fbclid'))
+        
         return Response(res_data, status=200)
 
 
