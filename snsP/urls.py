@@ -66,6 +66,9 @@ urlpatterns = [
     path('api/'+ms.API_SHA256_KEY+'postcomment', postview.PostCommentViewSet.as_view(), name='postComment'),
     path('api/'+ms.API_SHA256_KEY+'postcomment/<int:pc_id>', postview.PostCommentDetailViewSet.as_view(), name='postCommentDetail'),
 
+    # postPlace
+    path('api/'+ms.API_SHA256_KEY+'postplace/<int:pp_id>', postview.PostPlaceViewSet.as_view(), name='postPlace'),
+
     # myPage
     path('api/'+ms.API_SHA256_KEY+'mypage', postview.MyPageViewSet.as_view(), name='myPage'),
 

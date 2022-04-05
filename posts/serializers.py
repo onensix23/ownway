@@ -67,10 +67,23 @@ class SavePostSerializer(serializers.ModelSerializer):
                   )
 
 
+class PostPlaceSerializer(serializers.ModelSerializer):
+    # id = UserSerializer(read_only=True)
+    class Meta:
+        model = PostPlace
+        fields = ('pp_id',
+                  'pp_place_id',
+                  'pp_datetime',
+                  'pp_type',
+                  'pp_del',
+                )
+
+
 class PostSerializer(serializers.ModelSerializer):
     savepost_b_id = SavePostSerializer(read_only=True , many=True)
     photo_b_id = PhotoSerializer(read_only=True, many=True)
     postcomment_b_id = PostCommentSerializer(read_only=True, many=True)
+    postplace_b_id = PostPlaceSerializer(read_only=True, many=True)
     id = UserSerializer(read_only=True)
     
     class Meta:

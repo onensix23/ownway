@@ -80,7 +80,7 @@ class DeleteImageViewSet(APIView):
 
 class PostViewSet(APIView):
     """
-       POST /saveBoard
+       POST /savePost
     """
     def post(self, request, **kwargs):
 
@@ -112,7 +112,6 @@ class PostViewSet(APIView):
                 b_address=b_address,  
                 b_theme=b_theme, 
                 b_hash_tag_1=b_hash_tag_1, b_hash_tag_2=b_hash_tag_2, 
-                b_place_id=b_place_id
         )
 
         new_post.save()  # insert
@@ -122,8 +121,8 @@ class PostViewSet(APIView):
         # print(new_post.b_id)
 
         res_data['b_id'] = new_post.b_id
+
         postObj = Posts.objects.get(b_id=new_post.b_id)
-        # print(postObj)
 
         if pc_comment != '':
             new_postcomment = PostComment(
@@ -134,8 +133,18 @@ class PostViewSet(APIView):
             )
 
             new_postcomment.save()
-            res_data['postcommet_success']=True
+            res_data['postcomment_success']=True
+        
+        if b_place_id != '':
+            new_postplace = PostPlace(
+                b_id=postObj,
+                id=userObj,
+                pp_place_id = b_place_id,
+                pp_type='1',
+            )
 
+            new_postplace.save()
+            res_data['postplace_success']=True
 
         return Response(res_data, status=200)
 
@@ -146,7 +155,7 @@ class PostViewSet(APIView):
     def get(self, request, **kwargs):
         if(len(request.GET) > 0): #detail
             # print('1')
-            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').filter(Q(
+            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('postplace_b_id').prefetch_related('savepost_b_id').filter(Q(
                 Q(b_id=request.GET['b_id'])
             )).select_related('id')
             get_serializer_class = PostSerializer(get_queryset, many=True)
@@ -357,6 +366,64 @@ class PostCommentViewSet(APIView):
         return Response(res_data, status=200)
 
 
+class PostPlaceViewSet(APIView):
+    """
+    # DELETE /postPlcae/
+    # 
+    """
+
+    def delete(self, request, pp_id):
+        res_data = {
+            "success":True
+        }
+        
+        try:
+            model = PostPlace.objects.get(pp_id=pp_id)
+            model.delete()
+        except:
+            res_data["success"] = False
+
+        return Response(res_data, status=200)
+
+    # """
+    #     GET /postPlcae/
+    # """
+
+    # def get(self, request, **kwargs):
+    #     b_id = request.GET.get('b_id')
+    #     pc_type = request.GET.get('pc_type')
+    #     get_queryset = PostComment.objects.filter(pc_del='N', b_id=b_id, pc_type=pc_type).order_by('pc_datetime')
+    #     get_serializer_class = PostCommentSerializer(get_queryset, many=True)
+    #     return Response(get_serializer_class.data, status=200)
+
+    # """
+    #     POST /postPlcae/
+    # """
+    # def post(self, request, **kwargs):
+    #     res_data = {
+    #         "success": True,
+    #         "error": None
+    #     }
+
+    #     # select
+    #     user_id = request.data['userId']
+    #     b_id = request.data['b_id']
+    #     pc_comment = request.data['pc_comment']
+
+    #     userObj = User.objects.get(username=user_id)
+    #     postId = Posts.objects.get(b_id=b_id)
+
+    #     new_Comment = PostComment(id=userObj, b_id=postId, pc_comment=pc_comment)
+    #     new_Comment.save()  # insert
+
+    #     res_data = {
+    #         "success": True,
+    #         "error": None
+    #     }
+
+    #     return Response(res_data, status=200)
+
+    
 
 
 class MyPageViewSet(APIView):

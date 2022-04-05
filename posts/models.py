@@ -6,22 +6,6 @@ from django.contrib.auth.models import User
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
 
-# python manage.py inspectdb
-
-
-# class Posts(models.Model):
-#     b_id = models.AutoField(primary_key=True)   #게시물 번호
-#     user_id = models.ForeignKey(Users,max_length=12, null=False)  # 작성자
-#     b_locType1 = models.CharField(max_length=12, null=False, default='')  # 시
-#     b_locType2 = models.CharField(max_length=12, null=False, default='')  # 구군
-#     b_locType3 = models.CharField(max_length=12, null=True, default='')  # 동
-#     b_theme = models.CharField(max_length=12, null=True, default='') #장소 테마
-#     b_title = models.CharField(max_length=15, null=False)  # 제목
-#     b_text = models.TextField()  # 내용
-#     b_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
-#     def __str__(self):
-#         return self.b_title
-
 class Posts(models.Model):
     b_id = models.AutoField(primary_key=True)
     id = models.ForeignKey(User, to_field="username", db_column='id', default='', on_delete=models.CASCADE, max_length=12, null=False) 
@@ -31,7 +15,7 @@ class Posts(models.Model):
     b_hash_tag_2 = models.CharField(max_length=50, null=True, default='') 
     b_views = models.CharField(max_length=12, null=True, default='0') 
     b_title = models.CharField(max_length=15, null=True) 
-    b_place_id = models.CharField(max_length=50, null=True)
+    b_place_id = models.TextField(null=True)
     b_datetime = models.DateTimeField(default=datetime.now, null=False)
     b_del = models.CharField(max_length=1, null=False, default='N')
 
@@ -83,6 +67,17 @@ class PostComment(models.Model):
     pc_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
     pc_type = models.CharField(max_length=2, null=False, default='0' )
     pc_del = models.CharField(max_length=1, null=False, default='N')
+
+
+class PostPlace(models.Model):
+    pp_id = models.BigAutoField(primary_key=True)
+    b_id = models.ForeignKey(Posts, db_column='b_id', related_name='postplace_b_id', on_delete=models.CASCADE, null=False)
+    id = models.ForeignKey(User, to_field="username", db_column='id', default='', on_delete=models.CASCADE,
+                           max_length=12, null=False)  # 작성자
+    pp_place_id = models.TextField()  # 내용
+    pp_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
+    pp_type = models.CharField(max_length=2, null=False, default='0' )
+    pp_del = models.CharField(max_length=1, null=False, default='N')
 
 
 class EntrcSido(models.Model):
