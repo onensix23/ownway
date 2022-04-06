@@ -68,6 +68,7 @@ urlpatterns = [
 
     # postPlace
     path('api/'+ms.API_SHA256_KEY+'postplace/<int:pp_id>', postview.PostPlaceViewSet.as_view(), name='postPlace'),
+    path('api/'+ms.API_SHA256_KEY+'saveplace', postview.SavePostPlaceViewSet.as_view(), name='savePlace'),
 
     # myPage
     path('api/'+ms.API_SHA256_KEY+'mypage', postview.MyPageViewSet.as_view(), name='myPage'),

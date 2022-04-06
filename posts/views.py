@@ -371,7 +371,6 @@ class PostPlaceViewSet(APIView):
     # DELETE /postPlcae/
     # 
     """
-
     def delete(self, request, pp_id):
         res_data = {
             "success":True
@@ -385,46 +384,32 @@ class PostPlaceViewSet(APIView):
 
         return Response(res_data, status=200)
 
-    # """
-    #     GET /postPlcae/
-    # """
+class SavePostPlaceViewSet(APIView):
+    """
+        POST /postPlcae/
+    """
+    def post(self, request, **kwargs):
 
-    # def get(self, request, **kwargs):
-    #     b_id = request.GET.get('b_id')
-    #     pc_type = request.GET.get('pc_type')
-    #     get_queryset = PostComment.objects.filter(pc_del='N', b_id=b_id, pc_type=pc_type).order_by('pc_datetime')
-    #     get_serializer_class = PostCommentSerializer(get_queryset, many=True)
-    #     return Response(get_serializer_class.data, status=200)
+        res_data = {
+            "success": True,
+            "error": None
+        }
 
-    # """
-    #     POST /postPlcae/
-    # """
-    # def post(self, request, **kwargs):
-    #     res_data = {
-    #         "success": True,
-    #         "error": None
-    #     }
+        # select
+        user_id = request.data['userId']
+        b_id = request.data['b_id']
+        pp_place_id = request.data['place_id']
 
-    #     # select
-    #     user_id = request.data['userId']
-    #     b_id = request.data['b_id']
-    #     pc_comment = request.data['pc_comment']
+        userObj = User.objects.get(username=user_id)
+        postId = Posts.objects.get(b_id=b_id)
 
-    #     userObj = User.objects.get(username=user_id)
-    #     postId = Posts.objects.get(b_id=b_id)
+        try:
+            new_postplace = PostPlace(id=userObj, b_id=postId, pp_place_id=pp_place_id)
+            new_postplace.save()  # insert
+        except:
+            res_data["success"]=False
 
-    #     new_Comment = PostComment(id=userObj, b_id=postId, pc_comment=pc_comment)
-    #     new_Comment.save()  # insert
-
-    #     res_data = {
-    #         "success": True,
-    #         "error": None
-    #     }
-
-    #     return Response(res_data, status=200)
-
-    
-
+        return Response(res_data, status=200)
 
 class MyPageViewSet(APIView):
     """
