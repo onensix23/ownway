@@ -48,7 +48,9 @@ urlpatterns = [
     # social login 
     path('api/'+ms.API_SHA256_KEY+'socialLogin', userview.SocialLoginViewSet.as_view(), name='socialLogin'), 
     path('api/'+ms.API_SHA256_KEY+'logout', userview.LogoutUserViewSet.as_view(), name='userLogout'), 
-    path('api/'+ms.API_SHA256_KEY+'resignUser', userview.ResignUserViewSet.as_view(), name='resignUser'), 
+    path('api/'+ms.API_SHA256_KEY+'resignUser', userview.ResignUserViewSet.as_view(), name='resignUser'),  
+    path('api/'+ms.API_SHA256_KEY+'userData', userview.UserDataViewSet.as_view(), name='userData'), 
+
 
     path('api/'+ms.API_SHA256_KEY+'userProfile', userview.UserProfileViewSet.as_view(), name='userProfile'),
     path('api/'+ms.API_SHA256_KEY+'followUser', userview.FollowUserViewSet.as_view(), name='followUser'),

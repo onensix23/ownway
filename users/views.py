@@ -16,6 +16,7 @@ from rest_auth.registration.serializers import SocialLoginSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from snsP.storages import FileUpload, s3_client
 
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
@@ -26,26 +27,64 @@ from .models import *
 from posts.models import Posts
 
 class ResignUserViewSet(APIView):
-    
+    @method_decorator(csrf_exempt)
+    def post(self, request, **kwargs):
+        res_data = {
+            "action" : "delete user",
+            "success" : True
+        }
+
+        user_id = request.data['id']
+        userObj = User.objects.get(username=user_id)
+
+        try:
+            userObj.delete()
+        except:
+            res_data['success'] = False
+
+        return Response(res_data, status=200)
+
+
+class UserDataViewSet(APIView):
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
         print(request.data)
-        # res_data = {
-        #     "action" : "create",
-        #     "count" : 0,
-        #     "is_following" : True,
-        #     "success" : True
-        # }
 
-        # { url: '<url>', confirmation_code: '<code>' }
+        res_data = {
+            "action" : "save data",
+            "count" : 0,
+            'image_cnt': 0,
+            "success" : True
+        }
 
-        # user_id = request.data['id']
+        user_id = request.data['id']
+        userObj = User.objects.get(username=user_id)
 
-        # userObj = User.objects.get(username=user_id)
-        # userObj.delete()
+        if request.data['firstname']:
+            userObj.first_name = request.data['firstname']
+            userObj.save()
 
-        return Response({"test":"Test"}, status=200)
+            res_data['count'] = res_data['count'] + 1
 
+
+        userProfileObj = UserProfile.objects.get(up_id=user_id)
+
+        cnt = 0
+
+        if request.FILES:
+            for k in request.FILES.keys():
+                if k.find('uploadFile') != -1:
+                    cnt = cnt + 1
+                    userProfileObj.up_imagename = FileUpload(s3_client).upload(request.FILES[k])
+
+                    # 데이터베이스에 저장
+                    userProfileObj.save()
+
+                    res_data[k] = request.FILES[k].name
+                    
+        res_data['image_cnt'] = cnt
+
+        return Response(res_data, status=200)
 
 class SocialLoginViewSet(APIView):
     @method_decorator(csrf_exempt)
@@ -68,6 +107,7 @@ class SocialLoginViewSet(APIView):
             response = requests.get(url, params)
             response_dict = response.json()
             # print(response_dict)
+
             facebook_user_id = response_dict['id']
             facebook_name = response_dict['name']
 
@@ -78,6 +118,10 @@ class SocialLoginViewSet(APIView):
 
             user, user_created = User.objects.get_or_create(username=facebook_user_id)
 
+            res_data = {
+                'exist_user' : True,
+            }
+
             # 유저가 새로 생성되었다면
             if user_created:
                 user.first_name = facebook_name
@@ -85,10 +129,11 @@ class SocialLoginViewSet(APIView):
                 user.save()
 
                 UserProfile.objects.create(up_id=user)
+                res_data['exist_user']=False
 
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
-        return Response(response_dict, status=200)
+        return Response(res_data, status=200)
 
 
 class FollowUserViewSet(APIView):
