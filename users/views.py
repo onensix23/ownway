@@ -74,7 +74,12 @@ class UserDataViewSet(APIView):
         if request.FILES:
             for k in request.FILES.keys():
                 if k.find('uploadFile') != -1:
+
+                    if userProfileObj.up_imagename != None or userProfileObj.up_imagename != '':
+                        FileUpload(s3_client).delete(userProfileObj.up_imagename)
+
                     cnt = cnt + 1
+                    
                     userProfileObj.up_imagename = FileUpload(s3_client).upload(request.FILES[k])
 
                     # 데이터베이스에 저장

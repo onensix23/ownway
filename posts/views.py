@@ -79,8 +79,9 @@ class DeleteImageViewSet(APIView):
 
 
 class PostViewSet(APIView):
+
     """
-       POST /savePost
+       POST /board
     """
     def post(self, request, **kwargs):
 
@@ -180,6 +181,7 @@ class PostViewSet(APIView):
         if request.data['v_b_text'] == '990622':
             b_id = request.data['b_id']
             queryset = Posts.objects.get(b_id=b_id)
+            
             queryset.delete()
 
         else:
@@ -196,6 +198,7 @@ class PostViewSet(APIView):
             edit_board1.save()
 
         return Response(res_data, status=200)
+
 
 
 class SearchPostViewSet(APIView):
@@ -577,11 +580,34 @@ class GetReDongViewSet(APIView):
         return Response(dong_list.data, status=200)
 
 
-# # RetrieveAPIView 하나만 불러오는 거
-class PostDetailViewSet(RetrieveAPIView):
-    lookup_field = 'b_id'
-    queryset = Posts.objects.all()
-    serializer_class = PostDetailSerializer
+# RetrieveAPIView 하나만 불러오는 거
+class PostDetailViewSet(APIView):
+    """
+        DELETE /board/{b_id}
+    """
+    def delete(self, request, b_id):
+        res_data = {
+            "success": True,
+            "error": None
+        }
+
+        try:    
+            photoObj = Photo.objects.filter(b_id=b_id)
+            k = PhotoSerializer(photoObj, many=True)
+
+            for odict in k.data:
+                for key, value in odict.items():
+                    if key == 'p_filename':
+                        FileUpload(s3_client).delete(value)
+                        # print(value)
+
+            queryset = Posts.objects.get(b_id=b_id)
+            queryset.delete()
+
+        except Exception as e: 
+            res_data['error'] = e
+        
+        return Response(res_data, status=200)
 
 
 class PostDetailUpdateViewSet(APIView):
@@ -619,11 +645,11 @@ class PostCommentDetailViewSet(APIView):
             postcommentObj = PostComment.objects.get(pc_id=pc_id)
             postcommentObj.delete()
 
-            return Response(res_data, status=200)
         except Exception as e: 
             res_data['error'] = e
             
-            return Response(res_data, status=200)
+        
+        return Response(res_data, status=200)
 
 
 class PostUpdateViewSet(UpdateAPIView):
