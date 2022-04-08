@@ -24,28 +24,55 @@ from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 
 from .serializers import *
 from .models import *
-from posts.models import Posts
+from posts.models import Posts, Photo
+from posts.serializers import PostSerializer
 
 class ResignUserViewSet(APIView):
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
         res_data = {
             "action" : "delete user",
-            "success" : True
+            "success" : True,
+            'error': '',
         }
 
         user_id = request.data['id']
         userObj = User.objects.get(username=user_id)
+        userProfileObj = UserProfile.objects.get(up_id=user_id)
 
         try:
-            userObj.delete()
-        except:
-            res_data['success'] = False
+            postObj = Posts.objects.filter(id=user_id)
+            k = PostSerializer(postObj, many=True)
 
+            for odict in k.data:
+                for key, value in odict.items():
+                    if key == 'photo_b_id':
+                        if len(value) > 0 :
+                            for modict in value:
+                                for p_key, p_val in modict.items():
+                                    print(p_key)
+                                    if p_key == 'p_filename':
+                                        print("2")
+                                        if p_val != None and p_val.find('https://') != -1:
+                                            print("3")
+                                            FileUpload(s3_client).delete(p_val)
+                                        break
+                            break
+
+            if userProfileObj.up_imagename != None :
+                FileUpload(s3_client).delete(userProfileObj.up_imagename)
+
+            userObj.delete()
+
+        except Exception as e: 
+            res_data['error'] = e
+
+        # print(res_data)
         return Response(res_data, status=200)
 
 
 class UserDataViewSet(APIView):
+
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
         print(request.data)
@@ -74,8 +101,8 @@ class UserDataViewSet(APIView):
         if request.FILES:
             for k in request.FILES.keys():
                 if k.find('uploadFile') != -1:
-
-                    if userProfileObj.up_imagename != None or userProfileObj.up_imagename != '':
+                    # print(userProfileObj.up_imagename)
+                    if userProfileObj.up_imagename != None:
                         FileUpload(s3_client).delete(userProfileObj.up_imagename)
 
                     cnt = cnt + 1
