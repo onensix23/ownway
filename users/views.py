@@ -35,8 +35,10 @@ class ResignUserViewSet(APIView):
             "success" : True,
             'error': '',
         }
-
         user_id = request.data['id']
+        print('user_id')
+        print(user_id)
+
         userObj = User.objects.get(username=user_id)
         userProfileObj = UserProfile.objects.get(up_id=user_id)
 
@@ -65,9 +67,11 @@ class ResignUserViewSet(APIView):
             userObj.delete()
 
         except Exception as e: 
+            print('e')
+            print(e)
             res_data['error'] = e
 
-        # print(res_data)
+        print(res_data)
         return Response(res_data, status=200)
 
 
