@@ -433,8 +433,7 @@ class FollowPostViewSet(APIView):
     """
     def post(self, request, **kwargs):
         user_id = request.data['userId']
-
-        get_queryset = Posts.objects.filter(id__in=Subquery(UserFollow.objects.values('uf_reading').filter(uf_reader=user_id)), b_del='N').order_by('-b_datetime')
+        get_queryset = Posts.objects.filter(id__in=Subquery(UserFollow.objects.values('uf_reader').filter(uf_reading=user_id)), b_del='N').order_by('-b_datetime')
         get_serializer_class = PostSerializer(get_queryset, many=True)
 
         return Response(get_serializer_class.data, status=200)

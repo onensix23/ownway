@@ -1,9 +1,12 @@
 import json, requests
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
+
 # 비밀번호 암호화 / 패스워드 체크(db에있는거와 일치성확인)
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import login, authenticate, logout
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -32,6 +35,7 @@ class ResignUserViewSet(APIView):
         print(user_id)
 
         userObj = User.objects.get(username=user_id)
+        
         userProfileObj = UserProfile.objects.get(up_id=user_id)
 
         try:
