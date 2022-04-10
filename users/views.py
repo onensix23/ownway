@@ -1,9 +1,5 @@
 import json, requests
 
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
-
 # 비밀번호 암호화 / 패스워드 체크(db에있는거와 일치성확인)
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import login, authenticate, logout
@@ -15,12 +11,8 @@ from rest_auth.registration.serializers import SocialLoginSerializer
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from snsP.storages import FileUpload, s3_client
 
-from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from snsP.storages import FileUpload, s3_client
 
 from .serializers import *
 from .models import *
