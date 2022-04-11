@@ -6,6 +6,7 @@ from django.db.models import Q,Subquery
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, DestroyAPIView
+from django.http import HttpResponse
 
 class ServiceViewSet(APIView):
     def get(self, request, **kwargs):
@@ -19,12 +20,14 @@ class ServiceViewSet(APIView):
 
 class PrivacyPolicyViewSet(APIView):
     def get(self, request, **kwargs):
+        
         res_data = {
             "success": True,
             "error": None
         }
 
-        return Response(res_data, status=200)
+        return render(request, 'PrivacyPolicy.html')
+        # return Response(res_data, status=200)
 
 
 class HowToViewSet(APIView):

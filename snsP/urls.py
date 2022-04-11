@@ -28,7 +28,7 @@ import terms.views as termsview
 
 urlpatterns = [
     # path('admin', admin.site.urls),
-    # path('user', include('users.urls')),
+    path('terms/privacypolicy', termsview.PrivacyPolicyViewSet.as_view(), name='privacypolicy'), 
     #
     # path('search', include('search.urls')),
     # path('myPage', include('myPage.urls')),
