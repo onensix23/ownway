@@ -29,6 +29,7 @@ import terms.views as termsview
 urlpatterns = [
     # path('admin', admin.site.urls),
     path('terms/privacypolicy', termsview.PrivacyPolicyViewSet.as_view(), name='privacypolicy'), 
+    path('terms/termsofservice', termsview.ServiceViewSet.as_view(), name='termsOfService'),
     #
     # path('search', include('search.urls')),
     # path('myPage', include('myPage.urls')),
@@ -89,8 +90,8 @@ urlpatterns = [
     path('api/'+ms.API_SHA256_KEY+'getReDong', postview.GetReDongViewSet.as_view(), name='getReDong'),
 
     # terms
-    path('api/'+ms.API_SHA256_KEY+'terms/privacypolicy', termsview.PrivacyPolicyViewSet.as_view(), name='privacypolicy'), 
-    path('api/'+ms.API_SHA256_KEY+'terms/service', termsview.ServiceViewSet.as_view(), name='termsOfService'), 
+    # path('api/'+ms.API_SHA256_KEY+'terms/privacypolicy', termsview.PrivacyPolicyViewSet.as_view(), name='privacypolicy'), 
+    # path('api/'+ms.API_SHA256_KEY+'terms/service', termsview.ServiceViewSet.as_view(), name='termsOfService'), 
 
     path('api/'+ms.API_SHA256_KEY+'terms/howtodeletedata', termsview.HowToViewSet.as_view(), name='howtodeletedata'), 
 

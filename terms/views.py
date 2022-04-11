@@ -15,7 +15,8 @@ class ServiceViewSet(APIView):
             "error": None
         }
         
-        return Response(res_data, status=200)
+        return render(request, 'Termsofservice.html')
+        # return Response(res_data, status=200)
 
 
 class PrivacyPolicyViewSet(APIView):
