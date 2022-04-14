@@ -41,7 +41,7 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 
 class PostCommentSerializer(serializers.ModelSerializer):
-    # id = UserSerializer(read_only=True)
+    id = UserSerializer(read_only=True)
     class Meta:
         model = PostComment
         fields = "__all__"
