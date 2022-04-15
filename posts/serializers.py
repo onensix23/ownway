@@ -4,7 +4,7 @@ from users.serializers import UserSerializer2
 from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
-
+    # userprofile_id = UserProfileSerializer2(read_only=True)
     class Meta:
         model = User
         fields = ('id',
@@ -42,20 +42,20 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 
 class PostCommentSerializer(serializers.ModelSerializer):
-    userprofile_id = UserSerializer2(read_only=True)
+    id = UserSerializer2(read_only=True)
+
     class Meta:
         model = PostComment
-        fields = "__all__"
-        # fields = ('pc_id',
-        #           'b_id',
-        #           'id',
-        #           'pc_comment',
-        #           'pc_datetime',
-        #           'pc_del'
-        #           )
+        # fields = "__all__"
+        fields = ('pc_id',
+                  'b_id',
+                  'id',
+                  'pc_comment',
+                  'pc_datetime',
+                  'pc_del'
+                  )
 
 class SavePostSerializer(serializers.ModelSerializer):
-    # id = UserSerializer(read_only=True)
     class Meta:
         model = SavePost
         # fields = "__all__"

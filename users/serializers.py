@@ -13,6 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     up_id = UserSerializer(read_only=True)
+
     class Meta:
         model = UserProfile
         fields = (
@@ -22,14 +23,27 @@ class UserProfileSerializer(serializers.ModelSerializer):
                   'up_comment'
                   )
 
+
+class UserProfileSerializer2(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = (
+                  'id',
+                  'up_id',
+                  'up_imagename',
+                  'up_comment'
+        )
+        
 class UserSerializer2(serializers.ModelSerializer):
-    userprofile_id = UserProfileSerializer(read_only=True)
+    userprofile_id = UserProfileSerializer2(read_only=True,many=True)
+    
     class Meta:
         model = User
         fields = ('id',
                   'username',
                   'first_name',
-                  'email')
+                  'email',
+                  'userprofile_id')
 
 
 class UserFollowerSerializer(serializers.ModelSerializer):

@@ -122,48 +122,71 @@ class SocialLoginViewSet(APIView):
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
         request_d = request.data  # {"userId":"rohhj622","userPassword":"shgsuwls1!"}
-        if request_d['socialType'] == 'login':
-            url = 'https://graph.facebook.com/v3.0/me'
-            params =  {
-                'fields': ','.join([
-                    'id',
-                    'name',
-                    'email',
-                    # 'first_name',
-                    # 'last_name',
-                    # 'picture',
-                ]),
-                # 'fields': 'id,name,first_name,last_name,picture',
-                'access_token': request_d['data']['accessToken']
-            }
-            response = requests.get(url, params)
-            response_dict = response.json()
-            # print(response_dict)
+        res_data = {
+            'exist_user' : True,
+        }
 
-            facebook_user_id = response_dict['id']
-            facebook_name = response_dict['name']
+        if request_d['socialType'] == 'facebook':
+            if request_d['type'] == 'login':
+                url = 'https://graph.facebook.com/v3.0/me'
+                params =  {
+                    'fields': ','.join([
+                        'id',
+                        'name',
+                        'email',
+                        # 'first_name',
+                        # 'last_name',
+                        # 'picture',
+                    ]),
+                    # 'fields': 'id,name,first_name,last_name,picture',
+                    'access_token': request_d['data']['accessToken']
+                }
+                response = requests.get(url, params)
+                response_dict = response.json()
+                # print(response_dict)
 
-            if 'email' in response_dict.keys():
-                facebook_email = response_dict['email']
-            else:
-                facebook_email = ''
+                facebook_user_id = response_dict['id']
+                facebook_name = response_dict['name']
 
-            user, user_created = User.objects.get_or_create(username=facebook_user_id)
+                if 'email' in response_dict.keys():
+                    facebook_email = response_dict['email']
+                else:
+                    facebook_email = ''
 
-            res_data = {
-                'exist_user' : True,
-            }
+                user, user_created = User.objects.get_or_create(username=facebook_user_id)
 
-            # 유저가 새로 생성되었다면
-            if user_created:
-                user.first_name = facebook_name
-                user.email = facebook_email
-                user.save()
+                # 유저가 새로 생성되었다면
+                if user_created:
+                    user.first_name = facebook_name
+                    user.email = facebook_email
+                    user.save()
 
-                UserProfile.objects.create(up_id=user)
-                res_data['exist_user']=False
+                    UserProfile.objects.create(up_id=user)
+                    res_data['exist_user']=False
 
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        else:
+            if request_d['type'] == 'login':
+                google_user_id = request_d['data']['user']['id']
+                google_name = request_d['data']['user']['name']
+
+                if 'email' in request_d['data']['user'].keys():
+                    google_email = request_d['data']['user']['email']
+                else:
+                    google_email = ''
+
+                user, user_created = User.objects.get_or_create(username=google_user_id)
+
+                # 유저가 새로 생성되었다면
+                if user_created:
+                    user.first_name = google_name
+                    user.email = google_email
+                    user.save()
+
+                    UserProfile.objects.create(up_id=user)
+                    res_data['exist_user']=False
+
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
         return Response(res_data, status=200)
 
