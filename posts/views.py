@@ -33,6 +33,7 @@ class UploadImageViewSet(APIView):
             for k in request.FILES.keys():
                 if k.find('uploadFile') != -1:
                     cnt = cnt + 1
+                    print(request.FILES[k])
 
                     photo = Photo()
                     photo.b_id = postObj
