@@ -27,12 +27,13 @@ import terms.views as termsview
 
 
 urlpatterns = [
+    path('', include('pages.urls')),
+
     # path('admin', admin.site.urls),
     path('terms/privacypolicy', termsview.PrivacyPolicyViewSet.as_view(), name='privacypolicy'), 
     path('terms/termsofservice', termsview.ServiceViewSet.as_view(), name='termsOfService'),
     #
     # path('search', include('search.urls')),
-    # path('myPage', include('myPage.urls')),
 
     # board
     path('api/'+ms.API_SHA256_KEY+'board', postview.PostViewSet.as_view(), name='boardList'),
