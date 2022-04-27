@@ -85,7 +85,7 @@ class PostSerializer(serializers.ModelSerializer):
     photo_b_id = PhotoSerializer(read_only=True, many=True)
     postcomment_b_id = PostCommentSerializer(read_only=True, many=True)
     postplace_b_id = PostPlaceSerializer(read_only=True, many=True)
-    id = UserSerializer(read_only=True)
+    id = UserSerializer2(read_only=True)
     
     class Meta:
         model = Posts
@@ -94,7 +94,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 class PostDetailSerializer(serializers.ModelSerializer):
     # p_id = PhotoSerializer(read_only=True)
-    id = UserSerializer()
+    id = UserSerializer2()
 
     class Meta:
         model = Posts
