@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from snsP.my_settings import *
 from boto3 import *
-from PIL import Image, ExifTags   # 이미지 리사이징에 필요한 Pillow
+from PIL import Image, ExifTags, ImageOps   # 이미지 리사이징에 필요한 Pillow
 from io  import BytesIO # Pillow로 리사이징한 이미지를 다시 Bytes화
 from storages.backends.s3boto3 import S3Boto3Storage
 
@@ -52,19 +52,20 @@ class MyS3Client:
             extra_args = { 'ContentType' : file.content_type }
 
             im = Image.open(file)
-            im = im.resize((400, 400))
+            im = ImageOps.exif_transpose(im)
+            # im = im.resize((1920, 1920))
 
-            for orientation in ExifTags.TAGS.keys():
-                if ExifTags.TAGS[orientation]=='Orientation':
-                    break
+            # for orientation in ExifTags.TAGS.keys():
+            #     if ExifTags.TAGS[orientation]=='Orientation':
+            #         break
 
-                temp = im.getexif()[0x0112]
-                if temp == 3:
-                    im=im.rotate(180, expand=True)
-                elif temp == 6:
-                    im=im.rotate(270, expand=True)
-                elif temp == 8:
-                    im=im.rotate(90, expand=True)
+            #     temp = im.getexif()[0x0112]
+            #     if temp == 3:
+            #         im=im.rotate(180, expand=True)
+            #     elif temp == 6:
+            #         im=im.rotate(270, expand=True)
+            #     elif temp == 8:
+                    # im=im.rotate(90, expand=True)
                     
             buffer = BytesIO()
             im.save(buffer, "JPEG")
