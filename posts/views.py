@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from snsP.storages import FileUpload, s3_client
 from .serializers import *
+from django.core import serializers
 from .models import *
 from users.models import UserFollow
 import json
@@ -27,13 +28,16 @@ class UploadImageViewSet(APIView):
 
         postObj = Posts.objects.get(b_id=request.data['b_id'])
 
+        postObj.b_update_datetime = datetime.now()
+        postObj.save()
+
         cnt = 0
 
         if request.FILES:
             for k in request.FILES.keys():
                 if k.find('uploadFile') != -1:
                     cnt = cnt + 1
-                    print(request.FILES[k])
+                    # print(request.FILES[k])
 
                     photo = Photo()
                     photo.b_id = postObj
@@ -64,7 +68,7 @@ class DeleteImageViewSet(APIView):
         p_id=request.data['p_id']
         p_filename = request.data['p_filename']
         
-        print(request.data)
+        # print(request.data)
 
         photoObj = Photo.objects.get(b_id=b_id,p_id=p_id)
 
@@ -156,18 +160,16 @@ class PostViewSet(APIView):
     """
     def get(self, request, **kwargs):
         if(len(request.GET) > 0): #detail
-            # print('1')
             get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('postplace_b_id').prefetch_related('savepost_b_id').filter(Q(
                 Q(b_id=request.GET['b_id'])
-            )).select_related('id')
+            )).select_related('id') # .order_by('-photo_b_id.p_datetime').order_by('-postplace_b_id.pp_datetime').order_by('-postcomment_b_id.pc_datetime')
             get_serializer_class = PostSerializer(get_queryset, many=True)
 
         else:
-            # print('2')
-            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_datetime')
-
+            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime')
             get_serializer_class = PostSerializer(get_queryset, many=True)
 
+        # return Response(get_serializer_class2.data, status=200)
         return Response(get_serializer_class.data, status=200)
 
     """
@@ -314,8 +316,8 @@ class LikePostMpViewSet(APIView):
             user_id = request.data['userId']
             get_queryset = LikePost.objects.filter(id=user_id, lp_del='N')
 
-            print(get_queryset)
-            print(get_queryset.values_list())
+            # print(get_queryset)
+            # print(get_queryset.values_list())
 
             lp_id_list = []
 
@@ -325,7 +327,7 @@ class LikePostMpViewSet(APIView):
             res_queryset = Posts.objects.filter(b_id__in=lp_id_list)
 
             get_serializer_class = PostDetailSerializer(res_queryset, many=True)
-            print(get_serializer_class.data)
+            # print(get_serializer_class.data)
             return Response(get_serializer_class.data, status=200)
             # return  Response({"res": "hi"}, status=200)
 
@@ -361,6 +363,11 @@ class PostCommentViewSet(APIView):
 
         new_Comment = PostComment(id=userObj, b_id=postId, pc_comment=pc_comment)
         new_Comment.save()  # insert
+
+        postId.b_update_datetime = datetime.now()
+        postId.save()
+
+        # postId.b_datetime = 
 
         res_data = {
             "success": True,
@@ -434,7 +441,7 @@ class FollowPostViewSet(APIView):
     """
     def post(self, request, **kwargs):
         user_id = request.data['userId']
-        get_queryset = Posts.objects.filter(id__in=Subquery(UserFollow.objects.values('uf_reader').filter(uf_reading=user_id)), b_del='N').order_by('-b_datetime')
+        get_queryset = Posts.objects.filter(id__in=Subquery(UserFollow.objects.values('uf_reader').filter(uf_reading=user_id)), b_del='N').order_by('-b_update_datetime')
         # print(Posts.objects.filter(id__in=Subquery(UserFollow.objects.values('uf_reader').filter(uf_reading=user_id)), b_del='N').order_by('-b_datetime'))
         get_serializer_class = PostSerializer(get_queryset, many=True)
 
@@ -450,7 +457,7 @@ class SavePostViewSet(APIView):
     def get(self, request, **kwargs):
         user_id = request.GET['userId']
 
-        get_queryset = Posts.objects.filter(b_id__in=Subquery(SavePost.objects.values('b_id').filter(id=user_id))).prefetch_related('photo_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_datetime')
+        get_queryset = Posts.objects.filter(b_id__in=Subquery(SavePost.objects.values('b_id').filter(id=user_id))).prefetch_related('photo_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime')
         get_serializer_class = PostSerializer(get_queryset, many=True)
 
         return Response(get_serializer_class.data, status=200)

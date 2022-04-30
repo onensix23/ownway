@@ -55,6 +55,17 @@ class PostCommentSerializer(serializers.ModelSerializer):
                   'pc_del'
                   )
 
+
+class PostCommentSerializer2(serializers.ModelSerializer):
+    # id = UserSerializer2(read_only=True)
+
+    class Meta:
+        model = PostComment
+        # fields = "__all__"
+        fields = (
+                  'b_id',
+                  )
+
 class SavePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavePost

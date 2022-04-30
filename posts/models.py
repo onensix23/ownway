@@ -17,6 +17,7 @@ class Posts(models.Model):
     b_title = models.CharField(max_length=15, null=True) 
     b_place_id = models.TextField(null=True)
     b_datetime = models.DateTimeField(default=datetime.now, null=False)
+    b_update_datetime = models.DateTimeField(default=datetime.now, null=False)
     b_del = models.CharField(max_length=1, null=False, default='N')
 
     def __str__(self):
