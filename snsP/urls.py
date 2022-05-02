@@ -53,7 +53,6 @@ urlpatterns = [
     path('api/'+ms.API_SHA256_KEY+'resignUser', userview.ResignUserViewSet.as_view(), name='resignUser'),  
     path('api/'+ms.API_SHA256_KEY+'userData', userview.UserDataViewSet.as_view(), name='userData'), 
 
-
     path('api/'+ms.API_SHA256_KEY+'userProfile', userview.UserProfileViewSet.as_view(), name='userProfile'),
     path('api/'+ms.API_SHA256_KEY+'followUser', userview.FollowUserViewSet.as_view(), name='followUser'),
 
@@ -80,15 +79,15 @@ urlpatterns = [
     # followPage
     path('api/'+ms.API_SHA256_KEY+'followPost', postview.FollowPostViewSet.as_view(), name='followPost'),
 
-    # getAddress
-    path('api/'+ms.API_SHA256_KEY+'getSido', postview.GetSidoViewSet.as_view(), name='getSido'),
-    path('api/'+ms.API_SHA256_KEY+'getSigungu', postview.GetSigunguViewSet.as_view(), name='getSigungu'),
-    path('api/'+ms.API_SHA256_KEY+'getDong', postview.GetDongViewSet.as_view(), name='getDong'),
+    # # getAddress
+    # path('api/'+ms.API_SHA256_KEY+'getSido', postview.GetSidoViewSet.as_view(), name='getSido'),
+    # path('api/'+ms.API_SHA256_KEY+'getSigungu', postview.GetSigunguViewSet.as_view(), name='getSigungu'),
+    # path('api/'+ms.API_SHA256_KEY+'getDong', postview.GetDongViewSet.as_view(), name='getDong'),
 
-    # getReverseAddress
-    path('api/'+ms.API_SHA256_KEY+'getReSido', postview.GetReSidoViewSet.as_view(), name='getReSido'),
-    path('api/'+ms.API_SHA256_KEY+'getReSigungu', postview.GetReSigunguViewSet.as_view(), name='getReSigungu'),
-    path('api/'+ms.API_SHA256_KEY+'getReDong', postview.GetReDongViewSet.as_view(), name='getReDong'),
+    # # getReverseAddress
+    # path('api/'+ms.API_SHA256_KEY+'getReSido', postview.GetReSidoViewSet.as_view(), name='getReSido'),
+    # path('api/'+ms.API_SHA256_KEY+'getReSigungu', postview.GetReSigunguViewSet.as_view(), name='getReSigungu'),
+    # path('api/'+ms.API_SHA256_KEY+'getReDong', postview.GetReDongViewSet.as_view(), name='getReDong'),
 
     # terms
     # path('api/'+ms.API_SHA256_KEY+'terms/privacypolicy', termsview.PrivacyPolicyViewSet.as_view(), name='privacypolicy'), 

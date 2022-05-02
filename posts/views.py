@@ -364,10 +364,10 @@ class PostCommentViewSet(APIView):
         new_Comment = PostComment(id=userObj, b_id=postId, pc_comment=pc_comment)
         new_Comment.save()  # insert
 
-        postId.b_update_datetime = datetime.now()
-        postId.save()
-
-        # postId.b_datetime = 
+        if postId.id == user_id:
+            postId.b_update_datetime = datetime.now()
+            postId.save()
+            
 
         res_data = {
             "success": True,

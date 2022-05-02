@@ -192,6 +192,23 @@ class SocialLoginViewSet(APIView):
 
 
 class FollowUserViewSet(APIView):
+
+    def get(self, request, **kwargs):
+        user_id = request.GET.get('user_id')
+        type = request.GET.get('type')
+
+        if type == 'reading':
+            temp = UserFollow.objects.filter(uf_reading=user_id).values('uf_reader')
+            readingObj = User.objects.filter(username__in=temp) # 따라가는 사람
+            serialize_data = UserSerializer2(readingObj, many=True)
+
+        elif type == 'reader':
+            temp = UserFollow.objects.filter(uf_reader=user_id).values('uf_reading')
+            readerObj = User.objects.filter(username__in=temp) #따라오게 하는 사람
+            serialize_data = UserSerializer2(readerObj, many=True)
+
+        return Response(serialize_data.data, status=200)
+
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
 
@@ -205,8 +222,8 @@ class FollowUserViewSet(APIView):
         user_id = request.data['userId']
         page_host_id = request.data['myPageHost']
         
-        print(user_id)
-        print(page_host_id)
+        # print(user_id)
+        # print(page_host_id)
 
         readerObj = User.objects.get(username=page_host_id) # 따라오게 하는 사람
         readingObj = User.objects.get(username=user_id) # 따라가는 사람
