@@ -368,6 +368,7 @@ class PostCommentViewSet(APIView):
             postId.b_update_datetime = datetime.now()
             postId.save() 
 
+
         res_data = {
             "success": True,
             "error": None
