@@ -36,6 +36,23 @@ class UserProfileSerializer2(serializers.ModelSerializer):
         
 class UserSerializer2(serializers.ModelSerializer):
     userprofile_id = UserProfileSerializer2(read_only=True,many=True)
+
+    class Meta:
+        model = User
+        fields = ('id',
+                  'username',
+                  'first_name',
+                  'email',
+                  'userprofile_id', 
+        )
+        
+
+class UserSerializer3(serializers.ModelSerializer):
+    userprofile_id = UserProfileSerializer2(read_only=True,many=True)
+    status = serializers.SerializerMethodField('set_status')
+
+    def set_status(self, foo):
+        return 'follow'
     
     class Meta:
         model = User
@@ -43,7 +60,10 @@ class UserSerializer2(serializers.ModelSerializer):
                   'username',
                   'first_name',
                   'email',
-                  'userprofile_id')
+                  'userprofile_id', 
+                  'status')
+
+
 
 
 class UserFollowerSerializer(serializers.ModelSerializer):
