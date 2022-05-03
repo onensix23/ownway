@@ -200,12 +200,12 @@ class FollowUserViewSet(APIView):
         if type == 'reading':
             temp = UserFollow.objects.filter(uf_reading=user_id).values('uf_reader')
             readingObj = User.objects.filter(username__in=temp) # 따라가는 사람
-            serialize_data = UserSerializer2(readingObj, many=True)
+            serialize_data = UserSerializer3(readingObj, many=True)
 
         elif type == 'reader':
             temp = UserFollow.objects.filter(uf_reader=user_id).values('uf_reading')
             readerObj = User.objects.filter(username__in=temp) #따라오게 하는 사람
-            serialize_data = UserSerializer2(readerObj, many=True)
+            serialize_data = UserSerializer3(readerObj, many=True)
 
         return Response(serialize_data.data, status=200)
 
