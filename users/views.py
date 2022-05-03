@@ -236,8 +236,15 @@ class FollowUserViewSet(APIView):
                 res_data["is_following"] = False
             else:
                 res_data["count"] = 0
-        else:
+        elif request.data['type'] == '1':
             userFollowObj, isCreated =  UserFollow.objects.get_or_create(uf_reader=readerObj, uf_reading=readingObj)
+
+            if isCreated == False: # 삭제 해야 됨
+                res_data['action'] = 'delete'
+                userFollowObj.delete()
+                
+        elif request.data['type'] == '2':
+            userFollowObj, isCreated =  UserFollow.objects.get_or_create(uf_reader=readingObj, uf_reading=readerObj)
 
             if isCreated == False: # 삭제 해야 됨
                 res_data['action'] = 'delete'
