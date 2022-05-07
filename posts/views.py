@@ -357,16 +357,25 @@ class PostCommentViewSet(APIView):
         user_id = request.data['userId']
         b_id = request.data['b_id']
         pc_comment = request.data['pc_comment']
+        type = request.data['type']
 
         userObj = User.objects.get(username=user_id)
-        postId = Posts.objects.get(b_id=b_id)
+        postObj = Posts.objects.get(b_id=b_id)
 
-        new_Comment = PostComment(id=userObj, b_id=postId, pc_comment=pc_comment)
-        new_Comment.save()  # insert
+        if type == 'c' :
+            new_Comment = PostComment(id=userObj, b_id=postObj, pc_comment=pc_comment)
+            new_Comment.save()  # insert
 
-        if str(postId.id) == str(user_id):
-            postId.b_update_datetime = datetime.now()
-            postId.save() 
+        elif type == 'u':
+            pc_id = request.data['pc_id']
+            pcObj = PostComment.objects.get(pc_id=pc_id)
+
+            pcObj.pc_comment = pc_comment
+            pcObj.save()
+
+        if str(postObj.id) == str(user_id):
+            postObj.b_update_datetime = datetime.now()
+            postObj.save() 
 
 
         res_data = {
