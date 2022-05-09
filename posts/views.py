@@ -203,7 +203,6 @@ class PostViewSet(APIView):
         return Response(res_data, status=200)
 
 
-
 class SearchPostViewSet(APIView):
     """
        POST /searchPost
@@ -373,10 +372,9 @@ class PostCommentViewSet(APIView):
             pcObj.pc_comment = pc_comment
             pcObj.save()
 
-        if str(postObj.id) == str(user_id):
-            postObj.b_update_datetime = datetime.now()
-            postObj.save() 
-
+        # if str(postObj.id) == str(user_id):
+        #     postObj.b_update_datetime = datetime.now()
+        #     postObj.save() 
 
         res_data = {
             "success": True,
