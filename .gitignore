@@ -14,6 +14,8 @@ settings.py
 my_settings.py
 wsgi.py
 
+ownway-firebase-adminsdk-servicekey.json
+
 # If your build process includes running collectstatic, then you probably don't need or want to include static/
 # in your Git repository. Update and uncomment the following line accordingly.
 # <django-project-name>/static/
@@ -144,6 +146,7 @@ pythonenv*
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
 
 # Pyre type checker
 .pyre/

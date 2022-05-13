@@ -10,8 +10,10 @@ from snsP.storages import FileUpload, s3_client
 from .serializers import *
 from django.core import serializers
 from .models import *
-from users.models import UserFollow
-import json
+from users.models import UserFollow, UserFCMToken
+from notis.views import *
+import threading
+
 
 
 class UploadImageViewSet(APIView):
@@ -330,6 +332,7 @@ class LikePostMpViewSet(APIView):
             return Response(get_serializer_class.data, status=200)
             # return  Response({"res": "hi"}, status=200)
 
+
 class PostCommentViewSet(APIView):
     """
         GET /postcomment/
@@ -357,13 +360,28 @@ class PostCommentViewSet(APIView):
         b_id = request.data['b_id']
         pc_comment = request.data['pc_comment']
         type = request.data['type']
+        ufcm_device_id = request.data['device_id']
 
         userObj = User.objects.get(username=user_id)
         postObj = Posts.objects.get(b_id=b_id)
 
+        # noti_receiver = UserFCMToken.objects.get(ufcm_user_id=User.objects.get(username=postObj.id).username, ufcm_device_id=ufcm_device_id) # 글 작성자
+
+
         if type == 'c' :
             new_Comment = PostComment(id=userObj, b_id=postObj, pc_comment=pc_comment)
             new_Comment.save()  # insert
+                
+            if str(postObj.id) == str(user_id):
+                postObj.b_update_datetime = datetime.now()
+                postObj.save()
+                # 내가 내 글에 글 씀 -> 구독자한테 알림 가야됨ㄷ
+                t = threading.Thread(target=send_to_reader_about_new_comment(), args=('pc_comment_create',True,request.data, userObj, postObj))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
+                t.start()
+                    
+            else: # 내 글은 아닌데 누군가의 글에 답글이 달린 상태겠죠?
+                t = threading.Thread(target=send_to_reader_about_new_comment(), args=('pc_comment_create',False,request.data, userObj, postObj))
+                t.start()
 
         elif type == 'u':
             pc_id = request.data['pc_id']
@@ -371,16 +389,14 @@ class PostCommentViewSet(APIView):
 
             pcObj.pc_comment = pc_comment
             pcObj.save()
-
-        # if str(postObj.id) == str(user_id):
-        #     postObj.b_update_datetime = datetime.now()
-        #     postObj.save() 
+ 
 
         res_data = {
             "success": True,
             "error": None
         }
-
+        
+        
         return Response(res_data, status=200)
 
 

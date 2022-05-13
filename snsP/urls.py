@@ -49,13 +49,21 @@ urlpatterns = [
 
     # social login 
     path('api/'+ms.API_SHA256_KEY+'socialLogin', userview.SocialLoginViewSet.as_view(), name='socialLogin'), 
+
+    #logout
     path('api/'+ms.API_SHA256_KEY+'logout', userview.LogoutUserViewSet.as_view(), name='userLogout'), 
+
+    # resign 탈퇴 
     path('api/'+ms.API_SHA256_KEY+'resignUser', userview.ResignUserViewSet.as_view(), name='resignUser'),  
     path('api/'+ms.API_SHA256_KEY+'userData', userview.UserDataViewSet.as_view(), name='userData'), 
 
+    # FCM Token 관리
+    path('api/'+ms.API_SHA256_KEY+'userFCMToken', userview.UserFCMTokenViewSet.as_view(), name='userFCMToken'),
+
     path('api/'+ms.API_SHA256_KEY+'userProfile', userview.UserProfileViewSet.as_view(), name='userProfile'),
     path('api/'+ms.API_SHA256_KEY+'followUser', userview.FollowUserViewSet.as_view(), name='followUser'),
-
+    
+    
     # path('api/'+ms.API_SHA256_KEY+'register', userview.ResigterUserViewSet.as_view(), name='userRegister'),  # post
     # path('api/'+ms.API_SHA256_KEY+'login', userview.UserViewSet.as_view(), name='userLogin'),  # post
 

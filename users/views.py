@@ -399,6 +399,56 @@ class ResigterUserViewSet(APIView):
         return Response(res_data, status=200)
 
 
+class UserFCMTokenViewSet(APIView):
+
+    def post(self, request, **kwargs):
+        request_d = request.data
+
+        ufcm_user_id = request_d['userId']
+        ufcm_token = request_d['fcmToken']
+        ufcm_device_id = request_d['deviceId']
+
+        userObj = User.objects.get(username=ufcm_user_id)
+
+        res_data = {
+            'success': False,
+            'error': None,
+            'action' : '',
+        }
+
+        try:
+            userFCMTokenObj, isCreated = UserFCMToken.objects.get_or_create(ufcm_user_id=userObj, ufcm_device_id=ufcm_device_id)
+
+            if isCreated:
+                userFCMTokenObj.ufcm_token = ufcm_token
+                userFCMTokenObj.save()
+
+                res_data['action'] = 'first create token'
+
+            else:
+                if str(userFCMTokenObj.ufcm_token) != str(ufcm_token):
+
+                    userFCMTokenObj.ufcm_token = ufcm_token
+
+                    userFCMTokenObj.ufcm_token_add = datetime.now()
+                    userFCMTokenObj.ufcm_token_check = datetime.now()
+
+                    userFCMTokenObj.save()
+
+                    res_data['action'] = 'token refresh'
+
+                else:
+                    userFCMTokenObj.ufcm_token_check = datetime.now()
+                    res_data['action'] = 'noting'
+
+            res_data['success'] = True
+
+        except Exception as e:
+            res_data['error'] = e
+            
+        return Response(res_data, status=200)
+
+
 #Login
 class LogoutUserViewSet(APIView):
     """
@@ -408,13 +458,28 @@ class LogoutUserViewSet(APIView):
     """
     @method_decorator(csrf_exempt)
     def post(self, request):
+
         res_data = {
             'success': False,
+            'error': None,
         }
 
-        logout(request)
-        # response.delete_cookie('user_location')
-        res_data['success'] = True
+        try:
+            userObj = User.objects.get(username=request.data['userId'])
+            userFCMObj = UserFCMToken.objects.get(ufcm_user_id=userObj)
+            
+            userFCMObj.ufcm_token = None
+            
+            userFCMObj.save()
+
+            logout(request)
+
+            res_data['success'] = True
+
+        except Exception as e:
+            print(e)
+            res_data['error'] = e
+
         return Response(res_data, status=200)
 
 
