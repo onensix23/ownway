@@ -1,6 +1,6 @@
 import rest_framework.serializers as serializers
 from django.contrib.auth.models import User
-from .models import UserProfile, UserFollow
+from .models import *
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,8 +64,6 @@ class UserSerializer3(serializers.ModelSerializer):
                   'status')
 
 
-
-
 class UserFollowerSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserFollow
@@ -74,5 +72,25 @@ class UserFollowerSerializer(serializers.ModelSerializer):
                   'uf_reader',
                   'uf_reading',
                   )
+
+
+class UserFCMTokenSerializer(serializers.ModelSerializer):
+    ufcm_user_id = UserSerializer2(read_only=True)
+
+    class Meta:
+        model = UserFCMToken
+        fields = (
+                  'ufcm_id',
+                  'ufcm_user_id',
+                  'ufcm_device_id',
+                  'ufcm_token',
+                  'ufcm_token_check',
+                  'ufcm_token_add',
+                  'ufcm_sp_c',
+                  'ufcm_fu_c',
+                  'ufcm_p_c',
+                  'ufcm_p_u',
+                  )
+
 
 

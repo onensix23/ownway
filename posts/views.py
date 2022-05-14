@@ -375,12 +375,12 @@ class PostCommentViewSet(APIView):
             if str(postObj.id) == str(user_id):
                 postObj.b_update_datetime = datetime.now()
                 postObj.save()
-                # 내가 내 글에 글 씀 -> 구독자한테 알림 가야됨ㄷ
-                t = threading.Thread(target=send_to_reader_about_new_comment(), args=('pc_comment_create',True,request.data, userObj, postObj))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
+                # 내가 내 글에 글 씀 -> 구독자한테 알림 가야됨
+                t = threading.Thread(target=send_to_reader_about_new_comment('pc_c', True, request.data, userObj, postObj, pc_comment))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
                 t.start()
                     
             else: # 내 글은 아닌데 누군가의 글에 답글이 달린 상태겠죠?
-                t = threading.Thread(target=send_to_reader_about_new_comment(), args=('pc_comment_create',False,request.data, userObj, postObj))
+                t = threading.Thread(target=send_to_reader_about_new_comment('pc_c', False, request.data, userObj, postObj, pc_comment))
                 t.start()
 
         elif type == 'u':
@@ -418,6 +418,7 @@ class PostPlaceViewSet(APIView):
 
         return Response(res_data, status=200)
 
+
 class SavePostPlaceViewSet(APIView):
     """
         POST /postPlcae/
@@ -440,6 +441,12 @@ class SavePostPlaceViewSet(APIView):
         try:
             new_postplace = PostPlace(id=userObj, b_id=postId, pp_place_id=pp_place_id)
             new_postplace.save()  # insert
+
+            if str(user_id) != str(postId.id):
+                # 내가 아닌 누군가가 글 구독!
+                t = threading.Thread(target=send_to_user_about_who_saved_post('pp_c', userObj, postId))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
+                t.start()
+                    
         except:
             res_data["success"]=False
 
@@ -505,10 +512,17 @@ class SavePostViewSet(APIView):
                 res_data['count'] = query_count
         else:
             savePostObj, isCreated =  SavePost.objects.get_or_create(id=userObj, b_id=postObj)
-
+            
             if isCreated == False: # 삭제 해야 됨
                 res_data['action'] = 'delete'
                 savePostObj.delete()
+            elif isCreated == True:
+                print(str(user_id))
+                print(str(postObj.id))
+                if str(user_id) != str(postObj.id):
+                    # 내가 아닌 누군가가 글 구독!
+                    t = threading.Thread(target=send_to_user_about_who_saved_post('sp_c', userObj, postObj))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
+                    t.start()
 
         return Response(res_data, status=200)
 

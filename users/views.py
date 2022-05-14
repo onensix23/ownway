@@ -466,7 +466,7 @@ class LogoutUserViewSet(APIView):
 
         try:
             userObj = User.objects.get(username=request.data['userId'])
-            userFCMObj = UserFCMToken.objects.get(ufcm_user_id=userObj)
+            userFCMObj = UserFCMToken.objects.get(ufcm_user_id=userObj, ufcm_device_id=request.data['deviceId'])
             
             userFCMObj.ufcm_token = None
             
