@@ -517,8 +517,6 @@ class SavePostViewSet(APIView):
                 res_data['action'] = 'delete'
                 savePostObj.delete()
             elif isCreated == True:
-                print(str(user_id))
-                print(str(postObj.id))
                 if str(user_id) != str(postObj.id):
                     # 내가 아닌 누군가가 글 구독!
                     t = threading.Thread(target=send_to_user_about_who_saved_post('sp_c', userObj, postObj))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
