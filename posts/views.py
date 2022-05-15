@@ -29,7 +29,7 @@ class UploadImageViewSet(APIView):
         }
 
         postObj = Posts.objects.get(b_id=request.data['b_id'])
-
+        userObj = User.objects.get(username=postObj.id)
         postObj.b_update_datetime = datetime.now()
         postObj.save()
 
@@ -50,6 +50,9 @@ class UploadImageViewSet(APIView):
                     photo.save()
 
                     res_data[k] = request.FILES[k].name
+                    
+                    t = threading.Thread(target=send_to_user_about_who_add_image('im_c', True, userObj, postObj))
+                    t.start()
                     
         res_data['image_cnt'] = cnt
         return Response(res_data, status=200)
@@ -442,9 +445,8 @@ class SavePostPlaceViewSet(APIView):
             new_postplace = PostPlace(id=userObj, b_id=postId, pp_place_id=pp_place_id)
             new_postplace.save()  # insert
 
-            if str(user_id) != str(postId.id):
-                # 내가 아닌 누군가가 글 구독!
-                t = threading.Thread(target=send_to_user_about_who_saved_post('pp_c', userObj, postId))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
+            if str(user_id) == str(postId.id):
+                t = threading.Thread(target=send_to_user_about_who_add_place('pp_c', True, userObj, postId))
                 t.start()
                     
         except:

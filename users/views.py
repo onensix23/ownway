@@ -242,12 +242,11 @@ class FollowUserViewSet(APIView):
                 res_data['action'] = 'delete'
                 userFollowObj.delete()
             elif isCreated == True: 
-                print('111')
                 # 내가 아닌 누군가가 글 구독!
                 t = threading.Thread(target=send_to_user_about_who_followed_user('fu_c', readingObj, readerObj))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
                 t.start()
                 
-        elif request.data['type'] == '2':
+        elif request.data['type'] == '2': # 리더 삭제 시 불려짐
             userFollowObj, isCreated =  UserFollow.objects.get_or_create(uf_reader=readingObj, uf_reading=readerObj)
 
             if isCreated == False: # 삭제 해야 됨
