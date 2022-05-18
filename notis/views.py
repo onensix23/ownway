@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from django.db.models import Q,Subquery
 from firebase_admin import messaging
+import json
 
 from datetime import datetime, timedelta
 
 from .models  import *
-from users.serializers import UserFCMTokenSerializer
+from users.serializers import UserFCMTokenSerializer, UserNotificationSerializer
 
 from posts.models import SavePost
 from users.models import UserFCMToken, UserFollow, UserNotification
@@ -47,8 +48,10 @@ def send_to_reader_about_new_comment(type, isMine, reqdata, userObj, postObj, pc
             try:
                 for odict in getSerializerClass.data:
                     if odict['ufcm_token'] != None:
+                        # print(odict['ufcm_token'])
+                        # print(odict['ufcm_device_id'])
                         userNotificationObj = UserNotification.objects.create(
-                            un_token_id = UserFCMToken.objects.filter(ufcm_token=odict['ufcm_token'], ufcm_device_id=odict['ufcm_device_id']),
+                            un_token_id = UserFCMToken.objects.get(ufcm_token=odict['ufcm_token'], ufcm_device_id=odict['ufcm_device_id']),
                             un_type=notiTemplateObj,
                             un_title=userObj.first_name,
                             un_to=User.objects.get(username=odict['ufcm_user_id']['username']),
@@ -240,14 +243,17 @@ def send_to_user_about_who_followed_user(type, fromObj, toObj):
 def send_to_firebase_cloud_messaging(title, body, token, obj): #  token, device_id
     # This registration token comes from the client FCM SDKs.
     registration_token = token
-
+    getSerializerClass = UserNotificationSerializer(obj)
+    # print(getSerializerClass.data)
     # See documentation on defining a message payload.
     message = messaging.Message(
+
         notification=messaging.Notification(
             title=title,
             body=body,
         ),
         token=registration_token,
+        data={'param': json.dumps(getSerializerClass.data)},
     )
 
     try:

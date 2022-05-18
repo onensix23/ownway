@@ -51,12 +51,44 @@ class UploadImageViewSet(APIView):
 
                     res_data[k] = request.FILES[k].name
                     
-                    t = threading.Thread(target=send_to_user_about_who_add_image('im_c', True, userObj, postObj))
-                    t.start()
+                    if photo.p_isthumb == '0':
+                        t = threading.Thread(target=send_to_user_about_who_add_image('im_c', True, userObj, postObj))
+                        t.start()
                     
         res_data['image_cnt'] = cnt
+        
         return Response(res_data, status=200)
 
+    def put(self, request, **kwargs):
+        res_data = {
+            "success": True,
+            "error": None,
+            "fileName": '',
+            "image_cnt":0
+        }
+        cnt = 0
+        if request.FILES:
+            for k in request.FILES.keys():
+                if k.find('uploadFile') != -1:
+                    cnt = cnt + 1 
+
+                    photoObj = Photo.objects.get(b_id=request.data['b_id'], p_isthumb='1')
+                    exFile = photoObj.p_filename
+                    photoObj.p_filename = FileUpload(s3_client).upload(request.FILES[k])
+
+                    # 데이터베이스에 저장
+                    photoObj.save()
+
+                    FileUpload(s3_client).delete(exFile)
+
+                    res_data[k] = request.FILES[k].name
+                    
+                    # t = threading.Thread(target=send_to_user_about_who_add_image('im_c', True, userObj, postObj))
+                    # t.start()
+                    
+        res_data['image_cnt'] = cnt
+        
+        return Response(res_data, status=200)
 
 class DeleteImageViewSet(APIView):
     """
@@ -186,24 +218,17 @@ class PostViewSet(APIView):
             "error": None
         }
 
-        if request.data['v_b_text'] == '990622':
-            b_id = request.data['b_id']
-            queryset = Posts.objects.get(b_id=b_id)
-            
-            queryset.delete()
+        b_id = request.data['b_id']
 
-        else:
-            user_id = request.user.get_username()
-            user_id = request.data['userId']
-            b_id = request.data['b_id']
-            b_text = request.data['v_b_text']
-            b_title = request.data['v_b_title']
+        postObj= Posts.objects.get(b_id=b_id)
 
-            edit_board1 = Posts.objects.get(b_id=b_id)
-            edit_board1.b_title = b_title
-            edit_board1.b_text = b_text
+        postObj.b_title = request.data['b_title']
+        postObj.b_address = request.data['b_address']
+        postObj.b_theme = request.data['b_theme']
+        postObj.b_hash_tag_1 = request.data['b_hash_tag_1']
+        postObj.b_hash_tag_2 = request.data['b_hash_tag_2']
 
-            edit_board1.save()
+        postObj.save()
 
         return Response(res_data, status=200)
 
@@ -378,6 +403,7 @@ class PostCommentViewSet(APIView):
             if str(postObj.id) == str(user_id):
                 postObj.b_update_datetime = datetime.now()
                 postObj.save()
+
                 # 내가 내 글에 글 씀 -> 구독자한테 알림 가야됨
                 t = threading.Thread(target=send_to_reader_about_new_comment('pc_c', True, request.data, userObj, postObj, pc_comment))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
                 t.start()
@@ -398,7 +424,6 @@ class PostCommentViewSet(APIView):
             "success": True,
             "error": None
         }
-        
         
         return Response(res_data, status=200)
 
