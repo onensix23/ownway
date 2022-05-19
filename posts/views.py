@@ -433,14 +433,13 @@ class PostCommentViewSet(APIView):
                 postObj.save()
 
                 # start = timeit.default_timer()  
-                # send_to_reader_about_new_comment('pc_c', True, request.data, userObj, postObj, pc_comment)
+                send_to_reader_about_new_comment('pc_c', True, request.data, userObj, postObj, pc_comment)
                 # stop = timeit.default_timer()
                 # print(stop - start)
 
                 # 내가 내 글에 글 씀 -> 구독자한테 알림 가야됨
-                t = threading.Thread(target=send_to_reader_about_new_comment('pc_c', True, request.data, userObj, postObj, pc_comment))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
-                t.start()
-                    
+                # t = threading.Thread(target=send_to_reader_about_new_comment('pc_c', True, request.data, userObj, postObj, pc_comment))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
+                # t.start()
             else: # 내 글은 아닌데 누군가의 글에 답글이 달린 상태겠죠?
                 t = threading.Thread(target=send_to_reader_about_new_comment('pc_c', False, request.data, userObj, postObj, pc_comment))
                 t.start()
