@@ -61,23 +61,7 @@ def send_to_reader_about_new_comment(type, isMine, reqdata, userObj, postObj, pc
                         un_etc=postObj
                     )
 
-                    # url = 'http://172.30.1.44:8001/api/alert_noti'
-                    # params =  {
-                    #             'title': userObj.first_name,
-                    #             'body':pc_comment,
-                    #             'token':odict['ufcm_token'],
-                    #             'obj': userNotificationObj.un_id
-                    #         }
-                    
-                    # requests.post(url, params)
-                    # start = timeit.default_timer()
                     send_to_firebase_cloud_messaging(userObj.first_name,pc_comment,odict['ufcm_token'], userNotificationObj)
-                    # stop = timeit.default_timer()
-                    # asyncio.run(main_async())
-                    # print('hi')
-                    # print(stop - start)
-
-                    # send_to_firebase_cloud_messaging(userObj.first_name,pc_comment,odict['ufcm_token'], userNotificationObj)
                                 
         except Exception as e:
             print('out of for loop')
