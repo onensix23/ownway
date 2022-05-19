@@ -158,7 +158,7 @@ class PostViewSet(APIView):
         )
 
         new_post.save()  # insert
-        
+
         res_data['post_success']=True
         
         # print(new_post.b_id)
@@ -176,6 +176,8 @@ class PostViewSet(APIView):
             )
 
             new_postcomment.save()
+    
+
             res_data['postcomment_success']=True
         
         if b_place_id != '':
@@ -188,6 +190,9 @@ class PostViewSet(APIView):
 
             new_postplace.save()
             res_data['postplace_success']=True
+
+        t = threading.Thread(target=send_to_reader_about_new_post('p_c', userObj, postObj))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
+        t.start()
 
         return Response(res_data, status=200)
 

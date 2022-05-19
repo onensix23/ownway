@@ -3,6 +3,7 @@ from django.db import models
 from uuid import uuid4
 from django.contrib.auth.models import User
 from notis.models import *
+from posts.models import *
 
 class UserProfile(models.Model):
     up_id = models.ForeignKey(User, to_field="username", db_column='up_id',related_name='userprofile_id', on_delete=models.CASCADE, max_length=20, null=False)  # 작성자
@@ -45,5 +46,6 @@ class UserNotification(models.Model):
     un_is_sended = models.BooleanField(default=False, null=False)
     un_is_read = models.BooleanField(default=False, null=False)
     un_message_id = models.CharField(max_length=25, null=True)
-    un_etc = models.CharField(max_length=100, null=True)
+    un_etc = models.ForeignKey(Posts, to_field="b_id", db_column='un_etc',related_name='usernotification_etc', on_delete=models.CASCADE, max_length=10, null=False)
+    
 

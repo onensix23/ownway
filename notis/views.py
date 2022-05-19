@@ -11,6 +11,34 @@ from users.serializers import UserFCMTokenSerializer, UserNotificationSerializer
 from posts.models import SavePost
 from users.models import UserFCMToken, UserFollow, UserNotification
 
+# new post
+def send_to_reader_about_new_post(type, userObj, postObj):
+    notiTemplateObj = NotiTemplate.objects.get(notitemp_type=type)
+
+    allSendUserObj = User.objects.filter(username__in=Subquery(UserFollow.objects.values('uf_reading').filter(uf_reader=userObj.username))) #나를 따라오는 사람들한테 알려야함
+    userFCMTokenObj = UserFCMToken.objects.filter(ufcm_user_id__in=allSendUserObj)
+    getSerializerClass = UserFCMTokenSerializer(userFCMTokenObj, many=True)
+    
+    try:
+        for odict in getSerializerClass.data:
+            if odict['ufcm_token'] != None:
+
+                userNotificationObj = UserNotification.objects.create(
+                    un_token_id = UserFCMToken.objects.get(ufcm_token=odict['ufcm_token'], ufcm_device_id=odict['ufcm_device_id']),
+                    un_type=notiTemplateObj,
+                    un_title=userObj.first_name,
+                    un_to=User.objects.get(username=odict['ufcm_user_id']['username']), #누구에게
+                    un_from=userObj, # 누가
+                    un_body=notiTemplateObj.notitemp_body,
+                    un_etc=postObj
+                )
+
+                send_to_firebase_cloud_messaging(userObj.first_name,notiTemplateObj.notitemp_body,odict['ufcm_token'], userNotificationObj)
+                            
+    except Exception as e:
+        print('out of for loop')
+        print(e)
+
 # postcomment를 적었을 때
 def send_to_reader_about_new_comment(type, isMine, reqdata, userObj, postObj, pc_comment):
     if type == 'pc_c':
@@ -31,7 +59,7 @@ def send_to_reader_about_new_comment(type, isMine, reqdata, userObj, postObj, pc
                             un_to=User.objects.get(username=odict['ufcm_user_id']['username']), #누구에게
                             un_from=userObj, # 누가
                             un_body=pc_comment,
-                            un_etc=postObj.b_id
+                            un_etc=postObj
                         )
 
                         send_to_firebase_cloud_messaging(userObj.first_name,pc_comment,odict['ufcm_token'], userNotificationObj)
@@ -57,7 +85,7 @@ def send_to_reader_about_new_comment(type, isMine, reqdata, userObj, postObj, pc
                             un_to=User.objects.get(username=odict['ufcm_user_id']['username']),
                             un_from=userObj,
                             un_body=pc_comment,
-                            un_etc=postObj.b_id
+                            un_etc=postObj
                         )
 
                         send_to_firebase_cloud_messaging(userObj.first_name,pc_comment,odict['ufcm_token'], userNotificationObj)
@@ -85,7 +113,7 @@ def send_to_user_about_who_add_place(type, isMine, userObj, postObj):
                         un_to=User.objects.get(username=odict['ufcm_user_id']['username']), #누구에게
                         un_from=userObj, # 누가
                         un_body=notiTemplateObj.notitemp_body,
-                        un_etc=postObj.b_id
+                        un_etc=postObj
                     )
 
                     send_to_firebase_cloud_messaging(userObj.first_name, notiTemplateObj.notitemp_body, odict['ufcm_token'], userNotificationObj)
@@ -109,7 +137,7 @@ def send_to_user_about_who_add_place(type, isMine, userObj, postObj):
                         un_to=User.objects.get(username=odict['ufcm_user_id']['username']),
                         un_from=userObj,
                         un_body=notiTemplateObj.notitemp_body,
-                        un_etc=postObj.b_id
+                        un_etc=postObj
                     )
 
                     send_to_firebase_cloud_messaging(userObj.first_name,notiTemplateObj.notitemp_body,odict['ufcm_token'], userNotificationObj)
@@ -137,7 +165,7 @@ def send_to_user_about_who_add_image(type, isMine, userObj, postObj):
                         un_to=User.objects.get(username=odict['ufcm_user_id']['username']), #누구에게
                         un_from=userObj, # 누가
                         un_body=notiTemplateObj.notitemp_body,
-                        un_etc=postObj.b_id
+                        un_etc=postObj
                     )
 
                     send_to_firebase_cloud_messaging(userObj.first_name, notiTemplateObj.notitemp_body, odict['ufcm_token'], userNotificationObj)
@@ -161,7 +189,7 @@ def send_to_user_about_who_add_image(type, isMine, userObj, postObj):
                         un_to=User.objects.get(username=odict['ufcm_user_id']['username']),
                         un_from=userObj,
                         un_body=notiTemplateObj.notitemp_body,
-                        un_etc=postObj.b_id
+                        un_etc=postObj
                     )
 
                     send_to_firebase_cloud_messaging(userObj.first_name,notiTemplateObj.notitemp_body,odict['ufcm_token'], userNotificationObj)
@@ -194,7 +222,8 @@ def send_to_user_about_who_saved_post(type, userObj, postObj):
                         un_title=un_from.first_name,
                         un_to=userObj, #누구에게
                         un_from=un_from, # 누가
-                        un_body=notiTemplateObj.notitemp_body
+                        un_body=notiTemplateObj.notitemp_body,
+                        un_etc=postObj
                     )
 
                     send_to_firebase_cloud_messaging(userObj.first_name, notiTemplateObj.notitemp_body, odict['ufcm_token'], userNotificationObj)
