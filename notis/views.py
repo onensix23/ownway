@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.db.models import Q,Subquery
 from firebase_admin import messaging
-import json
+import json, requests, timeit, asyncio
+from asgiref.sync import sync_to_async
 
 from datetime import datetime, timedelta
 
@@ -40,59 +41,74 @@ def send_to_reader_about_new_post(type, userObj, postObj):
         print(e)
 
 # postcomment를 적었을 때
-def send_to_reader_about_new_comment(type, isMine, reqdata, userObj, postObj, pc_comment):
-    if type == 'pc_c':
-        notiTemplateObj = NotiTemplate.objects.get(notitemp_type=type)
+async def send_to_reader_about_new_comment(type, isMine, reqdata, userObj, postObj, pc_comment):
+    notiTemplateObj = await sync_to_async(NotiTemplate.objects.get(notitemp_type=type))
 
-        if isMine: # 내 글 : 리더, 글 구독하고 있던 사람
-            allSendUserObj = User.objects.filter(username__in=Subquery(SavePost.objects.values('id').filter(b_id=postObj.b_id))) | User.objects.filter(username__in=Subquery(UserFollow.objects.values('uf_reading').filter(uf_reader=userObj.username)))
-            userFCMTokenObj = UserFCMToken.objects.filter(ufcm_user_id__in=allSendUserObj)
-            getSerializerClass = UserFCMTokenSerializer(userFCMTokenObj, many=True)
-            
-            try:
-                for odict in getSerializerClass.data:
-                    if odict['ufcm_token'] != None:
-                        userNotificationObj = UserNotification.objects.create(
-                            un_token_id = UserFCMToken.objects.get(ufcm_token=odict['ufcm_token'], ufcm_device_id=odict['ufcm_device_id']),
-                            un_type=notiTemplateObj,
-                            un_title=userObj.first_name,
-                            un_to=User.objects.get(username=odict['ufcm_user_id']['username']), #누구에게
-                            un_from=userObj, # 누가
-                            un_body=pc_comment,
-                            un_etc=postObj
-                        )
+    if isMine: # 내 글 : 리더, 글 구독하고 있던 사람
+        allSendUserObj = await sync_to_async(User.objects.filter(username__in=Subquery(SavePost.objects.values('id').filter(b_id=postObj.b_id))) | User.objects.filter(username__in=Subquery(UserFollow.objects.values('uf_reading').filter(uf_reader=userObj.username))))
+        userFCMTokenObj = await sync_to_async(UserFCMToken.objects.filter(ufcm_user_id__in=allSendUserObj))
+        getSerializerClass = await sync_to_async(UserFCMTokenSerializer(userFCMTokenObj, many=True))
+        
+        try:
+            for odict in getSerializerClass.data:
+                if odict['ufcm_token'] != None:
+                    userNotificationObj = UserNotification.objects.create(
+                        un_token_id = UserFCMToken.objects.get(ufcm_token=odict['ufcm_token'], ufcm_device_id=odict['ufcm_device_id']),
+                        un_type=notiTemplateObj,
+                        un_title=userObj.first_name,
+                        un_to=User.objects.get(username=odict['ufcm_user_id']['username']), #누구에게
+                        un_from=userObj, # 누가
+                        un_body=pc_comment,
+                        un_etc=postObj
+                    )
 
-                        send_to_firebase_cloud_messaging(userObj.first_name,pc_comment,odict['ufcm_token'], userNotificationObj)
-                                    
-            except Exception as e:
-                print('out of for loop')
-                print(e)
+                    # url = 'http://172.30.1.44:8001/api/alert_noti'
+                    # params =  {
+                    #             'title': userObj.first_name,
+                    #             'body':pc_comment,
+                    #             'token':odict['ufcm_token'],
+                    #             'obj': userNotificationObj.un_id
+                    #         }
+                    
+                    # requests.post(url, params)
+                    # start = timeit.default_timer()
+                    send_to_firebase_cloud_messaging(userObj.first_name,pc_comment,odict['ufcm_token'], userNotificationObj)
+                    # stop = timeit.default_timer()
+                    # asyncio.run(main_async())
+                    # print('hi')
+                    # print(stop - start)
 
-        elif isMine == False: # 누군가 내 글에 답글을 달았다...!!!
-            postHostObj = User.objects.get(username=postObj.id)
-            userFCMTokenObj = UserFCMToken.objects.filter(ufcm_user_id=postHostObj)
-            getSerializerClass = UserFCMTokenSerializer(userFCMTokenObj, many=True)
+                    # send_to_firebase_cloud_messaging(userObj.first_name,pc_comment,odict['ufcm_token'], userNotificationObj)
+                                
+        except Exception as e:
+            print('out of for loop')
+            print(e)
 
-            try:
-                for odict in getSerializerClass.data:
-                    if odict['ufcm_token'] != None:
-                        # print(odict['ufcm_token'])
-                        # print(odict['ufcm_device_id'])
-                        userNotificationObj = UserNotification.objects.create(
-                            un_token_id = UserFCMToken.objects.get(ufcm_token=odict['ufcm_token'], ufcm_device_id=odict['ufcm_device_id']),
-                            un_type=notiTemplateObj,
-                            un_title=userObj.first_name,
-                            un_to=User.objects.get(username=odict['ufcm_user_id']['username']),
-                            un_from=userObj,
-                            un_body=pc_comment,
-                            un_etc=postObj
-                        )
+    elif isMine == False: # 누군가 내 글에 답글을 달았다...!!!
+        postHostObj = User.objects.get(username=postObj.id)
+        userFCMTokenObj = UserFCMToken.objects.filter(ufcm_user_id=postHostObj)
+        getSerializerClass = UserFCMTokenSerializer(userFCMTokenObj, many=True)
 
-                        send_to_firebase_cloud_messaging(userObj.first_name,pc_comment,odict['ufcm_token'], userNotificationObj)
-                                    
-            except Exception as e:
-                print('out of for loop')
-                print(e)
+        try:
+            for odict in getSerializerClass.data:
+                if odict['ufcm_token'] != None:
+                    # print(odict['ufcm_token'])
+                    # print(odict['ufcm_device_id'])
+                    userNotificationObj = UserNotification.objects.create(
+                        un_token_id = UserFCMToken.objects.get(ufcm_token=odict['ufcm_token'], ufcm_device_id=odict['ufcm_device_id']),
+                        un_type=notiTemplateObj,
+                        un_title=userObj.first_name,
+                        un_to=User.objects.get(username=odict['ufcm_user_id']['username']),
+                        un_from=userObj,
+                        un_body=pc_comment,
+                        un_etc=postObj
+                    )
+
+                    send_to_firebase_cloud_messaging(userObj.first_name,pc_comment,odict['ufcm_token'], userNotificationObj)
+                                
+        except Exception as e:
+            print('out of for loop')
+            print(e)
 
 # postplace를 추가했을 때
 def send_to_user_about_who_add_place(type, isMine, userObj, postObj):

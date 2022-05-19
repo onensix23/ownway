@@ -33,6 +33,7 @@ urlpatterns = [
     path('terms/privacypolicy', termsview.PrivacyPolicyViewSet.as_view(), name='privacypolicy'), 
     path('terms/termsofservice', termsview.ServiceViewSet.as_view(), name='termsOfService'),
 
+    path('test', postview.TestViewSet.as_view(), name='test'),
     # board
     path('api/'+ms.API_SHA256_KEY+'board', postview.PostViewSet.as_view(), name='boardList'),
     path('api/'+ms.API_SHA256_KEY+'board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),
@@ -82,20 +83,6 @@ urlpatterns = [
 
     # followPage
     path('api/'+ms.API_SHA256_KEY+'followPost', postview.FollowPostViewSet.as_view(), name='followPost'),
-
-    # # getAddress
-    # path('api/'+ms.API_SHA256_KEY+'getSido', postview.GetSidoViewSet.as_view(), name='getSido'),
-    # path('api/'+ms.API_SHA256_KEY+'getSigungu', postview.GetSigunguViewSet.as_view(), name='getSigungu'),
-    # path('api/'+ms.API_SHA256_KEY+'getDong', postview.GetDongViewSet.as_view(), name='getDong'),
-
-    # # getReverseAddress
-    # path('api/'+ms.API_SHA256_KEY+'getReSido', postview.GetReSidoViewSet.as_view(), name='getReSido'),
-    # path('api/'+ms.API_SHA256_KEY+'getReSigungu', postview.GetReSigunguViewSet.as_view(), name='getReSigungu'),
-    # path('api/'+ms.API_SHA256_KEY+'getReDong', postview.GetReDongViewSet.as_view(), name='getReDong'),
-
-    # terms
-    # path('api/'+ms.API_SHA256_KEY+'terms/privacypolicy', termsview.PrivacyPolicyViewSet.as_view(), name='privacypolicy'), 
-    # path('api/'+ms.API_SHA256_KEY+'terms/service', termsview.ServiceViewSet.as_view(), name='termsOfService'), 
 
     path('api/'+ms.API_SHA256_KEY+'terms/howtodeletedata', termsview.HowToViewSet.as_view(), name='howtodeletedata'), 
 
