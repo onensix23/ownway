@@ -320,7 +320,7 @@ class UserNotificationSet(APIView):
 
         try: 
             un_id = request.data['un_id']
-            userNotificationObj = UserNotification.objects.filter(un_id=un_id)
+            userNotificationObj = UserNotification.objects.get(un_id=un_id)
             userNotificationObj.un_is_read = True
             userNotificationObj.save()
 
