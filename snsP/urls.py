@@ -32,8 +32,6 @@ urlpatterns = [
     # path('admin', admin.site.urls),
     path('terms/privacypolicy', termsview.PrivacyPolicyViewSet.as_view(), name='privacypolicy'), 
     path('terms/termsofservice', termsview.ServiceViewSet.as_view(), name='termsOfService'),
-    #
-    # path('search', include('search.urls')),
 
     # board
     path('api/'+ms.API_SHA256_KEY+'board', postview.PostViewSet.as_view(), name='boardList'),
@@ -59,6 +57,8 @@ urlpatterns = [
 
     # FCM Token 관리
     path('api/'+ms.API_SHA256_KEY+'userFCMToken', userview.UserFCMTokenViewSet.as_view(), name='userFCMToken'),
+
+    path('api/'+ms.API_SHA256_KEY+'userNotification', userview.UserNotificationSet.as_view(), name='userProfile'),
 
     path('api/'+ms.API_SHA256_KEY+'userProfile', userview.UserProfileViewSet.as_view(), name='userProfile'),
     path('api/'+ms.API_SHA256_KEY+'followUser', userview.FollowUserViewSet.as_view(), name='followUser'),

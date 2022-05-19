@@ -90,12 +90,12 @@ class UserFCMTokenSerializer(serializers.ModelSerializer):
                   'ufcm_fu_c',
                   'ufcm_p_c',
                   'ufcm_p_u',
-                  )
+                )
 
 class UserNotificationSerializer(serializers.ModelSerializer):
-    usernotification_id=UserFCMTokenSerializer(read_only=True, many=False)
-    usernotification_from=UserSerializer2(read_only=True, many=False)
-    usernotification_to=UserSerializer2(read_only=True, many=False)
+    usernotification_id=UserFCMTokenSerializer(read_only=True)
+    usernotification_from=UserSerializer2(read_only=True)
+    usernotification_to=UserSerializer2(read_only=True)
 
     class Meta:
         model = UserNotification
@@ -112,7 +112,7 @@ class UserNotificationSerializer(serializers.ModelSerializer):
                   'un_is_read',
                   'un_message_id',
                   'un_etc',
-                  )
+                )
 
 
 

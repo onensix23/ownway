@@ -287,119 +287,33 @@ class UserProfileViewSet(APIView):
         return Response(response_data, status=200)
 
 
-class UserViewSet(APIView):
-    """
-        POST /login/
-        description
-            - 로그인
-        param
-            - userId
-            - uesrPassword
-    """
-
-    @method_decorator(csrf_exempt)
+class UserNotificationSet(APIView):
     def post(self, request, **kwargs):
-        request_d = request.data  # {"userId":"rohhj622","userPassword":"shgsuwls1!"}
-
-        response_data = {
-            'success': False,
-            'error': None
-
-        }
-
-        login_username = request_d['userId']
-        login_password = request_d['userPassword']
-
-        # print(login_username, login_password)
-
-        if not (login_username and login_password):
-            response_data['error'] = "아이디와 비밀번호를 모두 입력해주세요."
-        else:
-            myuser = User.objects.get(username=login_username)
-
-            if myuser.check_password(login_password):
-                print("비번 맞아")
-            else:
-                print("틀리다고?")
-
-            myuser = authenticate(username=login_username, password=login_password)
-            # db에서 꺼내는 명령. Post로 받아온 username으로 , db의 username을 꺼내온다.
-            # print(myuser)
-            if myuser is not None:
-                login(request, myuser)
-                # request.session['user'] = myuser.username
-                #     # 세션도 딕셔너리 변수 사용과 똑같이 사용하면 된다.
-                #     # 세션 user라는 key에 방금 로그인한 id를 저장한것.
-                response_data['success'] = True
-            else:
-                response_data['error'] = "비밀번호를 틀렸습니다."
-
-        return Response(response_data, status=200)
-    
-
-# ResigterUserViewSet
-class ResigterUserViewSet(APIView):
-    """
-        POST /register/
-        description
-            - 회원가입
-        param
-            - id1, password, nickname, email, re_password
-            - uesrPassword
-    """
-    def post(self, request, **kwargs):
-        request_d = request.data  # {"userId":"rohhj622","userPassword":"shgsuwls1!"}
-
-        response_data = {
-            'success': False,
-            'error': None
-        }
-
-        # id1 = request_d['id1']  # 딕셔너리형태
-        # password = request_d['password']
-        # nickname = request_d['nickname']
-        # email = request_d['email']
-        # re_password = request_d['re_password']
-        #
-        # res_data = {
-        #     'success': False,
-        # }
-        #
-        # if not (id1 and password and re_password and email and nickname):
-        #     res_data['error1'] = "모든 값을 입력해야 합니다."
-        # elif password != re_password:
-        #     # return HttpResponse('비밀번호가 다릅니다.')
-        #     res_data['error2'] = '비밀번호가 다릅니다.'
-        # elif (User.objects.filter(username=id1)).count() != 0:
-        #     res_data['error3'] = '중복된 ID 입니다.'
-        # else:
-        #     # username id ,
-        #     #m_password = make_password(password, None, 'pbkdf2_sha256')
-        #     #user = User.objects.create_user(username=id1, password=m_password,first_name=nickname, email=email)
-        #     res_data['success'] = "가입되었습니다."
-
-        id1 = request_d['id1']  # 딕셔너리형태
-        password = request_d['password']
-        nickname = request_d['nickname']
-        email = request_d['email']
-
-        # print("password:"+password);
 
         res_data = {
             'success': False,
+            'error': None,
+            'action' : '',
         }
 
-        if not (id1 and password and email and nickname):
-            res_data['error'] = "모든 값을 입력해야 합니다."
-        elif (User.objects.filter(username=id1)).count() != 0:
-            res_data['error'] = '중복된 ID 입니다.'
-        else:
-            # username id ,
-            m_password = make_password(password, None, 'pbkdf2_sha256')
-            User.objects.create_user(username=id1, password=m_password, first_name=nickname, email=email)
-            res_data['success'] = "가입되었습니다."
+        user_id = request.data['userId']
+        userObj = User.objects.get(username=user_id)
 
-        return Response(res_data, status=200)
+        try:
+            userNotificationObj = UserNotification.objects.filter(un_to=userObj)
+            print(userNotificationObj)
+
+            get_serializer_class = UserNotificationSerializer(userNotificationObj, many=True)         
+            res_data['success'] = True
+
+
+            return Response(get_serializer_class.data, status=200)
+
+        except Exception as e:
+            res_data['error'] = e
+            return Response(res_data, status=200)
+            
+        # return Response(res_data, status=200)
 
 
 class UserFCMTokenViewSet(APIView):
