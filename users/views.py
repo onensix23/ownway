@@ -288,6 +288,22 @@ class UserProfileViewSet(APIView):
 
 
 class UserNotificationSet(APIView):
+    def get(self, request, **kwargs):
+        res_data = {
+            'success': False,
+            'error': None,
+            'result' : '',
+            
+        }
+
+        userId = request.GET.get('userId')
+        userObj = User.objects.get(username=userId)
+
+        userNotificationObj = UserNotification.objects.filter(un_to=userObj, un_is_read=False).count()
+        res_data['result'] = userNotificationObj
+        
+        return Response(res_data, status=200)
+
     def post(self, request, **kwargs):
         res_data = {
             'success': False,
