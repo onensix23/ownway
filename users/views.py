@@ -367,7 +367,7 @@ class UserFCMTokenViewSet(APIView):
         try:
             userFCMTokenObj, isCreated = UserFCMToken.objects.get_or_create(ufcm_user_id=userObj, ufcm_device_id=ufcm_device_id)
 
-            if isCreated:
+            if isCreated == True:
                 userFCMTokenObj.ufcm_token = ufcm_token
                 userFCMTokenObj.save()
 
