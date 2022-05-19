@@ -114,5 +114,22 @@ class UserNotificationSerializer(serializers.ModelSerializer):
                   'un_etc',
                 )
 
+class UserNotificationSerializer2(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserNotification
+        fields = (
+                  'un_id',
+                  'un_type',
+                  'un_title',
+                  'un_body',
+                  'un_from',
+                  'un_to',
+                  'un_send_date',
+                  'un_is_sended',
+                  'un_is_read',
+                  'un_message_id',
+                  'un_etc',
+                )
 
 
