@@ -63,10 +63,6 @@ urlpatterns = [
     path('api/'+ms.API_SHA256_KEY+'userProfile', userview.UserProfileViewSet.as_view(), name='userProfile'),
     path('api/'+ms.API_SHA256_KEY+'followUser', userview.FollowUserViewSet.as_view(), name='followUser'),
     
-    
-    # path('api/'+ms.API_SHA256_KEY+'register', userview.ResigterUserViewSet.as_view(), name='userRegister'),  # post
-    # path('api/'+ms.API_SHA256_KEY+'login', userview.UserViewSet.as_view(), name='userLogin'),  # post
-
     # likepost(post)
     path('api/'+ms.API_SHA256_KEY+'likepost', postview.LikePostViewSet.as_view(), name='likePost'),
 

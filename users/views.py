@@ -300,9 +300,7 @@ class UserNotificationSet(APIView):
         userObj = User.objects.get(username=user_id)
 
         try:
-            userNotificationObj = UserNotification.objects.filter(un_to=userObj)
-            print(userNotificationObj)
-
+            userNotificationObj = UserNotification.objects.filter(un_to=userObj).order_by("-un_send_date")
             get_serializer_class = UserNotificationSerializer(userNotificationObj, many=True)         
             res_data['success'] = True
 
