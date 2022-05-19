@@ -289,7 +289,6 @@ class UserProfileViewSet(APIView):
 
 class UserNotificationSet(APIView):
     def post(self, request, **kwargs):
-
         res_data = {
             'success': False,
             'error': None,
@@ -309,9 +308,28 @@ class UserNotificationSet(APIView):
 
         except Exception as e:
             res_data['error'] = e
+
             return Response(res_data, status=200)
-            
-        # return Response(res_data, status=200)
+
+    def put(self, request, **kwargs):
+        res_data = {
+            'success': False,
+            'error': None,
+            'action' : '',
+        }
+
+        try: 
+            un_id = request.data['un_id']
+            userNotificationObj = UserNotification.objects.filter(un_id=un_id)
+            userNotificationObj.un_is_read = True
+            userNotificationObj.save()
+
+            res_data['success'] = True
+
+        except Exception as e:
+            res_data['error'] = e
+
+        return Response(res_data, status=200) 
 
 
 class UserFCMTokenViewSet(APIView):
