@@ -410,8 +410,6 @@ class PostCommentViewSet(APIView):
             "success": True,
             "error": None
         }
-
-        print('post_')
         # select
         user_id = request.data['userId']
         b_id = request.data['b_id']

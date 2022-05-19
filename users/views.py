@@ -312,10 +312,14 @@ class UserNotificationSet(APIView):
         }
 
         user_id = request.data['userId']
+        device_id = request.data['deviceId']
+        token = request.data['token']
+
         userObj = User.objects.get(username=user_id)
+        userFCMObj = UserFCMToken.objects.get(ufcm_user_id=userObj,ufcm_device_id= device_id,ufcm_token=token)
 
         try:
-            userNotificationObj = UserNotification.objects.filter(un_to=userObj, un_is_read=False).order_by("-un_send_date")
+            userNotificationObj = UserNotification.objects.filter(un_token_id=userFCMObj,un_to=userObj, un_is_read=False).order_by("-un_send_date")
             get_serializer_class = UserNotificationSerializer2(userNotificationObj, many=True)         
             res_data['success'] = True
 
@@ -367,7 +371,7 @@ class UserFCMTokenViewSet(APIView):
         try:
             userFCMTokenObj, isCreated = UserFCMToken.objects.get_or_create(ufcm_user_id=userObj, ufcm_device_id=ufcm_device_id)
 
-            if isCreated == True:
+            if isCreated:
                 userFCMTokenObj.ufcm_token = ufcm_token
                 userFCMTokenObj.save()
 
