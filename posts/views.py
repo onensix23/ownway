@@ -214,8 +214,8 @@ class PostViewSet(APIView):
             new_postplace.save()
             res_data['postplace_success']=True
 
-        t = threading.Thread(target=send_to_reader_about_new_post('p_c', userObj, postObj))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
-        t.start()
+        # t = threading.Thread(target=send_to_reader_about_new_post('p_c', userObj, postObj))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
+        # t.start()
 
         return Response(res_data, status=200)
 

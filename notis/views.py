@@ -44,7 +44,7 @@ def send_to_reader_about_new_comment(type, isMine, reqdata, userObj, postObj, pc
     notiTemplateObj = NotiTemplate.objects.get(notitemp_type=type)
 
     if isMine: # 내 글 : 리더, 글 구독하고 있던 사람
-        allSendUserObj = User.objects.filter(username__in=Subquery(SavePost.objects.values('id').filter(b_id=postObj.b_id))) | User.objects.filter(username__in=Subquery(UserFollow.objects.values('uf_reading').filter(uf_reader=userObj.username)))
+        allSendUserObj = User.objects.filter(username__in=Subquery(SavePost.objects.values('id').filter(b_id=postObj.b_id))) # | User.objects.filter(username__in=Subquery(UserFollow.objects.values('uf_reading').filter(uf_reader=userObj.username)))
         userFCMTokenObj = UserFCMToken.objects.filter(ufcm_user_id__in=allSendUserObj)
         getSerializerClass = UserFCMTokenSerializer(userFCMTokenObj, many=True)
         
@@ -98,7 +98,7 @@ def send_to_user_about_who_add_place(type, isMine, userObj, postObj):
     notiTemplateObj = NotiTemplate.objects.get(notitemp_type=type)
 
     if isMine: # 내 글 : 리더, 글 구독하고 있던 사람
-        allSendUserObj = User.objects.filter(username__in=Subquery(SavePost.objects.values('id').filter(b_id=postObj.b_id))) | User.objects.filter(username__in=Subquery(UserFollow.objects.values('uf_reading').filter(uf_reader=userObj.username)))
+        allSendUserObj = User.objects.filter(username__in=Subquery(SavePost.objects.values('id').filter(b_id=postObj.b_id))) # | User.objects.filter(username__in=Subquery(UserFollow.objects.values('uf_reading').filter(uf_reader=userObj.username)))
         userFCMTokenObj = UserFCMToken.objects.filter(ufcm_user_id__in=allSendUserObj)
         getSerializerClass = UserFCMTokenSerializer(userFCMTokenObj, many=True)
         
@@ -150,7 +150,7 @@ def send_to_user_about_who_add_image(type, isMine, userObj, postObj):
     notiTemplateObj = NotiTemplate.objects.get(notitemp_type=type)
 
     if isMine: # 내 글 : 리더, 글 구독하고 있던 사람
-        allSendUserObj = User.objects.filter(username__in=Subquery(SavePost.objects.values('id').filter(b_id=postObj.b_id))) | User.objects.filter(username__in=Subquery(UserFollow.objects.values('uf_reading').filter(uf_reader=userObj.username)))
+        allSendUserObj = User.objects.filter(username__in=Subquery(SavePost.objects.values('id').filter(b_id=postObj.b_id))) #| User.objects.filter(username__in=Subquery(UserFollow.objects.values('uf_reading').filter(uf_reader=userObj.username)))
         userFCMTokenObj = UserFCMToken.objects.filter(ufcm_user_id__in=allSendUserObj)
         getSerializerClass = UserFCMTokenSerializer(userFCMTokenObj, many=True)
         
