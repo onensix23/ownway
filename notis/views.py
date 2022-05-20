@@ -75,7 +75,7 @@ def send_to_reader_about_new_comment(type, isMine, reqdata, userObj, postObj, pc
         except Exception as e:
             savepostObj = None
 
-        if savepostObj != None and savepostObj.sp_is_noti == True:
+        if (savepostObj != None and savepostObj.sp_is_noti == True) or (savepostObj == None):
             postHostObj = User.objects.get(username=postObj.id)
             userFCMTokenObj = UserFCMToken.objects.filter(ufcm_user_id=postHostObj)
             getSerializerClass = UserFCMTokenSerializer(userFCMTokenObj, many=True)
