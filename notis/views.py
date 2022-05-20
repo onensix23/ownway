@@ -62,7 +62,7 @@ def send_to_reader_about_new_comment(type, isMine, reqdata, userObj, postObj, pc
                         un_etc=postObj
                     )
 
-                    # send_to_firebase_cloud_messaging(userObj.first_name,pc_comment,odict['ufcm_token'], userNotificationObj)
+                    send_to_firebase_cloud_messaging(userObj.first_name,pc_comment,odict['ufcm_token'], userNotificationObj)
                                 
         except Exception as e:
             print('out of for loop')
