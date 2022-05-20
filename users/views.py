@@ -344,19 +344,34 @@ class UserNotificationSet(APIView):
             'error': None,
             'action' : '',
         }
+        if request.data['type'] == 'delete':
+            try:
+                user_id = request.data['userId']
 
-        try: 
-            un_id = request.data['un_id']
-            userNotificationObj = UserNotification.objects.get(un_id=un_id)
-            userNotificationObj.un_is_read = True
-            userNotificationObj.save()
+                userObj = User.objects.get(username=user_id)
+                UserNotification.objects.filter(un_to=userObj).update(un_is_read=True)
+                # userNotificationObj.un_is_read = True
+                # userNotificationObj.save()
 
-            res_data['success'] = True
+                res_data['success'] = True
+            
+            except Exception as e:
+                res_data['error'] = e
 
-        except Exception as e:
-            res_data['error'] = e
+        else:
+            try: 
+                un_id = request.data['un_id']
+                userNotificationObj = UserNotification.objects.get(un_id=un_id)
+                userNotificationObj.un_is_read = True
+                userNotificationObj.save()
+
+                res_data['success'] = True
+
+            except Exception as e:
+                res_data['error'] = e
 
         return Response(res_data, status=200) 
+
 
 
 class UserFCMTokenViewSet(APIView):

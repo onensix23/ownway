@@ -44,6 +44,7 @@ def send_to_reader_about_new_comment(type, isMine, reqdata, userObj, postObj, pc
     notiTemplateObj = NotiTemplate.objects.get(notitemp_type=type)
 
     if isMine: # 내 글 : 리더, 글 구독하고 있던 사람
+
         allSendUserObj = User.objects.filter(username__in=Subquery(SavePost.objects.values('id').filter(b_id=postObj.b_id, sp_is_noti=True))) # | User.objects.filter(username__in=Subquery(UserFollow.objects.values('uf_reading').filter(uf_reader=userObj.username)))
         userFCMTokenObj = UserFCMToken.objects.filter(ufcm_user_id__in=allSendUserObj)
         getSerializerClass = UserFCMTokenSerializer(userFCMTokenObj, many=True)
@@ -61,16 +62,20 @@ def send_to_reader_about_new_comment(type, isMine, reqdata, userObj, postObj, pc
                         un_etc=postObj
                     )
 
-                    send_to_firebase_cloud_messaging(userObj.first_name,pc_comment,odict['ufcm_token'], userNotificationObj)
+                    # send_to_firebase_cloud_messaging(userObj.first_name,pc_comment,odict['ufcm_token'], userNotificationObj)
                                 
         except Exception as e:
             print('out of for loop')
             print(e)
 
     elif isMine == False: # 누군가 내 글에 답글을 달았다...!!!
-        savepostObj = SavePost.objects.filter(id=postObj.id, b_id=postObj.b_id)
+        
+        try:
+            savepostObj = SavePost.objects.get(id=postObj.id, b_id=postObj.b_id)
+        except Exception as e:
+            savepostObj = None
 
-        if len(savepostObj) > 0 and savepostObj.sp_is_noti == True:
+        if savepostObj != None and savepostObj.sp_is_noti == True:
             postHostObj = User.objects.get(username=postObj.id)
             userFCMTokenObj = UserFCMToken.objects.filter(ufcm_user_id=postHostObj)
             getSerializerClass = UserFCMTokenSerializer(userFCMTokenObj, many=True)
