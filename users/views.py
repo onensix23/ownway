@@ -297,7 +297,11 @@ class UserNotificationSet(APIView):
         }
 
         userId = request.GET.get('userId')
+        deviceId = request.GET.get('deviceId')
+        token = request.GET.get('tokenId')
+
         userObj = User.objects.get(username=userId)
+        userFCMObj = UserFCMToken.objects.get(un_token_id=userFCMObj, ufcm_user_id=userObj,ufcm_device_id= deviceId,ufcm_token=token)
 
         userNotificationObj = UserNotification.objects.filter(un_to=userObj, un_is_read=False).count()
         res_data['result'] = userNotificationObj

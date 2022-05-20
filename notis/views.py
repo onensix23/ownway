@@ -210,17 +210,17 @@ def send_to_user_about_who_saved_post(type, userObj, postObj):
         for odict in getSerializerClass.data:
             if odict['ufcm_token'] != None:
 
-                un_from = User.objects.get(username=odict['ufcm_user_id']['username'])
+                un_to = User.objects.get(username=odict['ufcm_user_id']['username'])
                 ufcm = UserFCMToken.objects.get(ufcm_token=odict['ufcm_token'], ufcm_device_id=odict['ufcm_device_id'])
 
-                c = UserNotification.objects.filter(un_token_id=ufcm, un_type=notiTemplateObj, un_from=un_from, un_to=userObj, un_send_date__range=[datetime.now()-timedelta(minutes=1), datetime.now()]).count()
+                c = UserNotification.objects.filter(un_token_id=ufcm, un_type=notiTemplateObj, un_from=userObj, un_to=un_to, un_send_date__range=[datetime.now()-timedelta(minutes=1), datetime.now()]).count()
                 if c == 0:
                     userNotificationObj = UserNotification.objects.create(
                         un_token_id = UserFCMToken.objects.get(ufcm_token=odict['ufcm_token'], ufcm_device_id=odict['ufcm_device_id']),
                         un_type=notiTemplateObj,
-                        un_title=un_from.first_name,
-                        un_to=userObj, #누구에게
-                        un_from=un_from, # 누가
+                        un_title=un_to.first_name,
+                        un_to=un_to, #누구에게
+                        un_from=userObj, # 누가
                         un_body=notiTemplateObj.notitemp_body,
                         un_etc=postObj
                     )
