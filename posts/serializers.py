@@ -74,6 +74,7 @@ class SavePostSerializer(serializers.ModelSerializer):
                   'b_id',
                   'id',
                   'sp_datetime',
+                  'sp_is_noti'
                 #   'pc_datetime',
                 #   'pc_del'
                   )

@@ -56,6 +56,7 @@ class SavePost(models.Model):
                                 related_name='savepost_b_id',
                                 on_delete=models.CASCADE, null=False)
     sp_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
+    sp_is_noti = models.BooleanField(default=True)
     # lp_del = models.CharField(max_length=1, null=False, default='N')
 
 

@@ -582,6 +582,41 @@ class SavePostViewSet(APIView):
 
         return Response(res_data, status=200)
 
+    def put(self, request, **kwargs):
+        res_data = {
+            'action' : None,
+            'result' : True,
+            "success" : True,
+            'error' : None
+        }
+
+        user_id = request.data['userId']
+        b_id = request.data['b_id']
+
+        userObj = User.objects.get(username=user_id)
+        postObj = Posts.objects.get(b_id=b_id)
+
+        savePostObj = SavePost.objects.get(id=userObj, b_id=postObj)
+
+        try:
+            if savePostObj.sp_is_noti == True:
+                savePostObj.sp_is_noti = False
+                res_data['action'] = False
+                savePostObj.save()
+
+            elif savePostObj.sp_is_noti == False:
+                savePostObj.sp_is_noti = True
+                res_data['action'] = True
+                savePostObj.save()
+
+        except Exception as e:
+            res_data['error'] = e
+            
+        return Response(res_data, status=200)
+
+
+
+
 
 class GetSidoViewSet(APIView):
     """
