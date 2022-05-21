@@ -555,7 +555,8 @@ class SavePostViewSet(APIView):
         res_data = {
             'action' : 'create',
             'count' : 0,
-            "success" : True
+            "success" : True,
+            'data' : None
         }
 
         user_id = request.data['userId']
@@ -565,9 +566,12 @@ class SavePostViewSet(APIView):
         postObj = Posts.objects.get(b_id=b_id)
 
         if request.data['type'] == '0':
-            query_count = SavePost.objects.filter(id=user_id, b_id=b_id).count()
-            if query_count > 0:
-                res_data['count'] = query_count
+            query = SavePost.objects.filter(id=user_id, b_id=b_id)
+
+            if query.count() > 0:
+                res_data['count'] = query.count()
+                res_data['data'] = SavePost.objects.get(id=user_id, b_id=b_id).sp_is_noti
+            
         else:
             savePostObj, isCreated =  SavePost.objects.get_or_create(id=userObj, b_id=postObj)
             

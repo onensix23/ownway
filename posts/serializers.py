@@ -67,11 +67,12 @@ class PostCommentSerializer2(serializers.ModelSerializer):
                   )
 
 class SavePostSerializer(serializers.ModelSerializer):
+    savepost_username = UserSerializer2(read_only=True)
     class Meta:
         model = SavePost
         # fields = "__all__"
         fields = ('sp_id',
-                  'b_id',
+                  'savepost_username',
                   'id',
                   'sp_datetime',
                   'sp_is_noti'
