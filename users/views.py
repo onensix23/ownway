@@ -1,4 +1,4 @@
-import json, requests
+import json, requests, subprocess
 import threading
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -243,8 +243,15 @@ class FollowUserViewSet(APIView):
                 userFollowObj.delete()
             elif isCreated == True: 
                 # 내가 아닌 누군가가 글 구독!
-                t = threading.Thread(target=send_to_user_about_who_followed_user('fu_c', readingObj, readerObj))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
-                t.start()
+                param1 = "python3 ./lambda_function.py " 
+                param1 = param1 + "'true'" + " "
+                param1 = param1 + "'true'" + " "
+                param1 = param1 + str(readerObj.username) + " "
+                param1 = param1 + str(readingObj.username) + " "
+                param1 = param1 + "'fu_c'" + " "
+                param1 = param1 + "'true'"
+
+                process = subprocess.Popen(param1, shell=True)
                 
         elif request.data['type'] == '2': # 리더 삭제 시 불려짐
             userFollowObj, isCreated =  UserFollow.objects.get_or_create(uf_reader=readingObj, uf_reading=readerObj)
@@ -300,10 +307,6 @@ class UserNotificationSet(APIView):
         deviceId = request.GET.get('deviceId')
         token = request.GET.get('tokenId')
 
-        # print(userId)
-        # print(deviceId)
-        # print(token)
-        
         userObj = User.objects.get(username=userId)
         userFCMObj = UserFCMToken.objects.get(ufcm_user_id=userObj,ufcm_device_id=deviceId,ufcm_token=token)
 

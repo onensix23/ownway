@@ -93,21 +93,26 @@ class CRUD(Databases):
         return result
 
 
-    def insertUnnest(self,param):
-        query = """insert into public.users_usernotification (un_token_id, un_type, un_title, un_to, un_from, un_body, un_is_sended, un_is_read, un_etc) 
+    def insertUnnest(self,param, t):
+        query = """insert into public.users_usernotification (un_token_id, un_type, un_title, un_to, un_from, un_body, un_is_sended, un_etc) 
         select unnest(%(un_token_id)s), unnest(%(un_type)s), unnest(%(un_title)s) 
             ,unnest(%(un_to)s) ,unnest(%(un_from)s),unnest(%(un_body)s), 
-            unnest(%(un_is_sended)s), false , unnest(%(un_etc)s)"""
+            unnest(%(un_is_sended)s), unnest(%(un_etc)s)"""
+
+        
+        query2 = """insert into public.users_usernotification (un_token_id, un_type, un_title, un_to, un_from, un_body, un_is_sended) 
+        select unnest(%(un_token_id)s), unnest(%(un_type)s), unnest(%(un_title)s) 
+            ,unnest(%(un_to)s) ,unnest(%(un_from)s),unnest(%(un_body)s), 
+            unnest(%(un_is_sended)s)"""
 
         try:
-            print('----1-----')
             with self.db as conn:
-                print('----2-----')
                 with conn.cursor() as curs:
-                    print('----3-----')
                     if len(param['un_token_id']) > 0 :
-                        print('----4-----')
-                        curs.execute(query, param)
+                        if t == 'sp_c' or t == 'fu_c':
+                            curs.execute(query2, param)
+                        else:
+                            curs.execute(query, param)
 
                         conn.commit()
 
@@ -115,35 +120,6 @@ class CRUD(Databases):
         
         except Exception as e :
             print(e)
-            result = (" update DB err",e)
-
-    def updateDB(self,query):
-        sql = query
-        try :
-            self.cursor.execute(sql)
-            self.db.commit()
-        except Exception as e :
-            print(" update DB err",e)
-
-    def readDB(self,schema,table,colum):
-        sql = " SELECT {colum} from {schema}.{table}".format(colum=colum,schema=schema,table=table)
-        try:
-            self.cursor.execute(sql)
-            result = self.cursor.fetchall()
-        except Exception as e :
-            result = (" read DB err",e)
-        
-        return result
-
-    def updateDB(self,schema,table,colum,value,condition):
-        sql = "UPDATE {schema}.{table} SET {colum}='{value}' WHERE {colum}='{condition}' ".format(schema=schema
-        , table=table , colum=colum ,value=value,condition=condition )
-        try :
-            self.cursor.execute(sql)
-            self.db.commit()
-        except Exception as e :
-            print(" update DB err",e)
-
 
     def send_to_firebase_cloud_messaging(self, title, body, token, token_id, etc): #  token, device_id
         # print(title, body, token, token_id, etc)
@@ -164,7 +140,6 @@ class CRUD(Databases):
         registration_token = 'dUo95LOfakWMlBLmapsW3C:APA91bGyHYy5XuzJNejPJkLxije4DqXdwI6pM-wTP4I6QOacHlkQH-ThXJbrai70cZdOvDd7YenVQ30hV-VPjSHbRFyOSwJbPJi9SB43AYjnIotjdvanMIWMOwaSKTjrJYo7tOp4bzx8'
 
         try:
-            print('hi')
             # See documentation on defining a message payload.
             message = messaging.Message(
                 notification=messaging.Notification(
@@ -175,24 +150,18 @@ class CRUD(Databases):
                 data={'param': json.dumps(sendData)},
             )
 
-            print("lets go")
             response = messaging.send(message)
             print(f"Successfully sent message: {response}")
             res['res'] = True
             
-            print(res)
-
             return res
         except Exception as e:
             print(e)
 
-            return res
-
-            
+            return res    
     
 
     def send_to_reader_about_new_comment(self, type, username, b_id, pc_comment):
-        un_token =[]
         un_token_id = []
         un_type = []
         un_title = []
@@ -248,7 +217,6 @@ class CRUD(Databases):
                             ufcm_token_data = self.readQuery(sql, 'one')
 
                             un_token_id.append(ufcm_token_data[0])
-                            un_token.append(odict['ufcm_token'])
                             un_type.append(type)
                             un_title.append(user_data[1])
                             un_to.append(odict['ufcm_user_id'])
@@ -266,45 +234,266 @@ class CRUD(Databases):
             param = {'un_token_id': un_token_id, 'un_type': un_type, 'un_title': un_title
             , 'un_to': un_to, 'un_from': un_from, 'un_body': un_body, 'un_is_sended': un_is_sended, 'un_etc': un_etc}
 
-            self.insertUnnest(param)
+            
+            self.insertUnnest(param, type)
                                 
         except Exception as e:
             print('out of for loop')
             print(e)
 
+    # postplace를 추가했을 때
+    # pp_c user_id b_id
+    def send_to_user_about_who_add_place(self, type, username, b_id):
+
+        un_token =[]
+        un_token_id = []
+        un_type = []
+        un_title = []
+        un_to = []
+        un_from = []
+        un_body = []
+        un_is_sended = []
+        un_etc = []
+
+        user_data = self.readQuery("select username, first_name from auth_user where username = '{0}'".format(username),'one')
+        postObj_id = self.readQuery("select id from posts_posts where b_id='{0}'".format(b_id), 'one')
+        
+        notiTemplateObj = self.readQuery("select notitemp_body from notis_notitemplate where notitemp_type = '{0}'".format(type), 'one')
+        
+        if username == postObj_id[0]: #mine: # 내 글 : 리더, 글 구독하고 있던 사람
+            try:
+                allSendUserObj = self.readQuery("""select * 
+                                                from users_userfcmtoken
+                                                where ufcm_user_id in (
+                                                select id from posts_savepost where b_id = '{0}' and sp_is_noti=true
+                                                )""".format(b_id), 'all')
+                
+                for odict in allSendUserObj:
+                    if odict['ufcm_token'] != None and odict['ufcm_user_id'] != username:
+
+                        sql = "select ufcm_id from users_userfcmtoken where ufcm_token = '{0}' and ufcm_device_id = '{1}'".format(odict['ufcm_token'], odict['ufcm_device_id'])
+                        ufcm_token_data = self.readQuery(sql, 'one')
+
+                        un_token_id.append(ufcm_token_data[0])
+                        un_type.append(type)
+                        un_title.append(user_data[1])
+                        un_to.append(odict['ufcm_user_id'])
+                        un_from.append(username)
+                        un_body.append(notiTemplateObj[0])
+                        un_etc.append(int(b_id))
+
+                        ans = self.send_to_firebase_cloud_messaging(user_data[1],notiTemplateObj[0], odict['ufcm_token'],ufcm_token_data[0], int(b_id))
+
+                        if ans['res'] == True :
+                            un_is_sended.append(True)
+                        else:
+                            un_is_sended.append(False)
+                
+                param = {'un_token_id': un_token_id, 'un_type': un_type, 'un_title': un_title
+                , 'un_to': un_to, 'un_from': un_from, 'un_body': un_body, 'un_is_sended': un_is_sended, 'un_etc': un_etc}
+
+                self.insertUnnest(param, type)
+                            
+            except Exception as e:
+                print('out of for loop')
+                print(e)
+
+    # image를 추가했을 때
+    def send_to_user_about_who_add_image(self, type, username, b_id):
+
+        un_token_id = []
+        un_type = []
+        un_title = []
+        un_to = []
+        un_from = []
+        un_body = []
+        un_is_sended = []
+        un_etc = []
+
+        user_data = self.readQuery("select username, first_name from auth_user where username = '{0}'".format(username),'one')
+        postObj_id = self.readQuery("select id from posts_posts where b_id='{0}'".format(b_id), 'one')
+        
+        notiTemplateObj = self.readQuery("select notitemp_body from notis_notitemplate where notitemp_type = '{0}'".format(type), 'one')
+        
+        if username == postObj_id[0]: #mine: # 내 글 : 리더, 글 구독하고 있던 사람
+            try:
+                allSendUserObj = self.readQuery("""select * 
+                                                from users_userfcmtoken
+                                                where ufcm_user_id in (
+                                                select id from posts_savepost where b_id = '{0}' and sp_is_noti=true
+                                                )""".format(b_id), 'all')
+                
+                for odict in allSendUserObj:
+                    if odict['ufcm_token'] != None and odict['ufcm_user_id'] != username:
+
+                        sql = "select ufcm_id from users_userfcmtoken where ufcm_token = '{0}' and ufcm_device_id = '{1}'".format(odict['ufcm_token'], odict['ufcm_device_id'])
+                        ufcm_token_data = self.readQuery(sql, 'one')
+
+                        un_token_id.append(ufcm_token_data[0])
+                        un_type.append(type)
+                        un_title.append(user_data[1])
+                        un_to.append(odict['ufcm_user_id'])
+                        un_from.append(username)
+                        un_body.append(notiTemplateObj[0])
+                        un_etc.append(int(b_id))
+
+                        ans = self.send_to_firebase_cloud_messaging(user_data[1],notiTemplateObj[0], odict['ufcm_token'],ufcm_token_data[0], int(b_id))
+
+                        if ans['res'] == True :
+                            un_is_sended.append(True)
+                        else:
+                            un_is_sended.append(False)
+                
+                param = {'un_token_id': un_token_id, 'un_type': un_type, 'un_title': un_title
+                , 'un_to': un_to, 'un_from': un_from, 'un_body': un_body, 'un_is_sended': un_is_sended, 'un_etc': un_etc}
+
+                
+                self.insertUnnest(param, type)
+                            
+            except Exception as e:
+                print('out of for loop')
+                print(e)
+          
+# 누군가 내 글을 구독했을 때
+    def send_to_user_about_who_saved_post(self, type, username, p_username):
+        # username 이  p_username 따르기 시작
+        un_token_id = []
+        un_type = []
+        un_title = []
+        un_to = []
+        un_from = []
+        un_body = []
+        un_is_sended = []
+        un_etc = []
+
+        user_data = self.readQuery("select username, first_name from auth_user where username = '{0}'".format(username),'one')
+        
+        notiTemplateObj = self.readQuery("select notitemp_body from notis_notitemplate where notitemp_type = '{0}'".format(type), 'one')
+
+        try:
+            allSendUserObj = self.readQuery("""select * from users_userfcmtoken 
+                                                where ufcm_user_id = '{0}'""".format(p_username), 'all')
+            
+            for odict in allSendUserObj:
+                if odict['ufcm_token'] != None and odict['ufcm_user_id'] != username:
+
+                    sql = "select ufcm_id from users_userfcmtoken where ufcm_token = '{0}' and ufcm_device_id = '{1}'".format(odict['ufcm_token'], odict['ufcm_device_id'])
+                    ufcm_token_data = self.readQuery(sql, 'one')
+
+                    sql1 = """select count(*) from users_usernotification where
+                                un_token_id = '{0}' and un_type = '{1}' 
+                                and un_from = '{2}' and un_to = '{3}' 
+                                and  un_send_date between now() - interval '1 minute' and now()""".format(ufcm_token_data[0],type, username, p_username)
+                    c = self.readQuery(sql1, 'one')
+                    
+                    if c[0] == 0:
+
+                        un_token_id.append(odict['ufcm_id'])
+                        un_type.append(type)
+                        un_title.append(user_data[1])
+                        un_to.append(odict['ufcm_user_id'])
+                        un_from.append(username)
+                        un_body.append(notiTemplateObj[0])
+                        un_etc.append(None)
+
+
+                        ans = self.send_to_firebase_cloud_messaging(user_data[1],notiTemplateObj[0], odict['ufcm_token'],ufcm_token_data[0], None)
+
+                        if ans['res'] == True :
+                            un_is_sended.append(True)
+                        else:
+                            un_is_sended.append(False)
+
+            param = {'un_token_id': un_token_id, 'un_type': un_type, 'un_title': un_title
+            , 'un_to': un_to, 'un_from': un_from, 'un_body': un_body, 'un_is_sended': un_is_sended, 'un_etc': un_etc}
+
+            
+            self.insertUnnest(param, type)
+                        
+        except Exception as e:
+            print('out of for loop')
+            print(e)
+        
+
+    # 누군가 나를 팔로우 했을 때
+    def send_to_user_about_who_followed_user(self, type, fromuser, touser):
+
+        un_token_id = []
+        un_type = []
+        un_title = []
+        un_to = []
+        un_from = []
+        un_body = []
+        un_is_sended = []
+        un_etc = []
+
+        user_data = self.readQuery("select username, first_name from auth_user where username = '{0}'".format(fromuser),'one')
+        notiTemplateObj = self.readQuery("select notitemp_body from notis_notitemplate where notitemp_type = '{0}'".format(type), 'one')
+
+        try:
+            allSendUserObj = self.readQuery("""select * from users_userfcmtoken 
+                                                where ufcm_user_id = '{0}'""".format(touser), 'all')
+            
+            for odict in allSendUserObj:
+                if odict['ufcm_token'] != None and odict['ufcm_user_id'] != fromuser:
+
+                    sql = "select ufcm_id from users_userfcmtoken where ufcm_token = '{0}' and ufcm_device_id = '{1}'".format(odict['ufcm_token'], odict['ufcm_device_id'])
+                    ufcm_token_data = self.readQuery(sql, 'one')
+
+                    sql1 = """select count(*) from users_usernotification where
+                                un_token_id = '{0}' and un_type = '{1}' 
+                                and un_from = '{2}' and un_to = '{3}' 
+                                and  un_send_date between now() - interval '1 minute' and now()""".format(ufcm_token_data[0],type, fromuser, touser)
+                    c = self.readQuery(sql1, 'one')
+                    
+                    if c[0] == 0:
+                        un_token_id.append(odict['ufcm_id'])
+                        un_type.append(type)
+                        un_title.append(user_data[1])
+                        un_to.append(odict['ufcm_user_id'])
+                        un_from.append(fromuser)
+                        un_body.append(notiTemplateObj[0])
+                        un_etc.append(None)
+
+                        ans = self.send_to_firebase_cloud_messaging(user_data[1], notiTemplateObj[0], odict['ufcm_token'],ufcm_token_data[0], None)
+
+                        if ans['res'] == True :
+                            un_is_sended.append(True)
+                        else:
+                            un_is_sended.append(False)
+
+            param = {'un_token_id': un_token_id, 'un_type': un_type, 'un_title': un_title
+            , 'un_to': un_to, 'un_from': un_from, 'un_body': un_body, 'un_is_sended': un_is_sended, 'un_etc': un_etc}
+            
+            self.insertUnnest(param, type)
+
+        except Exception as e:
+            print('out of for loop')
+            print(e)
+
+
 
 def lambda_handler(event):
-    # {'pc_id': '634', 'pc_comment': 'kk', 'b_id': '115', 'id': '1142995766470027', 'type' ,'pc_c'}
-    print(event)
-
     cred = credentials.Certificate('./ownway-firebase-adminsdk-servicekey.json')            
     default_app = firebase_admin.initialize_app(cred)
 
     try:
         db = CRUD()
-        #Namespace(arg1='709', arg2='Fw', arg3='0114', arg4='101960524939177545327', arg5='pc_c', arg6='false')
+
         if event.arg5 == 'pc_c':
-            # type, username, b_id, pc_comment
             db.send_to_reader_about_new_comment(event.arg5, event.arg4, event.arg3, event.arg2)
         elif event.arg5 == 'pp_c':
-            print(db.readDB(schema='public',table='auth_user',colum='*'))
+            db.send_to_user_about_who_add_place(event.arg5,event.arg4, event.arg3)
         elif event.arg5 == 'im_c':
-            print(db.readDB(schema='public',table='auth_user',colum='*'))
+            db.send_to_user_about_who_add_image(event.arg5,event.arg4, event.arg3)
         elif event.arg5 == 'sp_c':
-            print(db.readDB(schema='public',table='auth_user',colum='*'))
+            # type, 따르는 사람 , 따라가는 사람
+            db.send_to_user_about_who_saved_post(event.arg5,event.arg4, event.arg3)
         elif event.arg5 == 'fu_c':
-            print(db.readDB(schema='public',table='auth_user',colum='*'))
-        # elif event.arg6 ==  'p_c':
-        #     db.send_to_reader_about_new_post(event.arg6, event['id'], event['b_id'])
-            # print(db.readDB(schema='public',table='auth_user',colum='*'))
+            # type, 누가, 누구를
+            db.send_to_user_about_who_followed_user(event.arg5,event.arg4, event.arg3)
     except Exception as e:
         print('error1')
         print(e)
-
-    return {
-        'statusCode': 200,
-        'body': '234',
-        'res':event
-    }
 
 lambda_handler(args)

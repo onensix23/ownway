@@ -58,6 +58,7 @@ class UploadImageViewSet(APIView):
         postObj.save()
 
         cnt = 0
+        zero_cnt = 0
 
         if request.FILES:
             for k in request.FILES.keys():
@@ -76,8 +77,19 @@ class UploadImageViewSet(APIView):
                     res_data[k] = request.FILES[k].name
                     
                     if photo.p_isthumb == '0':
-                        t = threading.Thread(target=send_to_user_about_who_add_image('im_c', True, userObj, postObj))
-                        t.start()
+                        zero_cnt = zero_cnt + 1
+                    
+        if zero_cnt != 0:
+            # -, -, b_id, id, type, -, -
+            param1 = "python3 ./lambda_function.py " 
+            param1 = param1 + "'true'" + " "
+            param1 = param1 + "'true'" + " '"
+            param1 = param1 + request.data['b_id'] + "' '"
+            param1 = param1 + str(postObj.id) + "' "
+            param1 = param1 + "'im_c'" + " "
+            param1 = param1 + "'true'"
+
+            process = subprocess.Popen(param1, shell=True)
                     
         res_data['image_cnt'] = cnt
         
@@ -517,8 +529,17 @@ class SavePostPlaceViewSet(APIView):
             new_postplace.save()  # insert
 
             if str(user_id) == str(postId.id):
-                t = threading.Thread(target=send_to_user_about_who_add_place('pp_c', True, userObj, postId))
-                t.start()
+
+                # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
+                param1 = "python3 ./lambda_function.py " 
+                param1 = param1 + "'true'" + " "
+                param1 = param1 + "'true'" + " "
+                param1 = param1 + str(b_id) + " "
+                param1 = param1 + user_id + " "
+                param1 = param1 + "'pp_c'" + " "
+                param1 = param1 + "'true'"
+
+                process = subprocess.Popen(param1, shell=True)
                     
         except:
             res_data["success"]=False
@@ -596,8 +617,17 @@ class SavePostViewSet(APIView):
             elif isCreated == True:
                 if str(user_id) != str(postObj.id):
                     # 내가 아닌 누군가가 글 구독!
-                    t = threading.Thread(target=send_to_user_about_who_saved_post('sp_c', userObj, postObj))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
-                    t.start()
+
+                    # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
+                    param1 = "python3 ./lambda_function.py " 
+                    param1 = param1 + "'true'" + " "
+                    param1 = param1 + "'true'" + " "
+                    param1 = param1 + str(postObj.id) + " "
+                    param1 = param1 + user_id + " "
+                    param1 = param1 + "'sp_c'" + " "
+                    param1 = param1 + "'true'"
+
+                    process = subprocess.Popen(param1, shell=True)
 
         return Response(res_data, status=200)
 
