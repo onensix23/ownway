@@ -94,10 +94,10 @@ class CRUD(Databases):
 
 
     def insertUnnest(self,param):
-        query = """insert into public.users_usernotification (un_token_id, un_type, un_title, un_to, un_from, un_body, un_is_sended, un_etc) 
+        query = """insert into public.users_usernotification (un_token_id, un_type, un_title, un_to, un_from, un_body, un_is_sended, un_is_read, un_etc) 
         select unnest(%(un_token_id)s), unnest(%(un_type)s), unnest(%(un_title)s) 
-            ,unnest(%(un_to)s) ,unnest(%(un_from)s)
-            ,unnest(%(un_body)s), unnest(%(un_is_sended)s), unnest(%(un_etc)s) """
+            ,unnest(%(un_to)s) ,unnest(%(un_from)s),unnest(%(un_body)s), 
+            unnest(%(un_is_sended)s), false , unnest(%(un_etc)s)"""
 
         try:
             print('----1-----')
@@ -223,8 +223,8 @@ class CRUD(Databases):
                         un_token_id.append(ufcm_token_data[0])
                         un_type.append(type)
                         un_title.append(user_data[1])
-                        un_to.append(username)
-                        un_from.append(odict['ufcm_user_id'])
+                        un_to.append(odict['ufcm_user_id'])
+                        un_from.append(username)
                         un_body.append(pc_comment)
                         un_etc.append(int(b_id))
 
@@ -251,8 +251,8 @@ class CRUD(Databases):
                             un_token.append(odict['ufcm_token'])
                             un_type.append(type)
                             un_title.append(user_data[1])
-                            un_to.append(username)
-                            un_from.append(odict['ufcm_user_id'])
+                            un_to.append(odict['ufcm_user_id'])
+                            un_from.append(username)
                             un_body.append(pc_comment)
                             un_etc.append(int(b_id))
 
