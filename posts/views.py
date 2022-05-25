@@ -13,6 +13,7 @@ from .models import *
 from users.models import UserFollow, UserFCMToken
 from notis.views import *
 import threading, requests, asyncio
+import subprocess
 
 class TestViewSet(APIView):
     def get(self, request, **kwargs):
@@ -422,26 +423,40 @@ class PostCommentViewSet(APIView):
 
         # noti_receiver = UserFCMToken.objects.get(ufcm_user_id=User.objects.get(username=postObj.id).username, ufcm_device_id=ufcm_device_id) # 글 작성자
 
-
         if type == 'c' :
             new_Comment = PostComment(id=userObj, b_id=postObj, pc_comment=pc_comment)
             new_Comment.save()  # insert
                 
+            # 내가 내 글에 글 씀 -> 구독자한테 알림 가야됨
             if str(postObj.id) == str(user_id):
+
+                # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
+                param1 = "python3 ./lambda_function.py " 
+                param1 = param1 + str(new_Comment.pc_id) + " "
+                param1 = param1 +"'"+ pc_comment +"' "
+                param1 = param1 + str(b_id) + " "
+                param1 = param1 + user_id + " "
+                param1 = param1 + "'pc_c'" + " "
+                param1 = param1 + "'true'"
+
+                process = subprocess.Popen(param1, shell=True)
+
                 postObj.b_update_datetime = datetime.now()
                 postObj.save()
 
-                # start = timeit.default_timer()  
-                send_to_reader_about_new_comment('pc_c', True, request.data, userObj, postObj, pc_comment)
-                # stop = timeit.default_timer()
-                # print(stop - start)
-
-                # 내가 내 글에 글 씀 -> 구독자한테 알림 가야됨
-                # t = threading.Thread(target=send_to_reader_about_new_comment('pc_c', True, request.data, userObj, postObj, pc_comment))# , noti_receiver.ufcm_token, noti_receiver.ufcm_device_id))
-                # t.start()
             else: # 내 글은 아닌데 누군가의 글에 답글이 달린 상태겠죠?
-                t = threading.Thread(target=send_to_reader_about_new_comment('pc_c', False, request.data, userObj, postObj, pc_comment))
-                t.start()
+
+                # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
+                param1 = "python3 ./lambda_function.py " 
+                param1 = param1 + str(new_Comment.pc_id) + " "
+                param1 = param1 +"'"+ pc_comment +"' "
+                param1 = param1 + "'0'"
+                param1 = param1 + str(b_id) + " "
+                param1 = param1 + user_id + " "
+                param1 = param1 + "'pc_c'" + " "
+                param1 = param1 + "'false'"
+
+                process = subprocess.Popen(param1, shell=True)
 
         elif type == 'u':
             pc_id = request.data['pc_id']
