@@ -310,7 +310,7 @@ class UserNotificationSet(APIView):
         userObj = User.objects.get(username=userId)
         userFCMObj = UserFCMToken.objects.get(ufcm_user_id=userObj,ufcm_device_id=deviceId,ufcm_token=token)
 
-        userNotificationObj = UserNotification.objects.filter(un_token_id=userFCMObj, un_to=userObj, un_is_read=False).count()
+        userNotificationObj = UserNotification.objects.filter(un_token_id=userFCMObj, un_to=userObj, un_is_sended=True, un_is_read=False).count()
         res_data['result'] = userNotificationObj
         
         return Response(res_data, status=200)
@@ -330,7 +330,7 @@ class UserNotificationSet(APIView):
         userFCMObj = UserFCMToken.objects.get(ufcm_user_id=userObj,ufcm_device_id= device_id,ufcm_token=token)
 
         try:
-            userNotificationObj = UserNotification.objects.filter(un_token_id=userFCMObj,un_to=userObj, un_is_read=False).order_by("-un_send_date")
+            userNotificationObj = UserNotification.objects.filter(un_token_id=userFCMObj,un_to=userObj, un_is_sended=True, un_is_read=False).order_by("-un_send_date")
             get_serializer_class = UserNotificationSerializer2(userNotificationObj, many=True)         
             res_data['success'] = True
 
