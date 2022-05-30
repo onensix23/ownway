@@ -347,6 +347,7 @@ class UserNotificationSet(APIView):
             'error': None,
             'action' : '',
         }
+
         if request.data['type'] == 'delete':
             try:
                 user_id = request.data['userId']
@@ -364,6 +365,7 @@ class UserNotificationSet(APIView):
         else:
             try: 
                 un_id = request.data['un_id']
+
                 userNotificationObj = UserNotification.objects.get(un_id=un_id)
                 userNotificationObj.un_is_read = True
                 userNotificationObj.save()
