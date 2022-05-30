@@ -127,6 +127,7 @@ class CRUD(Databases):
         
         # This registration token comes from the client FCM SDKs.
         print('send_to_firebase_cloud_messaging')
+
         sendData = {
             'un_title' : title,
             'un_body' : body,
@@ -137,8 +138,6 @@ class CRUD(Databases):
         res = {'res' : False}
 
         registration_token = token
-        registration_token = 'dUo95LOfakWMlBLmapsW3C:APA91bGyHYy5XuzJNejPJkLxije4DqXdwI6pM-wTP4I6QOacHlkQH-ThXJbrai70cZdOvDd7YenVQ30hV-VPjSHbRFyOSwJbPJi9SB43AYjnIotjdvanMIWMOwaSKTjrJYo7tOp4bzx8'
-
         try:
             # See documentation on defining a message payload.
             message = messaging.Message(
