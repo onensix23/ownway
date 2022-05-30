@@ -138,12 +138,14 @@ class CRUD(Databases):
         res = {'res' : False}
 
         registration_token = token
+        
         try:
             # See documentation on defining a message payload.
             message = messaging.Message(
                 notification=messaging.Notification(
                     title=title,
                     body=body,
+                    sound='default' 
                 ),
                 token=registration_token,
                 data={'param': json.dumps(sendData)},
