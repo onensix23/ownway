@@ -121,7 +121,7 @@ class CRUD(Databases):
         except Exception as e :
             print(e)
 
-    def send_to_firebase_cloud_messaging(self, title, body, token, token_id, etc): #  token, device_id
+    def send_to_firebase_cloud_messaging(self, type, title, body, token, token_id, etc): #  token, device_id
         # print(title, body, token, token_id, etc)
         firebase_admin.get_app()
         
@@ -133,6 +133,7 @@ class CRUD(Databases):
             'un_body' : body,
             'un_token' : token,
             'un_token_id' : token_id,
+            'un_type': type,
             'un_etc' : etc
         }
         res = {'res' : False}
@@ -206,7 +207,7 @@ class CRUD(Databases):
                         un_body.append(pc_comment)
                         un_etc.append(int(b_id))
 
-                        ans = self.send_to_firebase_cloud_messaging(user_data[1],pc_comment, odict['ufcm_token'],ufcm_token_data[0], int(b_id))
+                        ans = self.send_to_firebase_cloud_messaging(type, user_data[1],pc_comment, odict['ufcm_token'],ufcm_token_data[0], int(b_id))
 
                         if ans['res'] == True :
                             un_is_sended.append(True)
@@ -233,7 +234,7 @@ class CRUD(Databases):
                             un_body.append(pc_comment)
                             un_etc.append(int(b_id))
 
-                            ans = self.send_to_firebase_cloud_messaging(user_data[1],pc_comment, odict['ufcm_token'],ufcm_token_data[0], int(b_id))
+                            ans = self.send_to_firebase_cloud_messaging(type,user_data[1],pc_comment, odict['ufcm_token'],ufcm_token_data[0], int(b_id))
 
                             if ans['res'] == True :
                                 un_is_sended.append(True)
@@ -291,7 +292,7 @@ class CRUD(Databases):
                         un_body.append(notiTemplateObj[0])
                         un_etc.append(int(b_id))
 
-                        ans = self.send_to_firebase_cloud_messaging(user_data[1],notiTemplateObj[0], odict['ufcm_token'],ufcm_token_data[0], int(b_id))
+                        ans = self.send_to_firebase_cloud_messaging(type,user_data[1],notiTemplateObj[0], odict['ufcm_token'],ufcm_token_data[0], int(b_id))
 
                         if ans['res'] == True :
                             un_is_sended.append(True)
@@ -346,7 +347,7 @@ class CRUD(Databases):
                         un_body.append(notiTemplateObj[0])
                         un_etc.append(int(b_id))
 
-                        ans = self.send_to_firebase_cloud_messaging(user_data[1],notiTemplateObj[0], odict['ufcm_token'],ufcm_token_data[0], int(b_id))
+                        ans = self.send_to_firebase_cloud_messaging(type,user_data[1],notiTemplateObj[0], odict['ufcm_token'],ufcm_token_data[0], int(b_id))
 
                         if ans['res'] == True :
                             un_is_sended.append(True)
@@ -406,7 +407,7 @@ class CRUD(Databases):
                         un_etc.append(None)
 
 
-                        ans = self.send_to_firebase_cloud_messaging(user_data[1],notiTemplateObj[0], odict['ufcm_token'],ufcm_token_data[0], None)
+                        ans = self.send_to_firebase_cloud_messaging(type,user_data[1],notiTemplateObj[0], odict['ufcm_token'],ufcm_token_data[0], None)
 
                         if ans['res'] == True :
                             un_is_sended.append(True)
@@ -464,7 +465,7 @@ class CRUD(Databases):
                         un_body.append(notiTemplateObj[0])
                         un_etc.append(None)
 
-                        ans = self.send_to_firebase_cloud_messaging(user_data[1], notiTemplateObj[0], odict['ufcm_token'],ufcm_token_data[0], None)
+                        ans = self.send_to_firebase_cloud_messaging(type,user_data[1], notiTemplateObj[0], odict['ufcm_token'],ufcm_token_data[0], None)
 
                         if ans['res'] == True :
                             un_is_sended.append(True)
