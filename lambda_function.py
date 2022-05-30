@@ -145,8 +145,16 @@ class CRUD(Databases):
                 notification=messaging.Notification(
                     title=title,
                     body=body,
-                    sound='default' 
                 ),
+                android=messaging.AndroidConfig( 
+                    priority='high', 
+                    notification=messaging.AndroidNotification( sound='default' ), 
+                ), 
+                apns=messaging.APNSConfig( 
+                    payload=messaging.APNSPayload( 
+                        aps=messaging.Aps( sound='default' ), 
+                    ), 
+                ), 
                 token=registration_token,
                 data={'param': json.dumps(sendData)},
             )
