@@ -362,13 +362,31 @@ class UserNotificationSet(APIView):
             except Exception as e:
                 res_data['error'] = e
 
-        else:
+        elif request.data['type'] == 'update':
             try: 
                 un_id = request.data['un_id']
 
                 userNotificationObj = UserNotification.objects.get(un_id=un_id)
                 userNotificationObj.un_is_read = True
                 userNotificationObj.save()
+
+                res_data['success'] = True
+
+            except Exception as e:
+                res_data['error'] = e
+
+        elif request.data['type'] == 'updateall':
+            try: 
+                # {'user_id': '101960524939177545327', 'b_id': 114, 'type': 'updateall'}
+
+                user_id = request.data['user_id']
+                b_id = request.data['b_id']
+
+                # print(request.data)
+                toObj = User.objects.get(username=user_id)
+                postObj = Posts.objects.get(b_id=b_id)
+
+                userNotificationObj = UserNotification.objects.filter(un_to=toObj, un_etc=postObj).update(un_is_read=True)
 
                 res_data['success'] = True
 
