@@ -145,11 +145,14 @@ class DeleteImageViewSet(APIView):
 
         photoObj = Photo.objects.get(b_id=b_id,p_id=p_id)
 
-        try:
-            FileUpload(s3_client).delete(p_filename)
+        try: 
+            if p_filename != None:
+                FileUpload(s3_client).delete(p_filename)
+            
             photoObj.delete()
-        except:
+        except Exception as e:
             print('except')
+            print(e)
             # return Response(res_data, status=200)
         
         return Response(res_data, status=200)
