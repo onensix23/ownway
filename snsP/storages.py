@@ -31,6 +31,9 @@ class FileUpload:
     def upload(self, file):
         return self.client.upload(file)
 
+    def uploadthumbnail(self, file):
+        return self.client.uploadthumbnail(file)
+
     def delete(self, file):
         return self.client.delete(file)
 
@@ -53,6 +56,7 @@ class MyS3Client:
 
             im = Image.open(file)
             im = ImageOps.exif_transpose(im)
+
             # im = im.resize((1920, 1920))
 
             # for orientation in ExifTags.TAGS.keys():
@@ -69,6 +73,31 @@ class MyS3Client:
                     
             buffer = BytesIO()
             im.save(buffer, "JPEG")
+            buffer.seek(0)
+
+            self.s3_client.upload_fileobj(
+                    buffer, #file,
+                    self.bucket_name,
+                    file_id,
+                    ExtraArgs = extra_args
+                )
+            return f'https://{self.bucket_name}.s3.ap-northeast-2.amazonaws.com/{file_id}'
+        except Exception as e:
+            print(e)
+            return None
+    
+    
+    def uploadthumbnail(self, file):
+        try: 
+            now_date = datetime.now().strftime('%Y%m%d')
+            file_id = 'media/images/'+now_date+'/'+str(uuid.uuid4())
+            extra_args = { 'ContentType' : file.content_type }
+
+            im = Image.open(file)
+            im = ImageOps.exif_transpose(im)
+            
+            buffer = BytesIO()
+            im.save(buffer, "JPEG", quality=10)
             buffer.seek(0)
 
             self.s3_client.upload_fileobj(

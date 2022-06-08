@@ -68,7 +68,12 @@ class UploadImageViewSet(APIView):
 
                     photo = Photo()
                     photo.b_id = postObj
-                    photo.p_filename = FileUpload(s3_client).upload(request.FILES[k])
+
+                    if request.data['type'] == 0:
+                        photo.p_filename = FileUpload(s3_client).upload(request.FILES[k])
+                    else:
+                        photo.p_filename = FileUpload(s3_client).uploadthumbnail(request.FILES[k])
+                        
                     photo.p_isthumb = request.data['type']
 
                     # 데이터베이스에 저장
