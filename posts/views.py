@@ -2,7 +2,7 @@ from django.db.models.functions import Substr
 from django.shortcuts import render, redirect
 from snsP.my_settings import *
 from django.http import HttpResponse
-from django.db.models import Q,Subquery
+from django.db.models import Q,Subquery,Prefetch
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, DestroyAPIView
@@ -10,7 +10,7 @@ from snsP.storages import FileUpload, s3_client
 from .serializers import *
 from django.core import serializers
 from .models import *
-from users.models import UserFollow, UserFCMToken
+from users.models import UserFollow, UserFCMToken, UserBlock
 from notis.views import *
 import threading, requests, asyncio
 import subprocess
@@ -177,64 +177,79 @@ class PostViewSet(APIView):
             'b_id': 6
         }
 
-        # print(request.data)
 
         user_id = request.data['user_id']
-        b_title = request.data['b_title']
-        b_address = request.data['b_address']
-        b_theme = request.data['b_theme']
-        b_hash_tag_1 = request.data['b_hash_tag_1']
-        b_hash_tag_2 = request.data['b_hash_tag_2']
-        b_place_id = request.data['b_place_id']
-
-        pc_comment = request.data['pc_comment']
-
-        # print(request.data)
-
         userObj = User.objects.get(username=user_id)
 
-        new_post = Posts(
-                id=userObj, 
-                b_title=b_title, 
-                b_address=b_address,  
-                b_theme=b_theme, 
-                b_hash_tag_1=b_hash_tag_1, b_hash_tag_2=b_hash_tag_2, 
-        )
+        if request.data['type'] == 'create':
+            b_title = request.data['b_title']
+            b_address = request.data['b_address']
+            b_theme = request.data['b_theme']
+            b_hash_tag_1 = request.data['b_hash_tag_1']
+            b_hash_tag_2 = request.data['b_hash_tag_2']
+            b_place_id = request.data['b_place_id']
 
-        new_post.save()  # insert
+            pc_comment = request.data['pc_comment']
 
-        res_data['post_success']=True
-        
-        # print(new_post.b_id)
+            # print(request.data)
 
-        res_data['b_id'] = new_post.b_id
 
-        postObj = Posts.objects.get(b_id=new_post.b_id)
-
-        if pc_comment != '':
-            new_postcomment = PostComment(
-                b_id=postObj,
-                id=userObj,
-                pc_comment=pc_comment,
-                pc_type='1'
+            new_post = Posts(
+                    id=userObj, 
+                    b_title=b_title, 
+                    b_address=b_address,  
+                    b_theme=b_theme, 
+                    b_hash_tag_1=b_hash_tag_1, b_hash_tag_2=b_hash_tag_2, 
             )
 
-            new_postcomment.save()
-    
+            new_post.save()  # insert
 
-            res_data['postcomment_success']=True
+            res_data['post_success']=True
+            
+            # print(new_post.b_id)
+
+            res_data['b_id'] = new_post.b_id
+
+            postObj = Posts.objects.get(b_id=new_post.b_id)
+
+            if pc_comment != '':
+                new_postcomment = PostComment(
+                    b_id=postObj,
+                    id=userObj,
+                    pc_comment=pc_comment,
+                    pc_type='1'
+                )
+
+                new_postcomment.save()
         
-        if b_place_id != '':
-            new_postplace = PostPlace(
-                b_id=postObj,
-                id=userObj,
-                pp_place_id = b_place_id,
-                pp_type='1',
-            )
 
-            new_postplace.save()
-            res_data['postplace_success']=True
+                res_data['postcomment_success']=True
+            
+            if b_place_id != '':
+                new_postplace = PostPlace(
+                    b_id=postObj,
+                    id=userObj,
+                    pp_place_id = b_place_id,
+                    pp_type='1',
+                )
 
+                new_postplace.save()
+                res_data['postplace_success']=True
+
+        elif request.data['type'] == 'read':
+            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime').filter(Q(
+                ~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj))))
+            ))
+
+            get_serializer_class = PostSerializer(get_queryset, many=True)
+            res_data = get_serializer_class.data
+
+        elif request.data['type'] == 'readDetail':
+            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related(Prefetch('postcomment_b_id',queryset=PostComment.objects.filter(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_from').filter(ub_from=userObj)))))).prefetch_related('postplace_b_id').prefetch_related('savepost_b_id').filter(Q(
+                Q(b_id=request.data['b_id']) 
+            )).select_related('id') # .order_by('-photo_b_id.p_datetime').order_by('-postplace_b_id.pp_datetime').order_by('-postcomment_b_id.pc_datetime')
+            get_serializer_class = PostSerializer(get_queryset, many=True)
+            res_data = get_serializer_class.data
 
         return Response(res_data, status=200)
 
@@ -245,7 +260,7 @@ class PostViewSet(APIView):
     def get(self, request, **kwargs):
         if(len(request.GET) > 0): #detail
             get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('postplace_b_id').prefetch_related('savepost_b_id').filter(Q(
-                Q(b_id=request.GET['b_id'])
+                Q(b_id=request.GET['b_id']) 
             )).select_related('id') # .order_by('-photo_b_id.p_datetime').order_by('-postplace_b_id.pp_datetime').order_by('-postcomment_b_id.pc_datetime')
             get_serializer_class = PostSerializer(get_queryset, many=True)
 
