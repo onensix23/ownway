@@ -75,7 +75,7 @@ class MyS3Client:
     def uploadthumbnail(self, file):
         try: 
             now_date = datetime.now().strftime('%Y%m%d')
-            file_id = 'media/thumbnail/images/'+now_date+'/'+str(uuid.uuid4())
+            file_id = 'media/thumbnail/'+now_date+'/'+str(uuid.uuid4())
             extra_args = { 'ContentType' : file.content_type }
 
             im = Image.open(file)
