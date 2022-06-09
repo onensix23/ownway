@@ -21,6 +21,15 @@ class UserFollow(models.Model):
                 db_column='uf_reading', on_delete=models.CASCADE, max_length=12, null=False)  # 팔로잉
 
 
+class UserBlock(models.Model):
+    ub_id = models.BigAutoField(primary_key=True)
+    ub_from = models.ForeignKey(User, to_field="username", 
+                related_name='ub_from',
+                db_column='ub_from', on_delete=models.CASCADE, max_length=12, null=False)  # 누가
+    ub_to =  models.ForeignKey(User, to_field="username", 
+                related_name='ub_to',
+                db_column='ub_to', on_delete=models.CASCADE, max_length=12, null=False)  # 누구에게
+
 class UserFCMToken(models.Model):
     ufcm_id = models.BigAutoField(primary_key=True)
     ufcm_user_id = models.ForeignKey(User, to_field="username", db_column='ufcm_user_id',related_name='userfcmtoken_id', on_delete=models.CASCADE, max_length=20, null=False)

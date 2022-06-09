@@ -52,9 +52,7 @@ class ResignUserViewSet(APIView):
                                 for p_key, p_val in modict.items():
                                     print(p_key)
                                     if p_key == 'p_filename':
-                                        print("2")
                                         if p_val != None and p_val.find('https://') != -1:
-                                            print("3")
                                             FileUpload(s3_client).delete(p_val)
                                         break
                             break
@@ -71,7 +69,6 @@ class ResignUserViewSet(APIView):
 
         print(res_data)
         return Response(res_data, status=200)
-
 
 class UserDataViewSet(APIView):
 
@@ -192,7 +189,6 @@ class SocialLoginViewSet(APIView):
 
         return Response(res_data, status=200)
 
-
 class FollowUserViewSet(APIView):
 
     def get(self, request, **kwargs):
@@ -262,7 +258,76 @@ class FollowUserViewSet(APIView):
 
         return Response(res_data, status=200)
 
+class BlockUserViewSet(APIView):
+    @method_decorator(csrf_exempt)
+    def post(self, request, **kwargs):
+        res_data = {
+            "action" : "block",
+            "error" : None,
+            'is_already_block':True,
+            "success" : True
+        }
 
+        from_id = request.data['from_id'] # 차단 누른 사람
+        to_id = request.data['to_id'] # 차단 당하는 사람
+        
+        fromObj = User.objects.get(username=from_id) # 차단 누른 사람
+        toObj = User.objects.get(username=to_id) # 차단 당하는 사람
+        
+        if request.data['type'] == '0': # 체크용
+            query_count = UserBlock.objects.filter(ub_from=fromObj, ub_to=toObj).count()
+
+            try:
+                if query_count == 0:
+                    res_data['count'] = query_count
+                    res_data["is_already_block"] = False
+                else:
+                    res_data["count"] = 0
+            except Exception as e:
+                res_data['success'] = False
+                res_data['error'] = e
+
+        else:
+            userBlockObj, isCreated =  UserBlock.objects.get_or_create(ub_from=fromObj, ub_to=toObj)
+            try:
+                if isCreated == False: # 삭제 해야 됨
+                    res_data['action'] = 'unblock'
+                    res_data["is_already_block"] = False
+                    userBlockObj.delete()
+
+                elif isCreated == True: 
+                    # 차단함...
+                    # 내가 그 사람한테 단 댓글 삭제
+                    # 팔로우 삭제 0
+                    # 구독한 거 있으면 삭제 
+                    userFollowObj_to = UserFollow.objects.filter(uf_reader=fromObj, uf_reading=toObj)
+                    if userFollowObj_to != None:
+                        userFollowObj_to.delete()
+
+                    userFollowObj_from = UserFollow.objects.filter(uf_reader=toObj, uf_reading=fromObj)
+                    if userFollowObj_from != None:
+                        userFollowObj_from.delete()
+
+                    savePostObj_from = SavePost.objects.filter(b_id__in=Subquery(Posts.objects.values('b_id').filter(id=toObj)), id=fromObj)
+                    if savePostObj_from != None:
+                        savePostObj_from.delete()
+                    
+                    savePostObj_to = SavePost.objects.filter(b_id__in=Subquery(Posts.objects.values('b_id').filter(id=fromObj)), id=toObj)
+                    if savePostObj_to != None:
+                        savePostObj_to.delete()
+
+                    postcommentObj_from= PostComment.objects.filter(b_id__in=Subquery(Posts.objects.values('b_id').filter(id=fromObj)), id=toObj)
+                    if postcommentObj_from != None:  
+                        postcommentObj_from.delete()
+
+                    postcommentObj_to= PostComment.objects.filter(b_id__in=Subquery(Posts.objects.values('b_id').filter(id=toObj)), id=fromObj)
+                    if postcommentObj_to != None:  
+                        postcommentObj_to.delete()
+            except Exception as e:
+                res_data['success'] = False
+                res_data['error'] = e
+            
+        return Response(res_data, status=200)
 
 class UserProfileViewSet(APIView):
 
