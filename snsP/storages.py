@@ -56,21 +56,6 @@ class MyS3Client:
 
             im = Image.open(file)
             im = ImageOps.exif_transpose(im)
-
-            # im = im.resize((1920, 1920))
-
-            # for orientation in ExifTags.TAGS.keys():
-            #     if ExifTags.TAGS[orientation]=='Orientation':
-            #         break
-
-            #     temp = im.getexif()[0x0112]
-            #     if temp == 3:
-            #         im=im.rotate(180, expand=True)
-            #     elif temp == 6:
-            #         im=im.rotate(270, expand=True)
-            #     elif temp == 8:
-                    # im=im.rotate(90, expand=True)
-                    
             buffer = BytesIO()
             im.save(buffer, "JPEG")
             buffer.seek(0)
@@ -90,7 +75,7 @@ class MyS3Client:
     def uploadthumbnail(self, file):
         try: 
             now_date = datetime.now().strftime('%Y%m%d')
-            file_id = 'media/images/'+now_date+'/'+str(uuid.uuid4())
+            file_id = 'media/thumbnail/images/'+now_date+'/'+str(uuid.uuid4())
             extra_args = { 'ContentType' : file.content_type }
 
             im = Image.open(file)
