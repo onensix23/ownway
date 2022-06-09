@@ -69,7 +69,7 @@ class UploadImageViewSet(APIView):
                     photo = Photo()
                     photo.b_id = postObj
 
-                    if request.data['type'] == 0:
+                    if request.data['type'] == 1:
                         photo.p_filename = FileUpload(s3_client).upload(request.FILES[k])
                     else:
                         photo.p_filename = FileUpload(s3_client).uploadthumbnail(request.FILES[k])
