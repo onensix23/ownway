@@ -269,14 +269,14 @@ class BlockUserViewSet(APIView):
         }
 
         from_id = request.data['from_id'] # 차단 누른 사람
-        to_id = request.data['to_id'] # 차단 당하는 사람
-        
         fromObj = User.objects.get(username=from_id) # 차단 누른 사람
-        toObj = User.objects.get(username=to_id) # 차단 당하는 사람
-        
-        if request.data['type'] == '0': # 체크용
-            query_count = UserBlock.objects.filter(ub_from=fromObj, ub_to=toObj).count()
 
+        if request.data['type'] == '0': # 체크용
+
+            to_id = request.data['to_id'] # 차단 당하는 사람
+            toObj = User.objects.get(username=to_id) # 차단 당하는 사람
+            
+            query_count = UserBlock.objects.filter(ub_from=fromObj, ub_to=toObj).count()
             try:
                 if query_count == 0:
                     res_data['count'] = query_count
@@ -287,8 +287,12 @@ class BlockUserViewSet(APIView):
                 res_data['success'] = False
                 res_data['error'] = e
 
-        else:
+        elif request.data['type'] == '1': # 실제로 동작
+            to_id = request.data['to_id'] # 차단 당하는 사람
+            toObj = User.objects.get(username=to_id) # 차단 당하는 사람
+
             userBlockObj, isCreated =  UserBlock.objects.get_or_create(ub_from=fromObj, ub_to=toObj)
+
             try:
                 if isCreated == False: # 삭제 해야 됨
                     res_data['action'] = 'unblock'
@@ -326,6 +330,10 @@ class BlockUserViewSet(APIView):
             except Exception as e:
                 res_data['success'] = False
                 res_data['error'] = e
+        elif request.data['type'] == '2': # 차단한 사람 내용 불러오기
+            get_queryset = UserBlock.objects.filter(ub_from=fromObj)
+            get_serializer_class = UserBlockSerializer(get_queryset, many=True)
+            res_data = get_serializer_class.data
             
         return Response(res_data, status=200)
 

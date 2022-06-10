@@ -73,6 +73,17 @@ class UserFollowerSerializer(serializers.ModelSerializer):
                   'uf_reading',
                   )
 
+class UserBlockSerializer(serializers.ModelSerializer):
+    ub_from=UserSerializer2(read_only=True)
+    ub_to=UserSerializer2(read_only=True)
+
+    class Meta:
+        model = UserBlock
+        fields = (
+                  'ub_id',
+                  'ub_from',
+                  'ub_to',
+                  )
 
 class UserFCMTokenSerializer(serializers.ModelSerializer):
     ufcm_user_id = UserSerializer2(read_only=True)
