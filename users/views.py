@@ -286,7 +286,6 @@ class BlockUserViewSet(APIView):
             except Exception as e:
                 res_data['success'] = False
                 res_data['error'] = e
-
         elif request.data['type'] == '1': # 실제로 동작
             to_id = request.data['to_id'] # 차단 당하는 사람
             toObj = User.objects.get(username=to_id) # 차단 당하는 사람

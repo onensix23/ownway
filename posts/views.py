@@ -52,7 +52,6 @@ class UploadImageViewSet(APIView):
         }
 
         postObj = Posts.objects.get(b_id=request.data['b_id'])
-        userObj = User.objects.get(username=postObj.id)
         postObj.b_update_datetime = datetime.now()
         postObj.save()
 
@@ -85,6 +84,9 @@ class UploadImageViewSet(APIView):
                     
         if zero_cnt != 0:
             # -, -, b_id, id, type, -, -
+            UserNotiCount.objects.filter(unc_b_id=postObj).update(unc_count=F('unc_count')+1) #다 하나씩 올리고 그 다음엔?
+            UserNotiCount.objects.filter(unc_b_id=postObj,unc_count=4).delete() #지울거 지우기
+
             param1 = "python3 ./lambda_function.py " 
             param1 = param1 + "'true'" + " "
             param1 = param1 + "'true'" + " '"
@@ -446,19 +448,20 @@ class PostCommentViewSet(APIView):
             "success": True,
             "error": None
         }
-        # select
-        user_id = request.data['userId']
-        b_id = request.data['b_id']
-        pc_comment = request.data['pc_comment']
-        type = request.data['type']
-        ufcm_device_id = request.data['device_id']
 
-        userObj = User.objects.get(username=user_id)
-        postObj = Posts.objects.get(b_id=b_id)
+        type = request.data['type']
 
         # noti_receiver = UserFCMToken.objects.get(ufcm_user_id=User.objects.get(username=postObj.id).username, ufcm_device_id=ufcm_device_id) # 글 작성자
 
         if type == 'c' :
+            # select
+            user_id = request.data['userId']
+            b_id = request.data['b_id']
+            pc_comment = request.data['pc_comment']
+
+            userObj = User.objects.get(username=user_id)
+            postObj = Posts.objects.get(b_id=b_id)
+            
             new_Comment = PostComment(id=userObj, b_id=postObj, pc_comment=pc_comment)
             new_Comment.save()  # insert
                 
@@ -507,13 +510,26 @@ class PostCommentViewSet(APIView):
 
             pcObj.pc_comment = pc_comment
             pcObj.save()
- 
 
-        res_data = {
-            "success": True,
-            "error": None
-        }
-        
+        elif type == 'd':
+            try:    
+                user_id  = request.data['user_id']
+                b_id = request.data['b_id']
+                pc_id = request.data['pc_id']
+
+                postObj = Posts.objects.get(b_id=b_id)
+                userObj = User.objects.get(username=user_id)
+
+                if str(postObj.id) != str(user_id):
+                    uncObj = UserNotiCount.objects.get(unc_b_id=postObj,unc_user_id=userObj)
+                    uncObj.delete()
+
+                postcommentObj = PostComment.objects.get(pc_id=pc_id)
+                postcommentObj.delete()
+
+            except Exception as e:
+                res_data['error'] = e
+
         return Response(res_data, status=200)
 
 
@@ -560,6 +576,8 @@ class SavePostPlaceViewSet(APIView):
             new_postplace.save()  # insert
 
             if str(user_id) == str(postId.id):
+                UserNotiCount.objects.filter(unc_b_id=postId).update(unc_count=F('unc_count')+1) #다 하나씩 올리고 그 다음엔?
+                UserNotiCount.objects.filter(unc_b_id=postId,unc_count=4).delete() #지울거 지우기
 
                 # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
                 param1 = "python3 ./lambda_function.py " 
@@ -859,7 +877,12 @@ class PostCommentDetailViewSet(APIView):
 
         try:    
             postcommentObj = PostComment.objects.get(pc_id=pc_id)
+            
+            uncObj = UserNotiCount.objects.get(unc_b_id=Posts.objects.get(b_id=postcommentObj.b_id),unc_user_id=User.objects.get(username=postcommentObj.id))
+            
+            uncObj.delete()
             postcommentObj.delete()
+
 
         except Exception as e: 
             res_data['error'] = e
