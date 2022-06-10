@@ -30,6 +30,7 @@ class UserBlock(models.Model):
                 related_name='ub_to',
                 db_column='ub_to', on_delete=models.CASCADE, max_length=12, null=False)  # 누구에게
 
+
 class UserFCMToken(models.Model):
     ufcm_id = models.BigAutoField(primary_key=True)
     ufcm_user_id = models.ForeignKey(User, to_field="username", db_column='ufcm_user_id',related_name='userfcmtoken_id', on_delete=models.CASCADE, max_length=20, null=False)
@@ -57,4 +58,9 @@ class UserNotification(models.Model):
     un_message_id = models.CharField(max_length=25, null=True)
     un_etc = models.ForeignKey(Posts, to_field="b_id", db_column='un_etc',related_name='usernotification_etc', on_delete=models.CASCADE, max_length=10, null=True)
     
-
+class UserNotiCount(models.Model):
+    unc_id = models.BigAutoField(primary_key=True)
+    unc_user_id = models.ForeignKey(User, to_field="username", db_column='unc_user_id',related_name='unc_user_id', on_delete=models.CASCADE, max_length=20, null=False)
+    unc_b_id = models.ForeignKey(Posts, to_field="b_id", db_column='unc_b_id',related_name='unc_b_id', on_delete=models.CASCADE, max_length=10, null=True)
+    unc_count = models.IntegerField(default=0)
+    

@@ -2,15 +2,14 @@ from django.db.models.functions import Substr
 from django.shortcuts import render, redirect
 from snsP.my_settings import *
 from django.http import HttpResponse
-from django.db.models import Q,Subquery,Prefetch
+from django.db.models import Q,Subquery,Prefetch,F
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import RetrieveAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.generics import UpdateAPIView, DestroyAPIView
 from snsP.storages import FileUpload, s3_client
 from .serializers import *
-from django.core import serializers
 from .models import *
-from users.models import UserFollow, UserFCMToken, UserBlock
+from users.models import UserFollow, UserBlock, UserNotiCount
 from notis.views import *
 import threading, requests, asyncio
 import subprocess
@@ -465,6 +464,8 @@ class PostCommentViewSet(APIView):
                 
             # 내가 내 글에 글 씀 -> 구독자한테 알림 가야됨
             if str(postObj.id) == str(user_id):
+                UserNotiCount.objects.filter(unc_b_id=postObj).update(unc_count=F('unc_count')+1) #다 하나씩 올리고 그 다음엔?
+                UserNotiCount.objects.filter(unc_b_id=postObj,unc_count=4).delete() #지울거 지우기
 
                 # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
                 param1 = "python3 ./lambda_function.py " 
@@ -481,7 +482,13 @@ class PostCommentViewSet(APIView):
                 postObj.save()
 
             else: # 내 글은 아닌데 누군가의 글에 답글이 달린 상태겠죠?
+                new_noticount, is_created = UserNotiCount.objects.get_or_create(unc_user_id=userObj, unc_b_id=postObj)
 
+                # 기존에 있다면
+                if is_created == False:
+                    new_noticount.unc_count = 0
+                    new_noticount.save()
+                    
                 # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
                 param1 = "python3 ./lambda_function.py " 
                 param1 = param1 + str(new_Comment.pc_id) + " "

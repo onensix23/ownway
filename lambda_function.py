@@ -186,13 +186,18 @@ class CRUD(Databases):
             postObj_id = self.readQuery("select id from posts_posts where b_id='{0}'".format(b_id), 'one')
 
             if username == postObj_id[0]: #mine
-
                 allSendUserObj = self.readQuery("""select * 
-                                                from users_userfcmtoken
-                                                where ufcm_user_id in (
-                                                select id from posts_savepost where b_id = '{0}' and sp_is_noti=true
-                                                )""".format(b_id), 'all')
-                
+                                                    from users_userfcmtoken
+                                                    where ufcm_user_id in (
+                                                        select id from posts_savepost where b_id = '{0}' and sp_is_noti=true
+                                                    )
+                                                    union
+                                                    select * 
+                                                    from users_userfcmtoken
+                                                    where ufcm_user_id in (
+                                                        select unc_user_id from users_usernoticount where unc_b_id = '{1}'
+                                                    )""".format(b_id, b_id), 'all')
+
                 for odict in allSendUserObj:
                     if odict['ufcm_token'] != None and odict['ufcm_user_id'] != username:
 
