@@ -520,10 +520,13 @@ class PostCommentViewSet(APIView):
                 postObj = Posts.objects.get(b_id=b_id)
                 userObj = User.objects.get(username=user_id)
 
-                if str(postObj.id) != str(user_id):
-                    uncObj = UserNotiCount.objects.get(unc_b_id=postObj,unc_user_id=userObj)
-                    uncObj.delete()
 
+                if str(postObj.id) != str(user_id):
+                    pcCount = PostComment.objects.filter(id=userObj, b_id=postObj).count()
+                    if pcCount == 1:
+                        uncObj = UserNotiCount.objects.get(unc_b_id=postObj,unc_user_id=userObj)
+                        uncObj.delete()
+                
                 postcommentObj = PostComment.objects.get(pc_id=pc_id)
                 postcommentObj.delete()
 
@@ -865,29 +868,6 @@ class PostDetailUpdateViewSet(APIView):
 
         now_post.save()
 
-        return Response(res_data, status=200)
-
-
-class PostCommentDetailViewSet(APIView):
-    def delete(self, request, pc_id):
-        res_data = {
-            "success": True,
-            "error": None
-        }
-
-        try:    
-            postcommentObj = PostComment.objects.get(pc_id=pc_id)
-            
-            uncObj = UserNotiCount.objects.get(unc_b_id=Posts.objects.get(b_id=postcommentObj.b_id),unc_user_id=User.objects.get(username=postcommentObj.id))
-            
-            uncObj.delete()
-            postcommentObj.delete()
-
-
-        except Exception as e: 
-            res_data['error'] = e
-            
-        
         return Response(res_data, status=200)
 
 
