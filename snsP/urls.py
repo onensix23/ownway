@@ -24,6 +24,7 @@ from . import my_settings as ms
 import posts.views as postview
 import users.views as userview
 import terms.views as termsview
+import reports.views as reportsview
 
 
 urlpatterns = [
@@ -87,5 +88,8 @@ urlpatterns = [
 
     path('api/'+ms.API_SHA256_KEY+'terms/howtodeletedata', termsview.HowToViewSet.as_view(), name='howtodeletedata'), 
 
+    path('api/'+ms.API_SHA256_KEY+'reporttremplate', reportsview.ReportTemplateViewSet.as_view(), name='reporttremplate'),
+    path('api/'+ms.API_SHA256_KEY+'report', reportsview.ReportViewSet.as_view(), name='report'),
+    
 ] 
 # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

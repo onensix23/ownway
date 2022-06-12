@@ -526,7 +526,8 @@ class PostCommentViewSet(APIView):
                     if pcCount == 1:
                         uncObj = UserNotiCount.objects.get(unc_b_id=postObj,unc_user_id=userObj)
                         uncObj.delete()
-                
+                    
+
                 postcommentObj = PostComment.objects.get(pc_id=pc_id)
                 postcommentObj.delete()
 

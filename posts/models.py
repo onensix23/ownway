@@ -17,6 +17,7 @@ class Posts(models.Model):
     b_title = models.CharField(max_length=15, null=True) 
     b_place_id = models.TextField(null=True)
     b_datetime = models.DateTimeField(default=datetime.now, null=False)
+    b_is_reported = models.BooleanField(default=False)
     b_update_datetime = models.DateTimeField(default=datetime.now, null=False)
     b_del = models.CharField(max_length=1, null=False, default='N')
 
@@ -29,6 +30,7 @@ class Photo(models.Model):
     b_id  = models.ForeignKey(Posts, db_column='b_id', related_name='photo_b_id',default='', max_length=12, null=False, blank=True, on_delete=models.CASCADE)
     p_filename = models.CharField(max_length=256, null=True)
     p_isthumb = models.CharField(max_length=2,null=False,  default='0')
+    p_is_reported = models.BooleanField(default=False)
     p_datetime = models.DateTimeField(default=datetime.now)  # 날짜
 
     def get_file_path(instance, filename):
@@ -68,6 +70,7 @@ class PostComment(models.Model):
     pc_comment = models.TextField()  # 내용
     pc_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
     pc_type = models.CharField(max_length=2, null=False, default='0' )
+    pc_is_reported = models.BooleanField(default=False)
     pc_del = models.CharField(max_length=1, null=False, default='N')
 
 
