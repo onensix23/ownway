@@ -39,7 +39,7 @@ class ReportViewSet(APIView):
         }
 
         request_d = request.data; 
-        
+
         try:
             from_id = request_d['from_id']
             fromObj = User.objects.get(username=from_id)
@@ -75,6 +75,7 @@ class ReportViewSet(APIView):
                 reportObj.r_p_id=photoObj
 
             elif type_title == 'pp': #postplace
+                # print(request_d)
                 pp_id = request.data['id']
                 postplaceObj = PostPlace.objects.get(pp_id=pp_id)
                 reportObj.r_pp_id=postplaceObj

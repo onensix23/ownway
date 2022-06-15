@@ -169,6 +169,7 @@ Thumbs.db
 
 # 사진 폴더 무시
 media/
+ownwayenv_user/
 ownwayvenv/
 ownwatvenv/
 my_env/

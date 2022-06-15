@@ -3,6 +3,7 @@ from datetime import datetime
 from snsP.my_settings import *
 from boto3 import *
 from PIL import Image, ExifTags, ImageOps   # 이미지 리사이징에 필요한 Pillow
+import pyheif
 from io  import BytesIO # Pillow로 리사이징한 이미지를 다시 Bytes화
 from storages.backends.s3boto3 import S3Boto3Storage
 
@@ -59,6 +60,22 @@ class MyS3Client:
             buffer = BytesIO()
             im.save(buffer, "JPEG")
             buffer.seek(0)
+
+ 
+
+            # heif_file = pyheif.read(src)
+
+            # image = Image.frombytes(
+            #     heif_file.mode,
+            #     heif_file.size,
+            #     heif_file.data,
+            #     "raw",
+            #     heif_file.mode,
+            #     heif_file.stride,
+            # )
+
+            # print(heif_file)
+            # im.save(buffer, "JPEG", quality=10)
 
             self.s3_client.upload_fileobj(
                     buffer, #file,
