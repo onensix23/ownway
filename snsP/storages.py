@@ -4,6 +4,9 @@ from snsP.my_settings import *
 from boto3 import *
 from PIL import Image, ExifTags, ImageOps   # 이미지 리사이징에 필요한 Pillow
 import pyheif
+import magic
+import mimetypes
+import whatimage
 from io  import BytesIO # Pillow로 리사이징한 이미지를 다시 Bytes화
 from storages.backends.s3boto3 import S3Boto3Storage
 
@@ -24,6 +27,29 @@ class S3DefaultStorage(S3Boto3Storage):
     default_acl = 'private'
     location = 'media'
 
+def get_mime_type_return_image(file):
+    """
+    Get MIME by reading the header of the file
+    """
+    initial_pos = file.tell()
+    file.seek(0)
+    mime_type = magic.from_buffer(file.read(1024), mime=True)
+    file.seek(initial_pos)
+    
+    if mime_type == 'image/heic':
+        heif_file = pyheif.read(file)
+        im = Image.frombytes(
+            heif_file.mode, 
+            heif_file.size,           
+            heif_file.data, 
+            "raw", 
+            heif_file.mode, 
+            heif_file.stride
+        )
+    else:  # assume "normal" image that pillow can open
+        im = Image.open(file)
+
+    return im
 
 class FileUpload:
     def __init__(self, client):
@@ -51,31 +77,17 @@ class MyS3Client:
 
     def upload(self, file):
         try: 
+            print(file)
             now_date = datetime.now().strftime('%Y%m%d')
             file_id = 'media/images/'+now_date+'/'+str(uuid.uuid4())
             extra_args = { 'ContentType' : file.content_type }
-
-            im = Image.open(file)
+            
+            im = get_mime_type_return_image(file)
             im = ImageOps.exif_transpose(im)
+            im.seek(0)
             buffer = BytesIO()
             im.save(buffer, "JPEG")
             buffer.seek(0)
-
- 
-
-            # heif_file = pyheif.read(src)
-
-            # image = Image.frombytes(
-            #     heif_file.mode,
-            #     heif_file.size,
-            #     heif_file.data,
-            #     "raw",
-            #     heif_file.mode,
-            #     heif_file.stride,
-            # )
-
-            # print(heif_file)
-            # im.save(buffer, "JPEG", quality=10)
 
             self.s3_client.upload_fileobj(
                     buffer, #file,
@@ -83,7 +95,9 @@ class MyS3Client:
                     file_id,
                     ExtraArgs = extra_args
                 )
+            
             return f'https://{self.bucket_name}.s3.ap-northeast-2.amazonaws.com/{file_id}'
+        
         except Exception as e:
             print(e)
             return None
@@ -95,7 +109,7 @@ class MyS3Client:
             file_id = 'media/thumbnail/'+now_date+'/'+str(uuid.uuid4())
             extra_args = { 'ContentType' : file.content_type }
 
-            im = Image.open(file)
+            im = get_mime_type_return_image(file)
             im = ImageOps.exif_transpose(im)
             
             buffer = BytesIO()
