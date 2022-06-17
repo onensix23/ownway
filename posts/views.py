@@ -246,10 +246,19 @@ class PostViewSet(APIView):
             res_data = get_serializer_class.data
 
         elif request.data['type'] == 'readDetail':
-            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related(
+            get_queryset = Posts.objects.prefetch_related(
+                Prefetch('photo_b_id',
+                    queryset=Photo.objects.filter(~Q(p_user_id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj)))))
+                )
+            ).prefetch_related(
                 Prefetch('postcomment_b_id',
-                queryset=PostComment.objects.filter(~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj)))))
-                )).prefetch_related('postplace_b_id').prefetch_related('savepost_b_id').filter(Q(
+                    queryset=PostComment.objects.filter(~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj)))))
+                )
+            ).prefetch_related(
+                Prefetch('postplace_b_id',
+                    queryset=PostPlace.objects.filter(~Q(pp_user_id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj)))))
+                )
+            ).prefetch_related('savepost_b_id').filter(Q(
                 Q(b_id=request.data['b_id']) 
             )).select_related('id') # .order_by('-photo_b_id.p_datetime').order_by('-postplace_b_id.pp_datetime').order_by('-postcomment_b_id.pc_datetime')
             get_serializer_class = PostSerializer(get_queryset, many=True)

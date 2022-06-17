@@ -27,18 +27,21 @@ class PostListSerializer(serializers.ModelSerializer):
                   'b_title',
                   'b_datetime',
                   'b_views',
-                #   'p_id'
                 )
 
 
 
 class PhotoSerializer(serializers.ModelSerializer):
-    # photo_b_id = PostListSerializer(read_only=True)
+    p_user_id = UserSerializer2(read_only=True)
 
     class Meta:
         model = Photo
-        fields = "__all__"
-        # fields = ('p_id','p_filename','p_image', 'b_id', 'p_isthumb')
+        fields = ('p_id',
+                  'p_filename',
+                  'p_datetime', 
+                  'p_isthumb',
+                  'p_is_reported',
+                  'p_user_id')
 
 
 class PostCommentSerializer(serializers.ModelSerializer):
@@ -46,7 +49,6 @@ class PostCommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PostComment
-        # fields = "__all__"
         fields = ('pc_id',
                   'b_id',
                   'id',
@@ -82,11 +84,12 @@ class SavePostSerializer(serializers.ModelSerializer):
 
 
 class PostPlaceSerializer(serializers.ModelSerializer):
-    # id = UserSerializer(read_only=True)
+    pp_user_id = UserSerializer2(read_only=True)
     class Meta:
         model = PostPlace
         fields = ('pp_id',
                   'pp_place_id',
+                  'pp_user_id',
                   'pp_datetime',
                   'pp_type',
                   'pp_del',
