@@ -52,6 +52,8 @@ class UploadImageViewSet(APIView):
         }
 
         postObj = Posts.objects.get(b_id=request.data['b_id'])
+        userObj = User.objects.get(username=postObj.id)
+        
         postObj.b_update_datetime = datetime.now()
         postObj.save()
 
@@ -73,6 +75,7 @@ class UploadImageViewSet(APIView):
                         photo.p_filename = FileUpload(s3_client).uploadthumbnail(request.FILES[k])
                         
                     photo.p_isthumb = request.data['type']
+                    photo.p_user_id = userObj
 
                     # 데이터베이스에 저장
                     photo.save()
