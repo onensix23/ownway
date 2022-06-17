@@ -132,6 +132,7 @@ class UploadImageViewSet(APIView):
         
         return Response(res_data, status=200)
 
+
 class DeleteImageViewSet(APIView):
     """
        POST /deleteImage
@@ -162,7 +163,6 @@ class DeleteImageViewSet(APIView):
             # return Response(res_data, status=200)
         
         return Response(res_data, status=200)
-
 
 
 class PostViewSet(APIView):
@@ -206,8 +206,6 @@ class PostViewSet(APIView):
             new_post.save()  # insert
 
             res_data['post_success']=True
-            
-            # print(new_post.b_id)
 
             res_data['b_id'] = new_post.b_id
 
@@ -216,20 +214,19 @@ class PostViewSet(APIView):
             if pc_comment != '':
                 new_postcomment = PostComment(
                     b_id=postObj,
-                    id=userObj,
+                    pp_user_id=userObj,
                     pc_comment=pc_comment,
                     pc_type='1'
                 )
 
                 new_postcomment.save()
         
-
                 res_data['postcomment_success']=True
             
             if b_place_id != '':
                 new_postplace = PostPlace(
                     b_id=postObj,
-                    id=userObj,
+                    pp_user_id=userObj,
                     pp_place_id = b_place_id,
                     pp_type='1',
                 )
@@ -576,7 +573,7 @@ class SavePostPlaceViewSet(APIView):
         postId = Posts.objects.get(b_id=b_id)
 
         try:
-            new_postplace = PostPlace(id=userObj, b_id=postId, pp_place_id=pp_place_id)
+            new_postplace = PostPlace(pp_user_id=userObj, b_id=postId, pp_place_id=pp_place_id)
             new_postplace.save()  # insert
 
             if str(user_id) == str(postId.id):

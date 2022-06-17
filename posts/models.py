@@ -27,7 +27,9 @@ class Posts(models.Model):
 
 class Photo(models.Model):
     p_id = models.BigAutoField(primary_key=True)
-    b_id  = models.ForeignKey(Posts, db_column='b_id', related_name='photo_b_id',default='', max_length=12, null=False, blank=True, on_delete=models.CASCADE)
+    b_id  = models.ForeignKey(Posts, db_column='b_id', related_name='photo_b_id', default='', max_length=12, null=False, blank=True, on_delete=models.CASCADE)  
+    p_user_id = models.ForeignKey(User, to_field="username", db_column='p_user_id', related_name='photo_user_id', on_delete=models.CASCADE,
+                           max_length=20, null=True)  # 작성자
     p_filename = models.CharField(max_length=256, null=True)
     p_isthumb = models.CharField(max_length=2,null=False,  default='0')
     p_is_reported = models.BooleanField(default=False)
@@ -66,7 +68,7 @@ class PostComment(models.Model):
     pc_id = models.BigAutoField(primary_key=True)
     b_id = models.ForeignKey(Posts, db_column='b_id', related_name='postcomment_b_id', on_delete=models.CASCADE, null=False)
     id = models.ForeignKey(User, to_field="username", db_column='id', default='', on_delete=models.CASCADE,
-                           max_length=12, null=False)  # 작성자
+                           max_length=20, null=False)  # 작성자
     pc_comment = models.TextField()  # 내용
     pc_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
     pc_type = models.CharField(max_length=2, null=False, default='0' )
@@ -77,8 +79,8 @@ class PostComment(models.Model):
 class PostPlace(models.Model):
     pp_id = models.BigAutoField(primary_key=True)
     b_id = models.ForeignKey(Posts, db_column='b_id', related_name='postplace_b_id', on_delete=models.CASCADE, null=False)
-    id = models.ForeignKey(User, to_field="username", db_column='id', default='', on_delete=models.CASCADE,
-                           max_length=12, null=False)  # 작성자
+    pp_user_id = models.ForeignKey(User, to_field="username", db_column='pp_user_id',related_name='postplace_user_id', on_delete=models.CASCADE,
+                           max_length=20, null=True)  # 작성자
     pp_place_id = models.TextField()  # 내용
     pp_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
     pp_type = models.CharField(max_length=2, null=False, default='0' )
