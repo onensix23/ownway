@@ -192,11 +192,13 @@ class PostViewSet(APIView):
             b_hash_tag_1 = request.data['b_hash_tag_1']
             b_hash_tag_2 = request.data['b_hash_tag_2']
             b_place_id = request.data['b_place_id']
+            b_permit_photo = request.data['b_permit_photo']
+            b_permit_place = request.data['b_permit_place']
+            b_permit_comment = request.data['b_permit_comment']
 
             pc_comment = request.data['pc_comment']
 
-            # print(request.data)
-
+            print(request.data)
 
             new_post = Posts(
                     id=userObj, 
@@ -204,6 +206,9 @@ class PostViewSet(APIView):
                     b_address=b_address,  
                     b_theme=b_theme, 
                     b_hash_tag_1=b_hash_tag_1, b_hash_tag_2=b_hash_tag_2, 
+                    b_permit_place=b_permit_place,
+                    b_permit_comment=b_permit_comment,
+                    b_permit_photo=b_permit_photo,
             )
 
             new_post.save()  # insert
@@ -217,7 +222,7 @@ class PostViewSet(APIView):
             if pc_comment != '':
                 new_postcomment = PostComment(
                     b_id=postObj,
-                    pp_user_id=userObj,
+                    id=userObj,
                     pc_comment=pc_comment,
                     pc_type='1'
                 )
@@ -302,6 +307,9 @@ class PostViewSet(APIView):
         postObj.b_theme = request.data['b_theme']
         postObj.b_hash_tag_1 = request.data['b_hash_tag_1']
         postObj.b_hash_tag_2 = request.data['b_hash_tag_2']
+        postObj.b_permit_place = request.data['b_permit_place']
+        postObj.b_permit_photo = request.data['b_permit_photo']
+        postObj.b_permit_comment = request.data['b_permit_comment']
 
         postObj.save()
 
