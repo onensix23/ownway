@@ -528,6 +528,8 @@ class PostCommentViewSet(APIView):
 
         elif type == 'u':
             pc_id = request.data['pc_id']
+            pc_comment = request.data['pc_comment']
+            
             pcObj = PostComment.objects.get(pc_id=pc_id)
 
             pcObj.pc_comment = pc_comment
