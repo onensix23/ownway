@@ -147,19 +147,18 @@ class DeleteImageViewSet(APIView):
        POST /deleteImage
     """
     def post(self, request, **kwargs):
+        
         res_data = {
             "success": True,
             "error": None,
             "fileName": '',
             "image_cnt":0
         }
-        b_id=request.data['b_id']
+        
         p_id=request.data['p_id']
         p_filename = request.data['p_filename']
         
-        # print(request.data)
-
-        photoObj = Photo.objects.get(b_id=b_id,p_id=p_id)
+        photoObj = Photo.objects.get(p_id=p_id)
 
         try: 
             if p_filename != None:
