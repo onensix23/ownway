@@ -52,7 +52,13 @@ class UploadImageViewSet(APIView):
         }
 
         postObj = Posts.objects.get(b_id=request.data['b_id'])
-        userObj = User.objects.get(username=postObj.id)
+        
+        try:
+            u = request.data['user_id']
+            userObj = User.objects.get(username=u)
+        except Exception as e:
+            userObj = User.objects.get(username=postObj.id)
+        
         
         postObj.b_update_datetime = datetime.now()
         postObj.save()
