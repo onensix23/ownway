@@ -472,7 +472,8 @@ class PostCommentViewSet(APIView):
         }
 
         type = request.data['type']
-
+        print('type')
+        print(type)
         # noti_receiver = UserFCMToken.objects.get(ufcm_user_id=User.objects.get(username=postObj.id).username, ufcm_device_id=ufcm_device_id) # 글 작성자
 
         if type == 'c' :
@@ -537,6 +538,7 @@ class PostCommentViewSet(APIView):
 
         elif type == 'd':
             try:    
+                print(request.data)
                 user_id  = request.data['user_id']
                 b_id = request.data['b_id']
                 pc_id = request.data['pc_id']
@@ -547,11 +549,14 @@ class PostCommentViewSet(APIView):
 
                 if str(postObj.id) != str(user_id):
                     pcCount = PostComment.objects.filter(id=userObj, b_id=postObj).count()
-                    if pcCount == 1:
-                        uncObj = UserNotiCount.objects.get(unc_b_id=postObj,unc_user_id=userObj)
-                        uncObj.delete()
                     
-
+                    if pcCount == 1:
+                        try:
+                            uncObj = UserNotiCount.objects.get(unc_b_id=postObj,unc_user_id=userObj)
+                            uncObj.delete()
+                        except Exception as e:
+                            print('noting')
+                    
                 postcommentObj = PostComment.objects.get(pc_id=pc_id)
                 postcommentObj.delete()
 
