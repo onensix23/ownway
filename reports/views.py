@@ -79,6 +79,9 @@ class ReportViewSet(APIView):
                 pp_id = request.data['id']
                 postplaceObj = PostPlace.objects.get(pp_id=pp_id)
                 reportObj.r_pp_id=postplaceObj
+                
+                toObj = User.objects.get(username=postplaceObj.pp_user_id)
+                reportObj.r_to=toObj
 
             if r_type == 11:
                 report_text = request_d['report_text']
