@@ -39,6 +39,7 @@ class ReportViewSet(APIView):
         }
 
         request_d = request.data; 
+        print(request.data)
 
         try:
             from_id = request_d['from_id']
@@ -71,7 +72,7 @@ class ReportViewSet(APIView):
             elif type_title == 'i': #image
                 p_id = request.data['id']
                 photoObj = Photo.objects.get(p_id=p_id)
-                reportObj.r_to = User.objects.get(username=postcommentObj.id)
+                reportObj.r_to = User.objects.get(username=photoObj.p_user_id)
                 reportObj.r_p_id=photoObj
 
             elif type_title == 'pp': #postplace
