@@ -703,7 +703,7 @@ class SavePostViewSet(APIView):
                     # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
                     param1 = "python3 ./lambda_function.py " 
                     param1 = param1 + "'true'" + " "
-                    param1 = param1 + "'true'" + " "
+                    param1 = param1 + str(b_id) + " "
                     param1 = param1 + str(postObj.id) + " "
                     param1 = param1 + user_id + " "
                     param1 = param1 + "'sp_c'" + " "

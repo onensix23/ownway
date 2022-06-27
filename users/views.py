@@ -437,7 +437,7 @@ class UserNotificationSet(APIView):
         elif request.data['type'] == 'update':
             try: 
                 un_id = request.data['un_id']
-
+                print(un_id)
                 userNotificationObj = UserNotification.objects.get(un_id=un_id)
                 userNotificationObj.un_is_read = True
                 userNotificationObj.save()

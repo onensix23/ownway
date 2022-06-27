@@ -109,7 +109,7 @@ class CRUD(Databases):
             with self.db as conn:
                 with conn.cursor() as curs:
                     if len(param['un_token_id']) > 0 :
-                        if t == 'sp_c' or t == 'fu_c':
+                        if t == 'fu_c':
                             curs.execute(query2, param)
                         else:
                             curs.execute(query, param)
@@ -370,7 +370,8 @@ class CRUD(Databases):
                 print(e)
           
 # 누군가 내 글을 구독했을 때
-    def send_to_user_about_who_saved_post(self, type, username, p_username):
+    def send_to_user_about_who_saved_post(self, type, username, p_username, b_id):
+        
         # username 이  p_username 따르기 시작
         un_token_id = []
         un_type = []
@@ -409,8 +410,7 @@ class CRUD(Databases):
                         un_to.append(odict['ufcm_user_id'])
                         un_from.append(username)
                         un_body.append(notiTemplateObj[0])
-                        un_etc.append(None)
-
+                        un_etc.append(int(b_id))
 
                         ans = self.send_to_firebase_cloud_messaging(type,user_data[1],notiTemplateObj[0], odict['ufcm_token'],ufcm_token_data[0], None)
 
@@ -421,7 +421,6 @@ class CRUD(Databases):
 
             param = {'un_token_id': un_token_id, 'un_type': un_type, 'un_title': un_title
             , 'un_to': un_to, 'un_from': un_from, 'un_body': un_body, 'un_is_sended': un_is_sended, 'un_etc': un_etc}
-
             
             self.insertUnnest(param, type)
                         
@@ -503,7 +502,7 @@ def lambda_handler(event):
             db.send_to_user_about_who_add_image(event.arg5,event.arg4, event.arg3)
         elif event.arg5 == 'sp_c':
             # type, 따르는 사람 , 따라가는 사람
-            db.send_to_user_about_who_saved_post(event.arg5,event.arg4, event.arg3)
+            db.send_to_user_about_who_saved_post(event.arg5,event.arg4, event.arg3, event.arg2)
         elif event.arg5 == 'fu_c':
             # type, 누가, 누구를
             db.send_to_user_about_who_followed_user(event.arg5,event.arg4, event.arg3)
