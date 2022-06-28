@@ -692,7 +692,7 @@ class SavePostViewSet(APIView):
         user_id = request.GET['userId']
 
         get_queryset = Posts.objects.filter(b_id__in=Subquery(SavePost.objects.values('b_id').filter(id=user_id))).prefetch_related('photo_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime')
-        get_serializer_class = PostSerializer(get_queryset, many=True)
+        get_serializer_class = PostListSerializer(get_queryset, many=True)
 
         return Response(get_serializer_class.data, status=200)
 
