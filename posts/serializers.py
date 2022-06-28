@@ -13,24 +13,6 @@ class UserSerializer(serializers.ModelSerializer):
                   'email')
 
 
-class PostListSerializer(serializers.ModelSerializer):
-    id = UserSerializer(read_only=True)
-
-    class Meta:
-        model = Posts
-        fields = ('b_id',
-                  'id',
-                  'b_loctype1',
-                  'b_loctype2',
-                  'b_loctype3',
-                  'b_theme',
-                  'b_title',
-                  'b_datetime',
-                  'b_views',
-                )
-
-
-
 class PhotoSerializer(serializers.ModelSerializer):
     p_user_id = UserSerializer2(read_only=True)
 
@@ -108,6 +90,15 @@ class PostSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class PostListSerializer(serializers.ModelSerializer):
+    photo_b_id = PhotoSerializer(read_only=True, many=True)
+    savepost_b_id = SavePostSerializer(read_only=True , many=True)
+    id = UserSerializer2(read_only=True)
+    
+    class Meta:
+        model = Posts
+        fields = "__all__"
+        
 class PostDetailSerializer(serializers.ModelSerializer):
     # p_id = PhotoSerializer(read_only=True)
     id = UserSerializer2()

@@ -2,7 +2,7 @@ from django.db.models.functions import Substr
 from django.shortcuts import render, redirect
 from snsP.my_settings import *
 from django.http import HttpResponse
-from django.db.models import Q,Subquery,Prefetch,F
+from django.db.models import Q,Subquery,Prefetch,F, Max, Min
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import UpdateAPIView, DestroyAPIView
@@ -11,8 +11,8 @@ from .serializers import *
 from .models import *
 from users.models import UserFollow, UserBlock, UserNotiCount
 from notis.views import *
-import threading, requests, asyncio
-import subprocess
+import requests, subprocess, random
+import timeit
 
 class TestViewSet(APIView):
     def get(self, request, **kwargs):
@@ -172,7 +172,22 @@ class DeleteImageViewSet(APIView):
         
         return Response(res_data, status=200)
 
-
+def get_random():
+    max_id = Posts.objects.all().aggregate(b_id = Max("b_id"))['b_id']
+    min_id = Posts.objects.all().aggregate(b_id = Min("b_id"))['b_id']
+            
+    res_arr = []
+    
+    while True : 
+        if len(res_arr) == 10:
+            return res_arr
+        else:
+            pk = random.randint(min_id, max_id)
+            posts = Posts.objects.filter(pk=pk).first()
+            
+            if posts :
+                res_arr.append(pk)
+            
 class PostViewSet(APIView):
 
     """
@@ -185,7 +200,6 @@ class PostViewSet(APIView):
             'postcomment_success': 'no comment',
             'b_id': 6
         }
-
 
         user_id = request.data['user_id']
         userObj = User.objects.get(username=user_id)
@@ -252,7 +266,7 @@ class PostViewSet(APIView):
                 ~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj))))
             ))
 
-            get_serializer_class = PostSerializer(get_queryset, many=True)
+            get_serializer_class = PostListSerializer(get_queryset, many=True)
             res_data = get_serializer_class.data
 
         elif request.data['type'] == 'readDetail':
@@ -272,6 +286,20 @@ class PostViewSet(APIView):
                 Q(b_id=request.data['b_id']) 
             )).select_related('id') # .order_by('-photo_b_id.p_datetime').order_by('-postplace_b_id.pp_datetime').order_by('-postcomment_b_id.pc_datetime')
             get_serializer_class = PostSerializer(get_queryset, many=True)
+            res_data = get_serializer_class.data
+        
+        elif request.data['type'] == 'readrandom':
+            in_b_id = get_random()
+            
+            q = Q()
+            q.add(~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj)))), q.AND)
+            q.add(Q(b_id__in=in_b_id), q.AND)
+            
+            get_queryset = Posts.objects.prefetch_related(Prefetch('photo_b_id',
+                    queryset=Photo.objects.filter(p_isthumb=1)
+                )).select_related('id').order_by('-b_update_datetime').filter(q)
+
+            get_serializer_class = PostListSerializer(get_queryset, many=True)
             res_data = get_serializer_class.data
 
         return Response(res_data, status=200)
