@@ -262,7 +262,9 @@ class PostViewSet(APIView):
                 res_data['postplace_success']=True
 
         elif request.data['type'] == 'read':
-            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime').filter(Q(
+            get_queryset = Posts.objects.prefetch_related(Prefetch('photo_b_id',
+                    queryset=Photo.objects.filter(p_isthumb=1)
+                )).prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime').filter(Q(
                 ~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj))))
             ))
 
@@ -361,7 +363,7 @@ class SearchPostViewSet(APIView):
         tag = request.data['hashTagValue']
         text = request.data['text']
 
-        print(request.data)
+        # print(request.data)
         # get_queryset = Posts.objects.filter(b_title__icontains=text)
         # get_serializer_class = PostDetailSerializer(get_queryset, many=True)
 
@@ -383,7 +385,9 @@ class SearchPostViewSet(APIView):
         if text != '':
             q.add(Q(b_title__icontains=text), q.AND)
 
-        get_queryset = Posts.objects.filter(q).prefetch_related('photo_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_datetime')
+        get_queryset = Posts.objects.filter(q).prefetch_related(Prefetch('photo_b_id',
+                    queryset=Photo.objects.filter(p_isthumb=1)
+                )).prefetch_related('savepost_b_id').select_related('id').order_by('-b_datetime')
         get_serializer_class = PostListSerializer(get_queryset, many=True)
 
         return Response(get_serializer_class.data, status=200)
