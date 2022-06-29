@@ -384,7 +384,7 @@ class SearchPostViewSet(APIView):
             q.add(Q(b_title__icontains=text), q.AND)
 
         get_queryset = Posts.objects.filter(q).prefetch_related('photo_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_datetime')
-        get_serializer_class = PostSerializer(get_queryset, many=True)
+        get_serializer_class = PostListSerializer(get_queryset, many=True)
 
         return Response(get_serializer_class.data, status=200)
 
