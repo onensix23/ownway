@@ -180,13 +180,14 @@ def get_random():
     
     while True : 
         if len(res_arr) == 10:
+            # print(res_arr)
             return res_arr
         else:
             pk = random.randint(min_id, max_id)
-            posts = Posts.objects.filter(pk=pk).first()
-            
-            if posts :
-                res_arr.append(pk)
+            if pk not in res_arr:
+                posts = Posts.objects.filter(pk=pk).first()
+                if posts:
+                    res_arr.append(pk)
             
 class PostViewSet(APIView):
 
