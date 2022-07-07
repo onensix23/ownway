@@ -313,6 +313,18 @@ class PostViewSet(APIView):
 
             get_serializer_class = PostListSerializer(get_queryset, many=True)
             res_data = get_serializer_class.data
+        
+        elif request.data['type'] == 'readrealtime':
+            q = Q()
+            q.add(~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj)))), q.AND)
+            
+            get_queryset = Posts.objects.prefetch_related(Prefetch('photo_b_id',
+                    queryset=Photo.objects.filter(p_isthumb=1)
+                )).select_related('id').order_by('-b_datetime').filter(q)[:10]
+
+            get_serializer_class = PostListSerializer(get_queryset, many=True)
+            res_data = get_serializer_class.data
+
 
         return Response(res_data, status=200)
 
