@@ -273,6 +273,15 @@ class PostViewSet(APIView):
             res_data = get_serializer_class.data
 
         elif request.data['type'] == 'readDetail':
+            now_post = Posts.objects.get(b_id=request.data['b_id'])
+            
+            if now_post.b_views == '':
+                now_post.b_views = 1
+            else:
+                now_post.b_views = int(now_post.b_views) + 1
+
+            now_post.save()
+            
             get_queryset = Posts.objects.prefetch_related(
                 Prefetch('photo_b_id',
                     queryset=Photo.objects.filter(~Q(p_user_id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj)))))
