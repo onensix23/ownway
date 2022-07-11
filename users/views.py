@@ -9,6 +9,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 
+from django.db.models import F
+
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_auth.registration.serializers import SocialLoginSerializer
@@ -33,8 +35,6 @@ class ResignUserViewSet(APIView):
             'error': '',
         }
         user_id = request.data['id']
-        print('user_id')
-        print(user_id)
 
         userObj = User.objects.get(username=user_id)
         
@@ -50,7 +50,6 @@ class ResignUserViewSet(APIView):
                         if len(value) > 0 :
                             for modict in value:
                                 for p_key, p_val in modict.items():
-                                    print(p_key)
                                     if p_key == 'p_filename':
                                         if p_val != None and p_val.find('https://') != -1:
                                             FileUpload(s3_client).delete(p_val)
@@ -67,7 +66,6 @@ class ResignUserViewSet(APIView):
             print(e)
             res_data['error'] = e
 
-        print(res_data)
         return Response(res_data, status=200)
 
 class UserDataViewSet(APIView):
@@ -191,21 +189,12 @@ class SocialLoginViewSet(APIView):
 
 class FollowUserViewSet(APIView):
 
-    def get(self, request, **kwargs):
-        user_id = request.GET.get('user_id')
-        type = request.GET.get('type')
+    # def get(self, request, **kwargs):
+    #     user_id = request.GET.get('user_id')
+    #     type = request.GET.get('type')
 
-        if type == 'reading':
-            temp = UserFollow.objects.filter(uf_reading=user_id).values('uf_reader')
-            readingObj = User.objects.filter(username__in=temp) # 따라가는 사람
-            serialize_data = UserSerializer3(readingObj, many=True)
-
-        elif type == 'reader':
-            temp = UserFollow.objects.filter(uf_reader=user_id).values('uf_reading')
-            readerObj = User.objects.filter(username__in=temp) #따라오게 하는 사람
-            serialize_data = UserSerializer3(readerObj, many=True)
-
-        return Response(serialize_data.data, status=200)
+        
+    #     return Response(serialize_data.data, status=200)
 
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
@@ -217,46 +206,70 @@ class FollowUserViewSet(APIView):
             "success" : True
         }
 
-        user_id = request.data['userId']
-        page_host_id = request.data['myPageHost']
-        
-        readerObj = User.objects.get(username=page_host_id) # 따라오게 하는 사람 following
-        readingObj = User.objects.get(username=user_id) # 따라가는 사람 follower
-
-        if request.data['type'] == '0': # 체크용
-            query_count = UserFollow.objects.filter(uf_reader=page_host_id, uf_reading=user_id).count()
-
-            if query_count == 0:
-                res_data['count'] = query_count
-                res_data["is_following"] = False
-            else:
-                res_data["count"] = 0
-        elif request.data['type'] == '1':
-            userFollowObj, isCreated =  UserFollow.objects.get_or_create(uf_reader=readerObj, uf_reading=readingObj)
-
-            if isCreated == False: # 삭제 해야 됨
-                res_data['action'] = 'delete'
-                userFollowObj.delete()
-            elif isCreated == True: 
-                # 내가 아닌 누군가가 글 구독!
-                param1 = "python3 ./lambda_function.py " 
-                param1 = param1 + "'true'" + " "
-                param1 = param1 + "'true'" + " "
-                param1 = param1 + str(readerObj.username) + " "
-                param1 = param1 + str(readingObj.username) + " "
-                param1 = param1 + "'fu_c'" + " "
-                param1 = param1 + "'true'"
-
-                process = subprocess.Popen(param1, shell=True)
+        if 'post_type' in request.data:
+            user_id = request.data['user_id']
+            userObj = User.objects.get(username=user_id)
+            
+            page_host = request.data['page_host']
+            type = request.data['type']
+            
+            if type == 'reading':
+                temp = UserFollow.objects.filter(uf_reading=page_host).values('uf_reader')
                 
-        elif request.data['type'] == '2': # 리더 삭제 시 불려짐
-            userFollowObj, isCreated =  UserFollow.objects.get_or_create(uf_reader=readingObj, uf_reading=readerObj)
+                readingObj = User.objects.filter(Q(~Q(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj)))&Q(username__in=temp))) #.order_by(F('username').desc(nulls_first=True)) # 따라가는 사람 # ~Q(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj))) and 
+                serialize_data = UserSerializer3(readingObj, many=True, context={'user_id': user_id, 'type' : 'reader'})
+                res_data = sorted(serialize_data.data, key=lambda k: k['is_already_follow'], reverse=False)
 
-            if isCreated == False: # 삭제 해야 됨
-                res_data['action'] = 'delete'
-                userFollowObj.delete()
+            elif type == 'reader':
+                temp = UserFollow.objects.filter(uf_reader=page_host).values('uf_reading')
+                
+                readerObj = User.objects.filter(Q(~Q(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj))) & Q(username__in=temp))) #따라오게 하는 사람 ~Q(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj))) and
+                serialize_data = UserSerializer3(readerObj, many=True, context={'user_id': user_id, 'type' : 'reader'})
+                res_data = sorted(serialize_data.data, key=lambda k: k['is_already_follow'], reverse=False)
 
-        return Response(res_data, status=200)
+            return Response(res_data, status=200)
+        
+        else:
+            user_id = request.data['userId']
+            page_host_id = request.data['myPageHost']
+            
+            readerObj = User.objects.get(username=page_host_id) # 따라오게 하는 사람 following
+            readingObj = User.objects.get(username=user_id) # 따라가는 사람 follower
+
+            if request.data['type'] == '0': # 체크용
+                query_count = UserFollow.objects.filter(uf_reader=page_host_id, uf_reading=user_id).count()
+
+                if query_count == 0:
+                    res_data['count'] = query_count
+                    res_data["is_following"] = False
+                else:
+                    res_data["count"] = 0
+            elif request.data['type'] == '1':
+                userFollowObj, isCreated =  UserFollow.objects.get_or_create(uf_reader=readerObj, uf_reading=readingObj)
+
+                if isCreated == False: # 삭제 해야 됨
+                    res_data['action'] = 'delete'
+                    userFollowObj.delete()
+                elif isCreated == True: 
+                    # 내가 아닌 누군가가 글 구독!
+                    param1 = "python3 ./lambda_function.py " 
+                    param1 = param1 + "'true'" + " "
+                    param1 = param1 + "'true'" + " "
+                    param1 = param1 + str(readerObj.username) + " "
+                    param1 = param1 + str(readingObj.username) + " "
+                    param1 = param1 + "'fu_c'" + " "
+                    param1 = param1 + "'true'"
+
+                    process = subprocess.Popen(param1, shell=True)
+                    
+            elif request.data['type'] == '2': # 리더 삭제 시 불려짐
+                userFollowObj, isCreated =  UserFollow.objects.get_or_create(uf_reader=readingObj, uf_reading=readerObj)
+
+                if isCreated == False: # 삭제 해야 됨
+                    res_data['action'] = 'delete'
+                    userFollowObj.delete()
+
+            return Response(res_data, status=200)
 
 class BlockUserViewSet(APIView):
     @method_decorator(csrf_exempt)
@@ -372,7 +385,6 @@ class UserNotificationSet(APIView):
             'success': False,
             'error': None,
             'result' : '',
-            
         }
 
         userId = request.GET.get('userId')
@@ -392,26 +404,37 @@ class UserNotificationSet(APIView):
             'success': False,
             'error': None,
             'action' : '',
+            'result' : '',
         }
-
+        
         user_id = request.data['userId']
         device_id = request.data['deviceId']
         token = request.data['token']
 
-        userObj = User.objects.get(username=user_id)
-        userFCMObj = UserFCMToken.objects.get(ufcm_user_id=userObj,ufcm_device_id= device_id,ufcm_token=token)
+        if 'type' in request.data:
+            userObj = User.objects.get(username=user_id)
+            userFCMObj = UserFCMToken.objects.get(ufcm_user_id=userObj,ufcm_device_id=device_id,ufcm_token=token)
 
-        try:
-            userNotificationObj = UserNotification.objects.filter(un_token_id=userFCMObj,un_to=userObj, un_is_sended=True).order_by("-un_send_date")
-            get_serializer_class = UserNotificationSerializer2(userNotificationObj, many=True)         
-            res_data['success'] = True
-
-            return Response(get_serializer_class.data, status=200)
-
-        except Exception as e:
-            res_data['error'] = e
-
+            userNotificationObj = UserNotification.objects.filter(un_token_id=userFCMObj, un_to=userObj, un_is_sended=True, un_is_read=False).count()
+            res_data['result'] = userNotificationObj
+            
             return Response(res_data, status=200)
+            
+        else:
+            userObj = User.objects.get(username=user_id)
+            userFCMObj = UserFCMToken.objects.get(ufcm_user_id=userObj,ufcm_device_id= device_id,ufcm_token=token)
+
+            try:
+                userNotificationObj = UserNotification.objects.filter(un_token_id=userFCMObj,un_to=userObj, un_is_sended=True).order_by("-un_send_date")
+                get_serializer_class = UserNotificationSerializer2(userNotificationObj, many=True)         
+                res_data['success'] = True
+
+                return Response(get_serializer_class.data, status=200)
+
+            except Exception as e:
+                res_data['error'] = e
+
+                return Response(res_data, status=200)
 
     def put(self, request, **kwargs):
         res_data = {
@@ -437,7 +460,6 @@ class UserNotificationSet(APIView):
         elif request.data['type'] == 'update':
             try: 
                 un_id = request.data['un_id']
-                print(un_id)
                 userNotificationObj = UserNotification.objects.get(un_id=un_id)
                 userNotificationObj.un_is_read = True
                 userNotificationObj.save()

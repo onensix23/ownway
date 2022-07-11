@@ -14,29 +14,29 @@ from notis.views import *
 import requests, subprocess, random
 import timeit
 
-class TestViewSet(APIView):
-    def get(self, request, **kwargs):
-        res_data = {
-            "success": True,
-            "error": None,
-            "fileName": '',
-            "image_cnt":0
-        }
-        url = 'http://172.30.1.44:8001/api/alert_noti'
+# class TestViewSet(APIView):
+#     def get(self, request, **kwargs):
+#         res_data = {
+#             "success": True,
+#             "error": None,
+#             "fileName": '',
+#             "image_cnt":0
+#         }
+#         url = 'http://172.30.1.44:8001/api/alert_noti'
 
-        params =  {
-            'fields': ','.join([
-                'id',
-                'name',
-                'email',
-                # 'first_name',
-                # 'last_name',
-                # 'picture',
-            ]),
-        }
-        response = requests.post(url, params)
+#         params =  {
+#             'fields': ','.join([
+#                 'id',
+#                 'name',
+#                 'email',
+#                 # 'first_name',
+#                 # 'last_name',
+#                 # 'picture',
+#             ]),
+#         }
+#         response = requests.post(url, params)
 
-        return Response('done', status=200)
+#         return Response('done', status=200)
 
 
 class UploadImageViewSet(APIView):
@@ -190,7 +190,6 @@ def get_random():
                     res_arr.append(pk)
             
 class PostViewSet(APIView):
-
     """
        POST /board
     """
@@ -217,8 +216,6 @@ class PostViewSet(APIView):
             b_permit_comment = request.data['b_permit_comment']
 
             pc_comment = request.data['pc_comment']
-
-            print(request.data)
 
             new_post = Posts(
                     id=userObj, 
@@ -844,7 +841,7 @@ class GetDongViewSet(APIView):
                                                                                 sigungu_cd=sel_sigungu_cd).exclude(
             dong_nm__exact='')
 
-        print(dong)
+        # print(dong)
         dong_list = EntrcSidoThirdSerializer(dong, many=True)  # 시- 도 return
 
         return Response(dong_list.data, status=200)
@@ -858,9 +855,9 @@ class GetReSidoViewSet(APIView):
     def post(self, request, **kwargs):
         # { "sido_nm":"경기도" }
         sel_sido_nm = request.data['sido_nm']
-        print(sel_sido_nm)
+        # print(sel_sido_nm)
         sido = EntrcSido.objects.values('sido_cd', 'sido_nm').filter(sido_nm=sel_sido_nm).distinct()
-        print(sido)
+        # print(sido)
         sido_list = EntrcSidoFirstSerializer(sido, many=True)  # 시- 도 return
         # print(sido_list)
         return Response(sido_list.data, status=200)
@@ -876,7 +873,7 @@ class GetReSigunguViewSet(APIView):
 
         sigungu = EntrcSido.objects.values('sigungu_nm').annotate(
             sigungu_cd=(Substr('doro_cd', 3, 3))).distinct().filter(sido_cd=sel_sido_cd)
-        print(sigungu)
+        # print(sigungu)
         sigungu_list = EntrcSidoSecondSerializer(sigungu, many=True)  # 시- 도 return
         # print(sigungu_list)
         return Response(sigungu_list.data, status=200)
@@ -895,7 +892,7 @@ class GetReDongViewSet(APIView):
                                                                                 sigungu_cd=sel_sigungu_cd).exclude(
             dong_nm__exact='')
 
-        print(dong)
+        # print(dong)
         dong_list = EntrcSidoThirdSerializer(dong, many=True)  # 시- 도 return
 
         return Response(dong_list.data, status=200)

@@ -34,7 +34,7 @@ urlpatterns = [
     path('terms/privacypolicy', termsview.PrivacyPolicyViewSet.as_view(), name='privacypolicy'), 
     path('terms/termsofservice', termsview.ServiceViewSet.as_view(), name='termsOfService'),
 
-    path('test', postview.TestViewSet.as_view(), name='test'),
+    # path('test', postview.TestViewSet.as_view(), name='test'),
     # board
     path('api/'+ms.API_SHA256_KEY+'board', postview.PostViewSet.as_view(), name='boardList'),
     path('api/'+ms.API_SHA256_KEY+'board/<int:b_id>', postview.PostDetailViewSet.as_view(), name='boardDetail'),

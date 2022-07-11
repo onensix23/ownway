@@ -50,9 +50,29 @@ class UserSerializer2(serializers.ModelSerializer):
 class UserSerializer3(serializers.ModelSerializer):
     userprofile_id = UserProfileSerializer2(read_only=True,many=True)
     status = serializers.SerializerMethodField('set_status')
+    is_already_follow = serializers.SerializerMethodField('is_already_follow_func')
 
     def set_status(self, foo):
         return 'follow'
+    
+    def is_already_follow_func(self, obj):
+        user_id = self.context.get("user_id")
+        type = self.context.get("type")
+        
+        if obj.username == user_id:
+            return -1
+        else:
+            if type == 'reader':
+                if UserFollow.objects.filter(uf_reader=User.objects.get(username=obj.username), uf_reading=User.objects.get(username=user_id)).exists(): # 내가 이미 리딩 하고 있는 사람이 있는지
+                    return True
+                else:
+                    return False
+            elif type == 'reading':
+                if UserFollow.objects.filter(uf_reading=User.objects.get(username=obj.username), uf_reader=User.objects.get(username=user_id)).exists(): # 내가 이미 리딩 하고 있는 사람이 있는지
+                    return True
+                else:
+                    return False
+
     
     class Meta:
         model = User
@@ -61,7 +81,8 @@ class UserSerializer3(serializers.ModelSerializer):
                   'first_name',
                   'email',
                   'userprofile_id', 
-                  'status')
+                  'status',
+                  'is_already_follow')
 
 
 class UserFollowerSerializer(serializers.ModelSerializer):
