@@ -391,6 +391,7 @@ class UserNotiControllSet(APIView):
         type = request.data['type']
         userObj = User.objects.get(username=request.data['user_id'])
         userFcmObj = UserFCMToken.objects.filter(ufcm_user_id=userObj)
+        
         try:
             if type == 'pc_c':
                 userFcmObj.update(ufcm_pc_c=c_value)
@@ -404,6 +405,7 @@ class UserNotiControllSet(APIView):
                 userFcmObj.update(ufcm_pp_c=c_value)
             elif type == 'im_c':
                 userFcmObj.update(ufcm_im_c=c_value)
+                
         except Exception as e:
             print(e)
             res_data['error'] = e

@@ -190,13 +190,13 @@ class CRUD(Databases):
                                                     from users_userfcmtoken
                                                     where ufcm_user_id in (
                                                         select id from posts_savepost where b_id = '{0}' and sp_is_noti=true
-                                                    )
+                                                    ) and ufcm_pc_c = true
                                                     union
                                                     select * 
                                                     from users_userfcmtoken
                                                     where ufcm_user_id in (
                                                         select unc_user_id from users_usernoticount where unc_b_id = '{1}'
-                                                    )""".format(b_id, b_id), 'all')
+                                                    ) and ufcm_pc_c = true""".format(b_id, b_id), 'all')
 
                 for odict in allSendUserObj:
                     if odict['ufcm_token'] != None and odict['ufcm_user_id'] != username:
@@ -224,7 +224,7 @@ class CRUD(Databases):
                 if((savepostObj != None and savepostObj[0] == True) or (savepostObj==None)):
                     allSendUserObj1 = self.readQuery("""select * 
                                                 from users_userfcmtoken
-                                                where ufcm_user_id = '{0}'""".format(postObj_id[0]), 'all')
+                                                where ufcm_user_id = '{0}' and ufcm_pc_c = true""".format(postObj_id[0]), 'all')
 
                     for odict in allSendUserObj1:
                         if odict['ufcm_token'] != None and odict['ufcm_user_id'] != username:
@@ -281,7 +281,7 @@ class CRUD(Databases):
                                                 from users_userfcmtoken
                                                 where ufcm_user_id in (
                                                 select id from posts_savepost where b_id = '{0}' and sp_is_noti=true
-                                                )""".format(b_id), 'all')
+                                                ) and ufcm_pp_c = true""".format(b_id), 'all')
                 
                 for odict in allSendUserObj:
                     if odict['ufcm_token'] != None and odict['ufcm_user_id'] != username:
@@ -336,7 +336,7 @@ class CRUD(Databases):
                                                 from users_userfcmtoken
                                                 where ufcm_user_id in (
                                                 select id from posts_savepost where b_id = '{0}' and sp_is_noti=true
-                                                )""".format(b_id), 'all')
+                                                ) and ufcm_im_c = true""".format(b_id), 'all')
                 
                 for odict in allSendUserObj:
                     if odict['ufcm_token'] != None and odict['ufcm_user_id'] != username:
@@ -388,7 +388,7 @@ class CRUD(Databases):
 
         try:
             allSendUserObj = self.readQuery("""select * from users_userfcmtoken 
-                                                where ufcm_user_id = '{0}'""".format(p_username), 'all')
+                                                where ufcm_user_id = '{0}' and ufcm_sp_c = true""".format(p_username), 'all')
             
             for odict in allSendUserObj:
                 if odict['ufcm_token'] != None and odict['ufcm_user_id'] != username:
@@ -446,7 +446,7 @@ class CRUD(Databases):
 
         try:
             allSendUserObj = self.readQuery("""select * from users_userfcmtoken 
-                                                where ufcm_user_id = '{0}'""".format(touser), 'all')
+                                                where ufcm_user_id = '{0}' and ufcm_fu_c = true""".format(touser), 'all')
             
             for odict in allSendUserObj:
                 if odict['ufcm_token'] != None and odict['ufcm_user_id'] != fromuser:
