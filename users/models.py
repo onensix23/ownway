@@ -41,6 +41,7 @@ class UserFCMToken(models.Model):
     ufcm_sp_c = models.BooleanField(default=True, null=True)
     ufcm_fu_c = models.BooleanField(default=True, null=True)
     ufcm_pc_c = models.BooleanField(default=True, null=True)
+    ufcm_pc_u = models.BooleanField(default=True, null=True) #3번은 알림 주는 권한
     ufcm_pp_c = models.BooleanField(default=True, null=True)
     ufcm_im_c = models.BooleanField(default=True, null=True)
     

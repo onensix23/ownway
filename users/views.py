@@ -387,8 +387,13 @@ class UserNotiControllSet(APIView):
             'result' : '',
         }
         
-        if 'type' in request.data:
-            type = request.data['type']
+        print(request.data)
+        # if 'type' in request.data:
+        #     type = request.data['type']
+            
+        #     if type == 'update':
+                
+            
             
         
         return Response(res_data, status=200)
