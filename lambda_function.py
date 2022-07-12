@@ -184,19 +184,33 @@ class CRUD(Databases):
         try:
             user_data = self.readQuery("select username, first_name from auth_user where username = '{0}'".format(username),'one')
             postObj_id = self.readQuery("select id from posts_posts where b_id='{0}'".format(b_id), 'one')
-
+                    
             if username == postObj_id[0]: #mine
-                allSendUserObj = self.readQuery("""select * 
-                                                    from users_userfcmtoken
-                                                    where ufcm_user_id in (
-                                                        select id from posts_savepost where b_id = '{0}' and sp_is_noti=true
-                                                    ) and ufcm_pc_c = true
-                                                    union
-                                                    select * 
-                                                    from users_userfcmtoken
-                                                    where ufcm_user_id in (
-                                                        select unc_user_id from users_usernoticount where unc_b_id = '{1}'
-                                                    ) and ufcm_pc_c = true""".format(b_id, b_id), 'all')
+                
+                query_pc_c = """select * 
+                            from users_userfcmtoken
+                            where ufcm_user_id in (
+                                select id from posts_savepost where b_id = '{0}' and sp_is_noti=true
+                            ) and ufcm_pc_c = true
+                            union
+                            select * 
+                            from users_userfcmtoken
+                            where ufcm_user_id in (
+                                select unc_user_id from users_usernoticount where unc_b_id = '{1}'
+                            ) and ufcm_pc_c = true""".format(b_id, b_id)
+                query_pc_u = """select * 
+                            from users_userfcmtoken
+                            where ufcm_user_id in (
+                                select id from posts_savepost where b_id = '{0}' and sp_is_noti=true
+                            ) and ufcm_pc_u = true
+                            union
+                            select * 
+                            from users_userfcmtoken
+                            where ufcm_user_id in (
+                                select unc_user_id from users_usernoticount where unc_b_id = '{1}'
+                            ) and ufcm_pc_u = true""".format(b_id, b_id)
+                            
+                allSendUserObj = self.readQuery((query_pc_c if type == 'pc_c' else query_pc_u), 'all')
 
                 for odict in allSendUserObj:
                     if odict['ufcm_token'] != None and odict['ufcm_user_id'] != username:
@@ -222,9 +236,14 @@ class CRUD(Databases):
             else: #others
                 savepostObj = self.readQuery("""select sp_is_noti from posts_savepost where id = '{0}' and b_id = {1}""".format(postObj_id[0], b_id), 'one')
                 if((savepostObj != None and savepostObj[0] == True) or (savepostObj==None)):
-                    allSendUserObj1 = self.readQuery("""select * 
-                                                from users_userfcmtoken
-                                                where ufcm_user_id = '{0}' and ufcm_pc_c = true""".format(postObj_id[0]), 'all')
+                    query_pc_c = """select * 
+                                    from users_userfcmtoken
+                                    where ufcm_user_id = '{0}' and ufcm_pc_c = true""".format(postObj_id[0])
+                    query_pc_u = """select * 
+                                    from users_userfcmtoken
+                                    where ufcm_user_id = '{0}' and ufcm_pc_u = true""".format(postObj_id[0])
+                                    
+                    allSendUserObj1 = self.readQuery((query_pc_c if type == 'pc_c' else query_pc_u), 'all')
 
                     for odict in allSendUserObj1:
                         if odict['ufcm_token'] != None and odict['ufcm_user_id'] != username:
@@ -494,7 +513,7 @@ def lambda_handler(event):
     try:
         db = CRUD()
 
-        if event.arg5 == 'pc_c':
+        if event.arg5 == 'pc_c' or event.arg5 == 'pc_u':
             db.send_to_reader_about_new_comment(event.arg5, event.arg4, event.arg3, event.arg2)
         elif event.arg5 == 'pp_c':
             db.send_to_user_about_who_add_place(event.arg5,event.arg4, event.arg3)
