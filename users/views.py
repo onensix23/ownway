@@ -381,21 +381,34 @@ class UserProfileViewSet(APIView):
 class UserNotiControllSet(APIView):
     def post(self, request, **kwargs):
         res_data = {
-            'success': False,
+            'success': True,
             'error': None,
             'action' : '',
             'result' : '',
         }
         
-        print(request.data)
-        # if 'type' in request.data:
-        #     type = request.data['type']
-            
-        #     if type == 'update':
+        c_value = request.data['value']
+        type = request.data['type']
+        userObj = User.objects.get(username=request.data['user_id'])
+        userFcmObj = UserFCMToken.objects.filter(ufcm_user_id=userObj)
+        try:
+            if type == 'pc_c':
+                userFcmObj.update(ufcm_pc_c=c_value)
+            elif type == 'sp_c':
+                userFcmObj.update(ufcm_sp_c=c_value)
+            elif type == 'fu_c':
+                userFcmObj.update(ufcm_fu_c=c_value)
+            elif type == 'pc_u':
+                userFcmObj.update(ufcm_pc_u=c_value)
+            elif type == 'pp_c':
+                userFcmObj.update(ufcm_pp_c=c_value)
+            elif type == 'im_c':
+                userFcmObj.update(ufcm_im_c=c_value)
+        except Exception as e:
+            print(e)
+            res_data['error'] = e
+            res_data['success'] = False
                 
-            
-            
-        
         return Response(res_data, status=200)
         
 class UserNotificationSet(APIView):
