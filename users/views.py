@@ -378,26 +378,22 @@ class UserProfileViewSet(APIView):
 
         return Response(response_data, status=200)
 
-
-class UserNotificationSet(APIView):
-    def get(self, request, **kwargs):
+class UserNotiControllSet(APIView):
+    def post(self, request, **kwargs):
         res_data = {
             'success': False,
             'error': None,
+            'action' : '',
             'result' : '',
         }
-
-        userId = request.GET.get('userId')
-        deviceId = request.GET.get('deviceId')
-        token = request.GET.get('tokenId')
-
-        userObj = User.objects.get(username=userId)
-        userFCMObj = UserFCMToken.objects.get(ufcm_user_id=userObj,ufcm_device_id=deviceId,ufcm_token=token)
-
-        userNotificationObj = UserNotification.objects.filter(un_token_id=userFCMObj, un_to=userObj, un_is_sended=True, un_is_read=False).count()
-        res_data['result'] = userNotificationObj
+        
+        if 'type' in request.data:
+            type = request.data['type']
+            
         
         return Response(res_data, status=200)
+        
+class UserNotificationSet(APIView):
 
     def post(self, request, **kwargs):
         res_data = {

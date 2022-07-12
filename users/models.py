@@ -38,11 +38,11 @@ class UserFCMToken(models.Model):
     ufcm_token = models.CharField(max_length=200, null=True)
     ufcm_token_check = models.DateTimeField(default=datetime.now)
     ufcm_token_add = models.DateTimeField(default=datetime.now)
-    ufcm_sp_c = models.CharField(max_length=1, null=False, default=1)
-    ufcm_fu_c = models.CharField(max_length=1, null=False, default=1)
-    ufcm_pc_c = models.CharField(max_length=1, null=False, default=1)
-    ufcm_pp_c = models.CharField(max_length=1, null=False, default=1)
-    ufcm_im_c = models.CharField(max_length=1, null=False, default=1)
+    ufcm_sp_c = models.BooleanField(default=True, null=True)
+    ufcm_fu_c = models.BooleanField(default=True, null=True)
+    ufcm_pc_c = models.BooleanField(default=True, null=True)
+    ufcm_pp_c = models.BooleanField(default=True, null=True)
+    ufcm_im_c = models.BooleanField(default=True, null=True)
     
 
 class UserNotification(models.Model):

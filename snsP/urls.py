@@ -60,7 +60,9 @@ urlpatterns = [
     # FCM Token 관리
     path('api/'+ms.API_SHA256_KEY+'userFCMToken', userview.UserFCMTokenViewSet.as_view(), name='userFCMToken'),
 
-    path('api/'+ms.API_SHA256_KEY+'userNotification', userview.UserNotificationSet.as_view(), name='userProfile'),
+    path('api/'+ms.API_SHA256_KEY+'userNotification', userview.UserNotificationSet.as_view(), name='userNotification'),
+    
+    path('api/'+ms.API_SHA256_KEY+'userNotiControll', userview.UserNotiControllSet.as_view(), name='userNotiControll'),
 
     path('api/'+ms.API_SHA256_KEY+'userProfile', userview.UserProfileViewSet.as_view(), name='userProfile'),
     path('api/'+ms.API_SHA256_KEY+'followUser', userview.FollowUserViewSet.as_view(), name='followUser'),
