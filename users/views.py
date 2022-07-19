@@ -162,6 +162,30 @@ class SocialLoginViewSet(APIView):
                     res_data['exist_user']=False
 
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        elif request_d['socialType'] == 'apple':
+            if request_d['type'] == 'login':
+                response_dict = request_d['data']
+                
+                apple_user_id = response_dict['user']
+                apple_name = '무직1'
+
+                if 'email' in response_dict.keys():
+                    apple_email = response_dict['email']
+                else:
+                    apple_email = ''
+
+                user, user_created = User.objects.get_or_create(username=apple_user_id)
+
+                # 유저가 새로 생성되었다면
+                if user_created:
+                    user.first_name = apple_name
+                    user.email = apple_email
+                    user.save()
+
+                    UserProfile.objects.create(up_id=user)
+                    res_data['exist_user']=False
+
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         else:
             if request_d['type'] == 'login':
                 google_user_id = request_d['data']['user']['id']
