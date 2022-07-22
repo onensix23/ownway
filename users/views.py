@@ -456,7 +456,7 @@ class UserNotificationSet(APIView):
             userFCMObj = UserFCMToken.objects.get(ufcm_user_id=userObj,ufcm_device_id=device_id,ufcm_token=token)
 
             userNotificationObj = UserNotification.objects.filter(un_token_id=userFCMObj, un_to=userObj, un_is_sended=True, un_is_read=False).count()
-            print(userNotificationObj)
+            # print(userNotificationObj)
             res_data['result'] = userNotificationObj
             
             return Response(res_data, status=200)

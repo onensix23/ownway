@@ -292,7 +292,7 @@ def send_to_firebase_cloud_messaging(title, body, token, obj): #  token, device_
 
     try:
         response = messaging.send(message)
-        print(f"Successfully sent message: {response}")
+        # print(f"Successfully sent message: {response}")
 
         obj.un_is_sended = True
         obj.save()
