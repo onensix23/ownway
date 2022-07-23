@@ -1,0 +1,186 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/images/playstore.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <title>Ownway</title>
+    <style type="text/css">
+        @font-face {
+            font-family: 'S-CoreDream-5Medium';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-5Medium.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'S-CoreDream-4Regular';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-4Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        a { text-decoration: none; }
+        a:link , a:visited, a:hover, a:active{
+            color:#666666
+        }
+        body {
+            font-family: 'S-CoreDream-4Regular';
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        body::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera*/
+        }
+
+        .navbar{
+            padding-top: 4vh;
+        }
+
+
+        .main-image{ 
+            height: 49vh;
+            width:  60vw;
+            background-repeat : no-repeat;
+            background-size : cover;
+            background-image: url('https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/images/ow_+mockup.jpeg');
+        }
+
+        .information-container-top{
+            background-color: #ead3a7;
+            padding-top:3vh;
+            padding-bottom:1vh;
+            padding-left:0.5vh;
+        }
+        .information-container{
+            background-color: #ead3a7;
+            padding-left:0.5vh;
+            padding-bottom:0.5vh;
+        }
+        .information-container-bottom{
+            background-color: #ead3a7;
+            padding-left:0.5vh;
+            padding-bottom:1vh;
+        }
+        .span-title{
+            font-weight:1000;
+            font-size:0.8em;
+        }
+        .company-title{
+            font-family: 'S-CoreDream-5Medium';
+            font-size:1em;
+        }
+        .span-content-title{
+            font-size:0.6em;
+        }
+        .terms-container{
+            text-align:right;
+        }
+        .span-content-terms{
+            text-align:right;
+            font-size:0.6em;
+        }
+
+        .main-content{
+            height: 91vh;
+            text-align:left;
+            {% comment %} align-items:center; {% endcomment %}
+        }
+
+        .main-content-first{
+            padding-top:25vh;
+
+        }
+        .main-content-second{
+            padding-top:15vh;
+            
+        }
+        
+        .main-content-title{
+            font-family: 'S-CoreDream-5Medium';
+            font-size:2em;
+            font-weight:900;
+            {% comment %} height: 20%;
+            margin-bottom:20vh; {% endcomment %}
+        }
+
+        .main-content-subtitle{
+            font-size:1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid"> 
+        <div class="row navbar justify-content-center">
+            <div class="col-md-7">
+                <a href="https://ownway.world">
+                    <img src="https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/images/OWNWAY%403x.png" width="14%">
+                </a>
+            </div>
+        </div>
+        <div class="row justify-content-center main-content">
+            <div class="col-md-3 main-content-first">
+                <p class="main-content-title">우리가 가는 모든 장소</p>
+                <p class="main-content-subtitle">내가 가는 곳 어디든지<br>공유하면서 소통해보세요!</p>
+            </div>
+            <div class="col-md-4 main-content-second">
+                <img src="https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/images/ow_+mockup.jpeg" width="100%">
+            </div>
+            {% comment %} https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/images/ow_+mockup.jpeg {% endcomment %}
+        </div>
+        <div class="row justify-content-center information-container-top">
+            <div class="col-md-10">
+                <span class="span-title company-title">원앤식스</span>
+            </div>
+        </div>
+        <div class="row justify-content-center information-container">
+            <div class="col-md-10">
+                <span class="span-title">대표</span>
+                <span class="span-content-title">권윤호</span>
+
+            </div>
+        </div>
+        <div class="row justify-content-center information-container">
+            <div class="col-md-10">
+                <span class="span-title">사업자등록번호</span>
+                <span class="span-content-title">396-32-00542</span>
+
+            </div>
+        </div>
+        <div class="row justify-content-center information-container">
+            <div class="col-md-10">
+                <span class="span-title">주소</span>
+                <span class="span-content-title">경기도 군포시 고산로 677번길 12, 1305-802</span>
+
+            </div>
+        </div>
+        <div class="row justify-content-center information-container">
+            <div class="col-md-10">
+                <span class="span-title">문의</span>
+                <span class="span-content-title">onensix23@gmail.com</span>
+            </div>
+        </div>
+        <div class="row justify-content-end information-container-bottom">
+            <div class="col-md-1 terms-container">
+                <a href='https://ownway.world/terms/termsofservice'>
+                    <span class="span-content-terms">서비스이용약관</span>
+                </a>
+            </div>
+            <div class="col-md-1 terms-container">
+                <a href='https://ownway.world/terms/privacypolicy'>
+                    <span class="span-content-terms">개인정보처리방침</span>
+                </a>
+            </div>
+        </div>
+
+        {% comment %} <div class="col-md-12">
+            <img src="https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/images/web_appstore_btn.jpeg"  class="img-responsive">
+        </div>     {% endcomment %}
+        {% comment %} <div class="col-md-12">
+            <img src="https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/images/web_background.jpeg">
+        </div>     {% endcomment %}
+    </div>
+</body>
+</html>
