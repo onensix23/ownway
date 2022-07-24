@@ -26,11 +26,13 @@
         a:link , a:visited, a:hover, a:active{
             color:#666666
         }
+
         body {
             font-family: 'S-CoreDream-4Regular';
             -ms-overflow-style: none; /* IE and Edge */
             scrollbar-width: none; /* Firefox */
         }
+
         body::-webkit-scrollbar {
             display: none; /* Chrome, Safari, Opera*/
         }
@@ -91,11 +93,11 @@
 
         .main-content-first{
             padding-top:25vh;
-
         }
+
         .main-content-second{
+            {% comment %} height:10vh; {% endcomment %}
             padding-top:15vh;
-            
         }
         
         .main-content-title{
@@ -109,6 +111,60 @@
         .main-content-subtitle{
             font-size:1em;
         }
+
+        .main-img{
+            width:32vw;
+        }
+
+        @media(max-width: 992px){
+            .main-content-first{
+                padding-top:25vh;
+
+            }
+            .main-content{
+                height:91vh;
+            }
+        }
+        @media(max-width: 768px){
+            .main-content-first{
+                padding-top:25vh;
+
+            }
+            .main-content{
+                height:91vh;
+            }
+        }
+        @media(max-width: 576px){
+            .main-content-first{
+                padding-top:10vh;
+            }
+            .main-content-second{
+                padding-top:0vh;
+            }
+            .main-content{
+                height:120vh;
+            }
+        }
+        @media(max-width: 500px){
+            .main-content-first{
+                padding-top: 10vh;
+                padding-left: 10vh;
+                height: 1vh;
+            }
+            .main-content-second{
+                padding-top:0vh;
+                display:block;
+                justify-content:center;
+                align-items:center;
+                display: flex;
+            }
+            .main-content{
+                height:80vh;
+            }
+            .main-img{
+                width:70vw;
+            }
+        }
     </style>
 </head>
 <body>
@@ -121,12 +177,16 @@
             </div>
         </div>
         <div class="row justify-content-center main-content">
-            <div class="col-md-3 main-content-first">
+            <div class="col-md-3 col-xs-12 main-content-first">
                 <p class="main-content-title">우리가 가는 모든 장소</p>
                 <p class="main-content-subtitle">내가 가는 곳 어디든지<br>공유하면서 소통해보세요!</p>
+                <a>
+                    <img src="https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/images/web_appstore_btn.jpeg" width="40%">
+                </a>
             </div>
-            <div class="col-md-4 main-content-second">
-                <img src="https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/images/ow_+mockup.jpeg" width="100%">
+            <div class="col-md-4 col-xs-12 main-content-second">
+                {% comment %} width="100%" {% endcomment %}
+                <img src="https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/images/ow_+mockup.jpeg" class="main-img">
             </div>
             {% comment %} https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/images/ow_+mockup.jpeg {% endcomment %}
         </div>
