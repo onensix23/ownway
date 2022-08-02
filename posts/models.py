@@ -67,19 +67,6 @@ class SavePost(models.Model):
     # lp_del = models.CharField(max_length=1, null=False, default='N')
 
 
-class PostComment(models.Model):
-    pc_id = models.BigAutoField(primary_key=True)
-    b_id = models.ForeignKey(Posts, db_column='b_id', related_name='postcomment_b_id', on_delete=models.CASCADE, null=False)
-    id = models.ForeignKey(User, to_field="username", db_column='id', default='', on_delete=models.CASCADE,
-                           max_length=20, null=False)  # 작성자
-    pc_comment = models.TextField()  # 내용
-    pc_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
-    pc_type = models.CharField(max_length=2, null=False, default='0') # 2 == reply
-    pc_is_reported = models.BooleanField(default=False)
-
-    pc_del = models.CharField(max_length=1, null=False, default='N')
-
-
 class PostPlace(models.Model):
     pp_id = models.BigAutoField(primary_key=True)
     b_id = models.ForeignKey(Posts, db_column='b_id', related_name='postplace_b_id', on_delete=models.CASCADE, null=False)
@@ -89,6 +76,22 @@ class PostPlace(models.Model):
     pp_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
     pp_type = models.CharField(max_length=2, null=False, default='0' )
     pp_del = models.CharField(max_length=1, null=False, default='N')
+
+
+class PostComment(models.Model):
+    pc_id = models.BigAutoField(primary_key=True)
+    b_id = models.ForeignKey(Posts, db_column='b_id', related_name='postcomment_b_id', on_delete=models.CASCADE, null=False)
+    id = models.ForeignKey(User, to_field="username", db_column='id', default='', on_delete=models.CASCADE,
+                           max_length=20, null=False)  # 작성자
+    pc_comment = models.TextField()  # 내용
+    pc_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
+    pc_type = models.CharField(max_length=2, null=False, default='0') # 2 == reply
+    pc_is_reported = models.BooleanField(default=False)
+    
+    pc_etc = models.CharField(max_length=100, null=True)
+    
+    pc_del = models.CharField(max_length=1, null=False, default='N')
+
 
 
 class EntrcSido(models.Model):
