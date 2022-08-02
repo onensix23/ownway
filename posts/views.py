@@ -278,6 +278,7 @@ class PostViewSet(APIView):
             q = Q()
             q.add(~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj)))), q.AND)
             q.add(Q(b_id__in=in_b_id), q.AND)
+            q.add(Q(b_del='N'))
             
             get_queryset = Posts.objects.prefetch_related(Prefetch('photo_b_id',
                     queryset=Photo.objects.filter(p_isthumb=1)
@@ -289,6 +290,7 @@ class PostViewSet(APIView):
         elif request.data['type'] == 'readrealtime':
             q = Q()
             q.add(~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj)))), q.AND)
+            q.add(Q(b_del='N'))
             
             get_queryset = Posts.objects.prefetch_related(Prefetch('photo_b_id',
                     queryset=Photo.objects.filter(p_isthumb=1)
