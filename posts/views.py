@@ -278,7 +278,6 @@ class PostViewSet(APIView):
             q = Q()
             q.add(~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj)))), q.AND)
             q.add(Q(b_id__in=in_b_id), q.AND)
-            # q.add(Q(b_del='N'))
             
             get_queryset = Posts.objects.prefetch_related(Prefetch('photo_b_id',
                     queryset=Photo.objects.filter(p_isthumb=1)
@@ -487,7 +486,6 @@ class PostCommentViewSet(APIView):
     """
         POST /postcomment/
     """
-
     def post(self, request, **kwargs):
         res_data = {
             "success": True,
@@ -495,8 +493,6 @@ class PostCommentViewSet(APIView):
         }
 
         type = request.data['type']
-        print('type')
-        print(type)
         # noti_receiver = UserFCMToken.objects.get(ufcm_user_id=User.objects.get(username=postObj.id).username, ufcm_device_id=ufcm_device_id) # 글 작성자
 
         if type == 'c' :
@@ -549,7 +545,59 @@ class PostCommentViewSet(APIView):
                 param1 = param1 + "'false'"
 
                 process = subprocess.Popen(param1, shell=True)
+                
+        elif type == 'rc' :
+            user_id = request.data['userId']
+            b_id = request.data['b_id']
+            pc_comment = request.data['pc_comment']
+            pc_type = request.data['pc_type']
+            pc_etc = request.data['pc_etc']
 
+            userObj = User.objects.get(username=user_id)
+            postObj = Posts.objects.get(b_id=b_id)
+            
+            new_Comment = PostComment(id=userObj, b_id=postObj, pc_comment=pc_comment, pc_type=pc_type,  pc_etc=pc_etc)
+            new_Comment.save()  # insert
+                
+            # # 내가 내 글에 글 씀 -> 구독자한테 알림 가야됨
+            # if str(postObj.id) == str(user_id):
+            #     UserNotiCount.objects.filter(unc_b_id=postObj).update(unc_count=F('unc_count')+1) #다 하나씩 올리고 그 다음엔?
+            #     UserNotiCount.objects.filter(unc_b_id=postObj,unc_count=4).delete() #지울거 지우기
+
+            #     # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
+            #     param1 = "python3 ./lambda_function.py " 
+            #     param1 = param1 + str(new_Comment.pc_id) + " "
+            #     param1 = param1 +"'"+ pc_comment +"' "
+            #     param1 = param1 + str(b_id) + " "
+            #     param1 = param1 + user_id + " "
+            #     param1 = param1 + "'pc_c'" + " "
+            #     param1 = param1 + "'true'"
+
+            #     process = subprocess.Popen(param1, shell=True)
+
+            #     postObj.b_update_datetime = datetime.now()
+            #     postObj.save()
+
+            # else: # 내 글은 아닌데 누군가의 글에 답글이 달린 상태겠죠?
+            #     new_noticount, is_created = UserNotiCount.objects.get_or_create(unc_user_id=userObj, unc_b_id=postObj)
+
+            #     # 기존에 있다면
+            #     if is_created == False:
+            #         new_noticount.unc_count = 0
+            #         new_noticount.save()
+                    
+            #     # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
+            #     param1 = "python3 ./lambda_function.py " 
+            #     param1 = param1 + str(new_Comment.pc_id) + " "
+            #     param1 = param1 +"'"+ pc_comment +"' "
+            #     param1 = param1 + "'0'"
+            #     param1 = param1 + str(b_id) + " "
+            #     param1 = param1 + user_id + " "
+            #     param1 = param1 + "'pc_c'" + " "
+            #     param1 = param1 + "'false'"
+
+            #     process = subprocess.Popen(param1, shell=True)
+                
         elif type == 'u':
             pc_id = request.data['pc_id']
             pc_comment = request.data['pc_comment']
@@ -561,7 +609,7 @@ class PostCommentViewSet(APIView):
 
         elif type == 'd':
             try:    
-                print(request.data)
+                # print(request.data)
                 user_id  = request.data['user_id']
                 b_id = request.data['b_id']
                 pc_id = request.data['pc_id']
@@ -579,6 +627,10 @@ class PostCommentViewSet(APIView):
                             uncObj.delete()
                         except Exception as e:
                             print('noting')
+                
+                print(PostComment.objects.filter(pc_etc=str(pc_id)))
+                
+                PostComment.objects.filter(pc_etc=str(pc_id)).update(pc_etc=None, pc_type=1)
                     
                 postcommentObj = PostComment.objects.get(pc_id=pc_id)
                 postcommentObj.delete()
@@ -765,107 +817,6 @@ class SavePostViewSet(APIView):
         return Response(res_data, status=200)
 
 
-
-
-
-class GetSidoViewSet(APIView):
-    """
-    GET /mypage/
-    """
-
-    def get(self, request, **kwargs):
-        sido = EntrcSido.objects.values('sido_nm').annotate(sido_cd=(Substr('doro_cd', 1, 2))).distinct()
-        sido_list = EntrcSidoFirstSerializer(sido, many=True)  # 시- 도 return
-        # print(sido_list)
-        return Response(sido_list.data, status=200)
-
-
-class GetSigunguViewSet(APIView):
-    """
-    POST /getSigungu
-    """
-
-    def post(self, request, **kwargs):
-        sel_sido_cd = request.data['sido_cd']
-
-        sigungu = EntrcSido.objects.values('sigungu_nm').annotate(
-            sigungu_cd=(Substr('doro_cd', 3, 3))).distinct().filter(sido_cd=sel_sido_cd)
-
-        sigungu_list = EntrcSidoSecondSerializer(sigungu, many=True)  # 시- 도 return
-        # print(sido_list)
-        return Response(sigungu_list.data, status=200)
-
-
-class GetDongViewSet(APIView):
-    """
-    POST /getDong
-    """
-
-    def post(self, request, **kwargs):
-        sel_sido_cd = request.data['sido_cd']
-        sel_sigungu_cd = request.data['sigungu_cd']
-
-        dong = EntrcSido.objects.values('dong_nm', 'dong_cd').distinct().filter(sido_cd=sel_sido_cd,
-                                                                                sigungu_cd=sel_sigungu_cd).exclude(
-            dong_nm__exact='')
-
-        # print(dong)
-        dong_list = EntrcSidoThirdSerializer(dong, many=True)  # 시- 도 return
-
-        return Response(dong_list.data, status=200)
-
-
-class GetReSidoViewSet(APIView):
-    """
-    POST /mypage/
-    """
-
-    def post(self, request, **kwargs):
-        # { "sido_nm":"경기도" }
-        sel_sido_nm = request.data['sido_nm']
-        # print(sel_sido_nm)
-        sido = EntrcSido.objects.values('sido_cd', 'sido_nm').filter(sido_nm=sel_sido_nm).distinct()
-        # print(sido)
-        sido_list = EntrcSidoFirstSerializer(sido, many=True)  # 시- 도 return
-        # print(sido_list)
-        return Response(sido_list.data, status=200)
-
-
-class GetReSigunguViewSet(APIView):
-    """
-    POST /getSigungu
-    """
-
-    def post(self, request, **kwargs):
-        sel_sido_cd = request.data['sido_cd']
-
-        sigungu = EntrcSido.objects.values('sigungu_nm').annotate(
-            sigungu_cd=(Substr('doro_cd', 3, 3))).distinct().filter(sido_cd=sel_sido_cd)
-        # print(sigungu)
-        sigungu_list = EntrcSidoSecondSerializer(sigungu, many=True)  # 시- 도 return
-        # print(sigungu_list)
-        return Response(sigungu_list.data, status=200)
-
-
-class GetReDongViewSet(APIView):
-    """
-    POST /getDong
-    """
-
-    def post(self, request, **kwargs):
-        sel_sido_cd = request.data['sido_cd']
-        sel_sigungu_cd = request.data['sigungu_cd']
-
-        dong = EntrcSido.objects.values('dong_nm', 'dong_cd').distinct().filter(sido_cd=sel_sido_cd,
-                                                                                sigungu_cd=sel_sigungu_cd).exclude(
-            dong_nm__exact='')
-
-        # print(dong)
-        dong_list = EntrcSidoThirdSerializer(dong, many=True)  # 시- 도 return
-
-        return Response(dong_list.data, status=200)
-
-
 # RetrieveAPIView 하나만 불러오는 거
 class PostDetailViewSet(APIView):
     """
@@ -885,10 +836,8 @@ class PostDetailViewSet(APIView):
                 for key, value in odict.items():
                     if key == 'p_filename':
                         FileUpload(s3_client).delete(value)
-                        # print(value)
 
-            queryset = Posts.objects.get(b_id=b_id)
-            queryset.delete()
+            Posts.objects.get(b_id=b_id).delete()
 
         except Exception as e: 
             res_data['error'] = e

@@ -36,7 +36,10 @@ class PostCommentSerializer(serializers.ModelSerializer):
                   'id',
                   'pc_comment',
                   'pc_datetime',
-                  'pc_del'
+                  'pc_type',
+                  'pc_etc',
+                  'pc_del',
+                  
                   )
 
 
