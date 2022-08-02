@@ -74,8 +74,9 @@ class PostComment(models.Model):
                            max_length=20, null=False)  # 작성자
     pc_comment = models.TextField()  # 내용
     pc_datetime = models.DateTimeField(default=datetime.now, null=False)  # 날짜
-    pc_type = models.CharField(max_length=2, null=False, default='0' )
+    pc_type = models.CharField(max_length=2, null=False, default='0') # 2 == reply
     pc_is_reported = models.BooleanField(default=False)
+
     pc_del = models.CharField(max_length=1, null=False, default='N')
 
 

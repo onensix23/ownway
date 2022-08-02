@@ -14,31 +14,6 @@ from notis.views import *
 import requests, subprocess, random
 import timeit
 
-# class TestViewSet(APIView):
-#     def get(self, request, **kwargs):
-#         res_data = {
-#             "success": True,
-#             "error": None,
-#             "fileName": '',
-#             "image_cnt":0
-#         }
-#         url = 'http://172.30.1.44:8001/api/alert_noti'
-
-#         params =  {
-#             'fields': ','.join([
-#                 'id',
-#                 'name',
-#                 'email',
-#                 # 'first_name',
-#                 # 'last_name',
-#                 # 'picture',
-#             ]),
-#         }
-#         response = requests.post(url, params)
-
-#         return Response('done', status=200)
-
-
 class UploadImageViewSet(APIView):
     """
        POST /uploadImage
@@ -140,7 +115,6 @@ class UploadImageViewSet(APIView):
         res_data['image_cnt'] = cnt
         
         return Response(res_data, status=200)
-
 
 class DeleteImageViewSet(APIView):
     """
@@ -264,6 +238,7 @@ class PostViewSet(APIView):
                     queryset=Photo.objects.filter(p_isthumb=1)
                 )).prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime').filter(Q(
                 ~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj))))
+                &Q(b_del='N')
             ))
 
             get_serializer_class = PostListSerializer(get_queryset, many=True)
@@ -369,7 +344,6 @@ class PostViewSet(APIView):
 
         return Response(res_data, status=200)
 
-
 class SearchPostViewSet(APIView):
     """
        POST /searchPost
@@ -410,7 +384,6 @@ class SearchPostViewSet(APIView):
         get_serializer_class = PostListSerializer(get_queryset, many=True)
 
         return Response(get_serializer_class.data, status=200)
-
 
 class LikePostViewSet(APIView):
     """
@@ -468,7 +441,6 @@ class LikePostViewSet(APIView):
 
             return Response(res_data, status=200)
 
-
 class LikePostMpViewSet(APIView):
     """
         POST /mplikepost/
@@ -498,8 +470,6 @@ class LikePostMpViewSet(APIView):
             # print(get_serializer_class.data)
             return Response(get_serializer_class.data, status=200)
             # return  Response({"res": "hi"}, status=200)
-
-
 class PostCommentViewSet(APIView):
     """
         GET /postcomment/
@@ -616,7 +586,6 @@ class PostCommentViewSet(APIView):
 
         return Response(res_data, status=200)
 
-
 class PostPlaceViewSet(APIView):
     """
     # DELETE /postPlcae/
@@ -634,7 +603,6 @@ class PostPlaceViewSet(APIView):
             res_data["success"] = False
 
         return Response(res_data, status=200)
-
 
 class SavePostPlaceViewSet(APIView):
     """
@@ -691,7 +659,6 @@ class MyPageViewSet(APIView):
         # print(get_serializer_class.data)
         return Response(get_serializer_class.data, status=200)
 
-
 class FollowPostViewSet(APIView):
     """
     POST /followPost/
@@ -703,7 +670,6 @@ class FollowPostViewSet(APIView):
         get_serializer_class = PostListSerializer(get_queryset, many=True)
 
         return Response(get_serializer_class.data, status=200)
-
 
 class SavePostViewSet(APIView):
     """
