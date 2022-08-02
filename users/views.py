@@ -212,14 +212,6 @@ class SocialLoginViewSet(APIView):
         return Response(res_data, status=200)
 
 class FollowUserViewSet(APIView):
-
-    # def get(self, request, **kwargs):
-    #     user_id = request.GET.get('user_id')
-    #     type = request.GET.get('type')
-
-        
-    #     return Response(serialize_data.data, status=200)
-
     @method_decorator(csrf_exempt)
     def post(self, request, **kwargs):
 

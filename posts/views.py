@@ -139,6 +139,8 @@ class DeleteImageViewSet(APIView):
                 FileUpload(s3_client).delete(p_filename)
             
             photoObj.delete()
+            
+            
         except Exception as e:
             print('except')
             print(e)
@@ -617,7 +619,6 @@ class PostCommentViewSet(APIView):
                 postObj = Posts.objects.get(b_id=b_id)
                 userObj = User.objects.get(username=user_id)
 
-
                 if str(postObj.id) != str(user_id):
                     pcCount = PostComment.objects.filter(id=userObj, b_id=postObj).count()
                     
@@ -627,13 +628,12 @@ class PostCommentViewSet(APIView):
                             uncObj.delete()
                         except Exception as e:
                             print('noting')
-                
-                print(PostComment.objects.filter(pc_etc=str(pc_id)))
+                            
+                UserNotification.objects.filter(un_detail_etc=str(pc_id)).delete()
                 
                 PostComment.objects.filter(pc_etc=str(pc_id)).update(pc_etc=None, pc_type=1)
-                    
-                postcommentObj = PostComment.objects.get(pc_id=pc_id)
-                postcommentObj.delete()
+                PostComment.objects.get(pc_id=pc_id).delete()
+                
 
             except Exception as e:
                 res_data['error'] = e

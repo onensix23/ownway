@@ -59,6 +59,7 @@ class UserNotification(models.Model):
     un_is_read = models.BooleanField(default=False, null=False)
     un_message_id = models.CharField(max_length=25, null=True)
     un_etc = models.ForeignKey(Posts, to_field="b_id", db_column='un_etc',related_name='usernotification_etc', on_delete=models.CASCADE, max_length=10, null=True)
+    un_detail_etc = models.CharField(max_length=100, null=True)
     
 class UserNotiCount(models.Model):
     unc_id = models.BigAutoField(primary_key=True)

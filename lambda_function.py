@@ -104,6 +104,11 @@ class CRUD(Databases):
         select unnest(%(un_token_id)s), unnest(%(un_type)s), unnest(%(un_title)s) 
             ,unnest(%(un_to)s) ,unnest(%(un_from)s),unnest(%(un_body)s), 
             unnest(%(un_is_sended)s)"""
+            
+        query3 = """insert into public.users_usernotification (un_token_id, un_type, un_title, un_to, un_from, un_body, un_is_sended, un_etc, un_detail_etc) 
+        select unnest(%(un_token_id)s), unnest(%(un_type)s), unnest(%(un_title)s) 
+            ,unnest(%(un_to)s) ,unnest(%(un_from)s),unnest(%(un_body)s), 
+            unnest(%(un_is_sended)s), unnest(%(un_etc)s) , unnest(%(un_detail_etc)s)"""
 
         try:
             with self.db as conn:
@@ -111,6 +116,8 @@ class CRUD(Databases):
                     if len(param['un_token_id']) > 0 :
                         if t == 'fu_c':
                             curs.execute(query2, param)
+                        elif t == 'pc_c':
+                            curs.execute(query3, param)
                         else:
                             curs.execute(query, param)
 
@@ -171,7 +178,7 @@ class CRUD(Databases):
             return res    
     
 
-    def send_to_reader_about_new_comment(self, type, username, b_id, pc_comment):
+    def send_to_reader_about_new_comment(self, type, username, b_id, pc_comment, pc_id):
         un_token_id = []
         un_type = []
         un_title = []
@@ -180,6 +187,7 @@ class CRUD(Databases):
         un_body = []
         un_is_sended = []
         un_etc = []
+        un_detail_etc = []
 
         try:
             user_data = self.readQuery("select username, first_name from auth_user where username = '{0}'".format(username),'one')
@@ -225,6 +233,7 @@ class CRUD(Databases):
                         un_from.append(username)
                         un_body.append(pc_comment)
                         un_etc.append(int(b_id))
+                        un_detail_etc.append(int(pc_id))
 
                         ans = self.send_to_firebase_cloud_messaging(type, user_data[1],pc_comment, odict['ufcm_token'],ufcm_token_data[0], int(b_id))
 
@@ -257,6 +266,7 @@ class CRUD(Databases):
                             un_from.append(username)
                             un_body.append(pc_comment)
                             un_etc.append(int(b_id))
+                            un_detail_etc.append(int(pc_id))
 
                             ans = self.send_to_firebase_cloud_messaging(type,user_data[1],pc_comment, odict['ufcm_token'],ufcm_token_data[0], int(b_id))
 
@@ -266,7 +276,7 @@ class CRUD(Databases):
                                 un_is_sended.append(False)
                             
             param = {'un_token_id': un_token_id, 'un_type': un_type, 'un_title': un_title
-            , 'un_to': un_to, 'un_from': un_from, 'un_body': un_body, 'un_is_sended': un_is_sended, 'un_etc': un_etc}
+            , 'un_to': un_to, 'un_from': un_from, 'un_body': un_body, 'un_is_sended': un_is_sended, 'un_etc': un_etc, 'un_detail_etc': un_detail_etc}
 
             
             self.insertUnnest(param, type)
@@ -514,7 +524,7 @@ def lambda_handler(event):
         db = CRUD()
 
         if event.arg5 == 'pc_c' or event.arg5 == 'pc_u':
-            db.send_to_reader_about_new_comment(event.arg5, event.arg4, event.arg3, event.arg2)
+            db.send_to_reader_about_new_comment(event.arg5, event.arg4, event.arg3, event.arg2, event.arg1)
         elif event.arg5 == 'pp_c':
             db.send_to_user_about_who_add_place(event.arg5,event.arg4, event.arg3)
         elif event.arg5 == 'im_c':
