@@ -140,6 +140,8 @@ class DeleteImageViewSet(APIView):
             
             photoObj.delete()
             
+            UserNotification.objects.filter(un_detail_etc=str(p_id)).delete()
+            
             
         except Exception as e:
             print('except')
@@ -156,7 +158,6 @@ def get_random():
     
     while True : 
         if len(res_arr) == 10:
-            # print(res_arr)
             return res_arr
         else:
             pk = random.randint(min_id, max_id)
@@ -653,6 +654,8 @@ class PostPlaceViewSet(APIView):
         try:
             model = PostPlace.objects.get(pp_id=pp_id)
             model.delete()
+            
+            UserNotification.objects.filter(un_detail_etc=str(pp_id)).delete()
         except:
             res_data["success"] = False
 
