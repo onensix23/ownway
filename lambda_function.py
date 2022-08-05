@@ -262,7 +262,7 @@ class CRUD(Databases):
                                     select * 
                                     from users_userfcmtoken
                                     where ufcm_user_id ='{2}'
-                                    and ufcm_pc_c = true and ufcm_token is not null""".format(postObj_id[0],postObj_id[0], username)
+                                    and ufcm_pc_c = true and ufcm_token is not null""".format(b_id, b_id, postObj_id[0])
                                     
                     query_pc_u = """select * 
                                     from users_userfcmtoken
@@ -279,7 +279,7 @@ class CRUD(Databases):
                                     select * 
                                     from users_userfcmtoken
                                     where ufcm_user_id ='{2}'
-                                    and ufcm_pc_u = true and ufcm_token is not null""".format(postObj_id[0],postObj_id[0], username)
+                                    and ufcm_pc_u = true and ufcm_token is not null""".format(b_id, b_id, postObj_id[0])
                                     
                     allSendUserObj1 = self.readQuery((query_pc_c if type == 'pc_c' else query_pc_u), 'all')
 
