@@ -244,13 +244,42 @@ class CRUD(Databases):
 
             else: #others
                 savepostObj = self.readQuery("""select sp_is_noti from posts_savepost where id = '{0}' and b_id = {1}""".format(postObj_id[0], b_id), 'one')
+                
                 if((savepostObj != None and savepostObj[0] == True) or (savepostObj==None)):
+                    
                     query_pc_c = """select * 
                                     from users_userfcmtoken
-                                    where ufcm_user_id = '{0}' and ufcm_pc_c = true""".format(postObj_id[0])
+                                    where ufcm_user_id in (
+                                        select id from posts_savepost where b_id = {0} and sp_is_noti=true
+                                    ) and ufcm_pc_c = true and ufcm_token is not null
+                                    union
+                                    select * 
+                                    from users_userfcmtoken
+                                    where ufcm_user_id in (
+                                        select unc_user_id from users_usernoticount where unc_b_id = {1}
+                                    ) and ufcm_pc_c = true and ufcm_token is not null
+                                    union
+                                    select * 
+                                    from users_userfcmtoken
+                                    where ufcm_user_id ='{2}'
+                                    and ufcm_pc_c = true and ufcm_token is not null""".format(postObj_id[0],postObj_id[0], username)
+                                    
                     query_pc_u = """select * 
                                     from users_userfcmtoken
-                                    where ufcm_user_id = '{0}' and ufcm_pc_u = true""".format(postObj_id[0])
+                                    where ufcm_user_id in (
+                                        select id from posts_savepost where b_id = {0} and sp_is_noti=true
+                                    ) and ufcm_pc_u = true and ufcm_token is not null
+                                    union
+                                    select * 
+                                    from users_userfcmtoken
+                                    where ufcm_user_id in (
+                                        select unc_user_id from users_usernoticount where unc_b_id = {1}
+                                    ) and ufcm_pc_u = true and ufcm_token is not null
+                                    union
+                                    select * 
+                                    from users_userfcmtoken
+                                    where ufcm_user_id ='{2}'
+                                    and ufcm_pc_u = true and ufcm_token is not null""".format(postObj_id[0],postObj_id[0], username)
                                     
                     allSendUserObj1 = self.readQuery((query_pc_c if type == 'pc_c' else query_pc_u), 'all')
 
