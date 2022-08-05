@@ -69,7 +69,7 @@ class UploadImageViewSet(APIView):
         if zero_cnt != 0:
             # -, -, b_id, id, type, -, -
             UserNotiCount.objects.filter(unc_b_id=postObj).update(unc_count=F('unc_count')+1) #다 하나씩 올리고 그 다음엔?
-            UserNotiCount.objects.filter(unc_b_id=postObj,unc_count=4).delete() #지울거 지우기
+            UserNotiCount.objects.filter(unc_b_id=postObj,unc_count=6).delete() #지울거 지우기
 
             param1 = "python3 ./lambda_function.py " 
             param1 = param1 + "'true'" + " "
@@ -513,7 +513,7 @@ class PostCommentViewSet(APIView):
             # 내가 내 글에 글 씀 -> 구독자한테 알림 가야됨
             if str(postObj.id) == str(user_id):
                 UserNotiCount.objects.filter(unc_b_id=postObj).update(unc_count=F('unc_count')+1) #다 하나씩 올리고 그 다음엔?
-                UserNotiCount.objects.filter(unc_b_id=postObj,unc_count=4).delete() #지울거 지우기
+                UserNotiCount.objects.filter(unc_b_id=postObj, unc_count=6).delete() #지울거 지우기
 
                 # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
                 param1 = "python3 ./lambda_function.py " 
@@ -562,44 +562,44 @@ class PostCommentViewSet(APIView):
             new_Comment = PostComment(id=userObj, b_id=postObj, pc_comment=pc_comment, pc_type=pc_type,  pc_etc=pc_etc)
             new_Comment.save()  # insert
                 
-            # # 내가 내 글에 글 씀 -> 구독자한테 알림 가야됨
-            # if str(postObj.id) == str(user_id):
-            #     UserNotiCount.objects.filter(unc_b_id=postObj).update(unc_count=F('unc_count')+1) #다 하나씩 올리고 그 다음엔?
-            #     UserNotiCount.objects.filter(unc_b_id=postObj,unc_count=4).delete() #지울거 지우기
+            # 내가 내 글에 글 씀 -> 구독자한테 알림 가야됨
+            if str(postObj.id) == str(user_id):
+                UserNotiCount.objects.filter(unc_b_id=postObj).update(unc_count=F('unc_count')+1) #다 하나씩 올리고 그 다음엔?
+                UserNotiCount.objects.filter(unc_b_id=postObj,unc_count=6).delete() #지울거 지우기
 
-            #     # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
-            #     param1 = "python3 ./lambda_function.py " 
-            #     param1 = param1 + str(new_Comment.pc_id) + " "
-            #     param1 = param1 +"'"+ pc_comment +"' "
-            #     param1 = param1 + str(b_id) + " "
-            #     param1 = param1 + user_id + " "
-            #     param1 = param1 + "'pc_c'" + " "
-            #     param1 = param1 + "'true'"
+                # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
+                param1 = "python3 ./lambda_function.py " 
+                param1 = param1 + str(new_Comment.pc_id) + " "
+                param1 = param1 +"'"+ pc_comment +"' "
+                param1 = param1 + str(b_id) + " "
+                param1 = param1 + user_id + " "
+                param1 = param1 + "'pc_c'" + " "
+                param1 = param1 + "'true'"
 
-            #     process = subprocess.Popen(param1, shell=True)
+                process = subprocess.Popen(param1, shell=True)
 
-            #     postObj.b_update_datetime = datetime.now()
-            #     postObj.save()
+                postObj.b_update_datetime = datetime.now()
+                postObj.save()
 
-            # else: # 내 글은 아닌데 누군가의 글에 답글이 달린 상태겠죠?
-            #     new_noticount, is_created = UserNotiCount.objects.get_or_create(unc_user_id=userObj, unc_b_id=postObj)
+            else: # 내 글은 아닌데 누군가의 글에 답글이 달린 상태겠죠?
+                new_noticount, is_created = UserNotiCount.objects.get_or_create(unc_user_id=userObj, unc_b_id=postObj)
 
-            #     # 기존에 있다면
-            #     if is_created == False:
-            #         new_noticount.unc_count = 0
-            #         new_noticount.save()
+                # 기존에 있다면
+                if is_created == False:
+                    new_noticount.unc_count = 0
+                    new_noticount.save()
                     
-            #     # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
-            #     param1 = "python3 ./lambda_function.py " 
-            #     param1 = param1 + str(new_Comment.pc_id) + " "
-            #     param1 = param1 +"'"+ pc_comment +"' "
-            #     param1 = param1 + "'0'"
-            #     param1 = param1 + str(b_id) + " "
-            #     param1 = param1 + user_id + " "
-            #     param1 = param1 + "'pc_c'" + " "
-            #     param1 = param1 + "'false'"
+                # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
+                param1 = "python3 ./lambda_function.py " 
+                param1 = param1 + str(new_Comment.pc_id) + " "
+                param1 = param1 +"'"+ pc_comment +"' "
+                param1 = param1 + "'0'"
+                param1 = param1 + str(b_id) + " "
+                param1 = param1 + user_id + " "
+                param1 = param1 + "'pc_c'" + " "
+                param1 = param1 + "'false'"
 
-            #     process = subprocess.Popen(param1, shell=True)
+                process = subprocess.Popen(param1, shell=True)
                 
         elif type == 'u':
             pc_id = request.data['pc_id']
@@ -686,7 +686,7 @@ class SavePostPlaceViewSet(APIView):
 
             if str(user_id) == str(postId.id):
                 UserNotiCount.objects.filter(unc_b_id=postId).update(unc_count=F('unc_count')+1) #다 하나씩 올리고 그 다음엔?
-                UserNotiCount.objects.filter(unc_b_id=postId,unc_count=4).delete() #지울거 지우기
+                UserNotiCount.objects.filter(unc_b_id=postId,unc_count=6).delete() #지울거 지우기
 
                 # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
                 param1 = "python3 ./lambda_function.py " 

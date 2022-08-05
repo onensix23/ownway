@@ -194,7 +194,6 @@ class CRUD(Databases):
             postObj_id = self.readQuery("select id from posts_posts where b_id='{0}'".format(b_id), 'one')
                     
             if username == postObj_id[0]: #mine
-                
                 query_pc_c = """select * 
                             from users_userfcmtoken
                             where ufcm_user_id in (
@@ -246,7 +245,6 @@ class CRUD(Databases):
                 savepostObj = self.readQuery("""select sp_is_noti from posts_savepost where id = '{0}' and b_id = {1}""".format(postObj_id[0], b_id), 'one')
                 
                 if((savepostObj != None and savepostObj[0] == True) or (savepostObj==None)):
-                    
                     query_pc_c = """select * 
                                     from users_userfcmtoken
                                     where ufcm_user_id in (
