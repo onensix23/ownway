@@ -60,26 +60,44 @@ class UploadImageViewSet(APIView):
 
                     # 데이터베이스에 저장
                     photo.save()
-
+                    
                     res_data[k] = request.FILES[k].name
                     
-                    if photo.p_isthumb == '0':
-                        zero_cnt = zero_cnt + 1
+                    if str(userObj.username) == str(postObj.id):
+                        UserNotiCount.objects.filter(unc_b_id=postObj).update(unc_count=F('unc_count')+1) #다 하나씩 올리고 그 다음엔?
+                        UserNotiCount.objects.filter(unc_b_id=postObj,unc_count=6).delete() #지울거 지우기
+
+                        # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
+                        param1 = "python3 ./lambda_function.py " 
+                        param1 = param1 + str(photo.p_id) + " "
+                        param1 = param1 + str(zero_cnt) + " '"
+                        param1 = param1 + request.data['b_id'] + "' '"
+                        param1 = param1 + str(postObj.id) + "' "
+                        param1 = param1 + "'im_c'" + " "
+                        param1 = param1 + "'true'"
+
+                        process = subprocess.Popen(param1, shell=True)
+                        
+                    else: # 내 글은 아닌데 누군가의 글에 답글이 달린 상태겠죠?
+                        new_noticount, is_created = UserNotiCount.objects.get_or_create(unc_user_id=userObj, unc_b_id=postObj)
+
+                        # 기존에 있다면
+                        if is_created == False:
+                            new_noticount.unc_count = 0
+                            new_noticount.save()
+                            
+                        # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
+                        param1 = "python3 ./lambda_function.py " 
+                        param1 = param1 + str(photo.p_id) + " "
+                        param1 = param1 + str(zero_cnt) + " '"
+                        param1 = param1 + request.data['b_id'] + "' '"
+                        param1 = param1 + str(postObj.id) + "' "
+                        param1 = param1 + "'im_c'" + " "
+                        param1 = param1 + "'true'"
+
+                        process = subprocess.Popen(param1, shell=True)
                     
-        if zero_cnt != 0:
-            # -, -, b_id, id, type, -, -
-            UserNotiCount.objects.filter(unc_b_id=postObj).update(unc_count=F('unc_count')+1) #다 하나씩 올리고 그 다음엔?
-            UserNotiCount.objects.filter(unc_b_id=postObj,unc_count=6).delete() #지울거 지우기
-
-            param1 = "python3 ./lambda_function.py " 
-            param1 = param1 + "'true'" + " "
-            param1 = param1 + "'true'" + " '"
-            param1 = param1 + request.data['b_id'] + "' '"
-            param1 = param1 + str(postObj.id) + "' "
-            param1 = param1 + "'im_c'" + " "
-            param1 = param1 + "'true'"
-
-            process = subprocess.Popen(param1, shell=True)
+                    zero_cnt = zero_cnt + 1
                     
         res_data['image_cnt'] = cnt
         
@@ -690,7 +708,7 @@ class SavePostPlaceViewSet(APIView):
 
                 # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
                 param1 = "python3 ./lambda_function.py " 
-                param1 = param1 + "'true'" + " "
+                param1 = param1 + str(new_postplace.pp_id) + " "
                 param1 = param1 + "'true'" + " "
                 param1 = param1 + str(b_id) + " "
                 param1 = param1 + user_id + " "
@@ -698,7 +716,26 @@ class SavePostPlaceViewSet(APIView):
                 param1 = param1 + "'true'"
 
                 process = subprocess.Popen(param1, shell=True)
+                
+            else: # 내 글은 아닌데 누군가의 글에 답글이 달린 상태겠죠?
+                new_noticount, is_created = UserNotiCount.objects.get_or_create(unc_user_id=userObj, unc_b_id=postId)
+
+                # 기존에 있다면
+                if is_created == False:
+                    new_noticount.unc_count = 0
+                    new_noticount.save()
                     
+                # pc_id, pc_comment, pc_type, b_id, id, type, who's comment
+                param1 = "python3 ./lambda_function.py " 
+                param1 = param1 + str(new_postplace.pp_id) + " "
+                param1 = param1 + "'true'" + " "
+                param1 = param1 + str(b_id) + " "
+                param1 = param1 + user_id + " "
+                param1 = param1 + "'pp_c'" + " "
+                param1 = param1 + "'true'"
+
+                process = subprocess.Popen(param1, shell=True)
+                
         except:
             res_data["success"]=False
 
