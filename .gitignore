@@ -30,7 +30,7 @@ ownway-firebase-adminsdk-servicekey.json
 
 # Distribution / packaging
 .Python
-build/
+# build/
 develop-eggs/
 dist/
 downloads/
