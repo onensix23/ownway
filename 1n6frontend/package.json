@@ -2,7 +2,7 @@
   "name": "1n6frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://ownway.world:8000",
+  "proxy": "https://ownway.world",
   "homepage": "./",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
