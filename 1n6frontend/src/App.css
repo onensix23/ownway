@@ -1,0 +1,218 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@font-face {
+  font-family: 'S-CoreDream-5Medium';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-5Medium.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'S-CoreDream-4Regular';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-4Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link,
+a:visited,
+a:hover,
+a:active {
+  color: #666666
+}
+
+body {
+  font-family: 'S-CoreDream-4Regular';
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+body::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera*/
+}
+
+.navbar {
+  padding-top: 4vh;
+}
+
+.main-image {
+  height: 49vh;
+  width: 60vw;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url('https://ownway-bucket.s3.ap-northeast-2.amazonaws.com/images/ow_+mockup.jpeg');
+}
+
+.information-container-top {
+  background-color: #ead3a7;
+  padding-top: 3vh;
+  padding-bottom: 1vh;
+  padding-left: 0.5vh;
+}
+
+.information-container {
+  background-color: #ead3a7;
+  padding-left: 0.5vh;
+  padding-bottom: 0.5vh;
+}
+
+.information-container-bottom {
+  background-color: #ead3a7;
+  padding-left: 0.5vh;
+  padding-bottom: 1vh;
+}
+
+.span-title {
+  font-weight: 1000;
+  font-size: 0.8em;
+}
+
+.company-title {
+  font-family: 'S-CoreDream-5Medium';
+  font-size: 1em;
+}
+
+.span-content-title {
+  font-size: 0.6em;
+}
+
+.terms-container {
+  text-align: right;
+}
+
+.span-content-terms {
+  text-align: right;
+  font-size: 0.6em;
+}
+
+.main-content {
+  height: 91vh;
+  text-align: left;
+}
+
+.main-content-first {
+  padding-top: 25vh;
+}
+
+.main-content-second {
+  padding-top: 15vh;
+}
+
+.main-content-title {
+  font-family: 'S-CoreDream-5Medium';
+  font-size: 2em;
+  font-weight: 900;
+}
+
+.main-content-subtitle {
+  font-size: 1em;
+}
+
+.main-img {
+  width: 32vw;
+}
+
+@media(max-width: 992px) {
+  .main-content-first {
+    padding-top: 25vh;
+
+  }
+
+  .main-content {
+    height: 91vh;
+  }
+}
+
+@media(max-width: 768px) {
+  .main-content-first {
+    padding-top: 25vh;
+
+  }
+
+  .main-content {
+    height: 91vh;
+  }
+}
+
+@media(max-width: 576px) {
+  .main-content-first {
+    padding-top: 10vh;
+  }
+
+  .main-content-second {
+    padding-top: 0vh;
+  }
+
+  .main-content {
+    height: 120vh;
+  }
+}
+
+@media(max-width: 500px) {
+  .main-content-first {
+    padding-top: 10vh;
+    padding-left: 10vh;
+    height: 1vh;
+  }
+
+  .main-content-second {
+    padding-top: 0vh;
+    display: block;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+  }
+
+  .main-content {
+    height: 80vh;
+  }
+
+  .main-img {
+    width: 70vw;
+  }
+}
