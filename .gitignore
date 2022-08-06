@@ -187,7 +187,6 @@ googleMapKey.js
 1n6frontend/coverage/
 
 # production
-# 1n6frontend/build/
 
 # misc
 .DS_Store
