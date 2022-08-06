@@ -8,4 +8,5 @@ def AboutView(TemplateView):
     # return render(request, 'index.html')
     
 def index(request):
-    return render(request, 'index.html')
+    # return render(request, 'index.html')
+    return render(request, 'main.html')
