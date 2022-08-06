@@ -179,7 +179,7 @@ googleMapKey.js
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-1n6frontend/node_modules/
+# 1n6frontend/node_modules/
 1n6frontend/.pnp
 1n6frontend/.pnp.js
 
@@ -187,7 +187,7 @@ googleMapKey.js
 1n6frontend/coverage/
 
 # production
-1n6frontend/build/
+# 1n6frontend/build/
 
 # misc
 .DS_Store
