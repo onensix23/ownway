@@ -175,3 +175,27 @@ ownwatvenv/
 my_env/
 
 googleMapKey.js
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+1n6frontend/node_modules/
+1n6frontend/.pnp
+1n6frontend/.pnp.js
+
+# testing
+1n6frontend/coverage/
+
+# production
+1n6frontend/build/
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
