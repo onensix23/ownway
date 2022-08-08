@@ -67,6 +67,16 @@ class SavePost(models.Model):
     # lp_del = models.CharField(max_length=1, null=False, default='N')
 
 
+class CountUnread(models.Model):
+    cu_id = models.BigAutoField(primary_key=True)
+    sp_id = models.ForeignKey(SavePost, to_field="sp_id",
+                                related_name='countunread_sp_id',
+                                db_column='sp_id', default='', on_delete=models.CASCADE, max_length=100, null=False) 
+    cu_pre_datetime = models.DateTimeField(default=datetime.now, null=False)
+    cu_datetime = models.DateTimeField(default=datetime.now, null=False)
+    cu_count = models.IntegerField(default=0)
+    
+    
 class PostPlace(models.Model):
     pp_id = models.BigAutoField(primary_key=True)
     b_id = models.ForeignKey(Posts, db_column='b_id', related_name='postplace_b_id', on_delete=models.CASCADE, null=False)

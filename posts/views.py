@@ -795,18 +795,25 @@ class SavePostViewSet(APIView):
         postObj = Posts.objects.get(b_id=b_id)
 
         if request.data['type'] == '0':
-            query = SavePost.objects.filter(id=user_id, b_id=b_id)
-
-            if query.count() > 0:
-                res_data['count'] = query.count()
-                res_data['data'] = SavePost.objects.get(id=user_id, b_id=b_id).sp_is_noti
+            
+            if  SavePost.objects.filter(id=user_id, b_id=b_id).count() > 0:
+                
+                spdata = SavePost.objects.get(id=user_id, b_id=b_id)
+                
+                res_data['count'] = SavePost.objects.filter(id=user_id, b_id=b_id).count()
+                res_data['data'] =spdata.sp_is_noti
+                res_data['countunread_data'] =  CountUnreadSerializer(CountUnread.objects.get(sp_id=spdata)).data
+                
             
         else:
             savePostObj, isCreated =  SavePost.objects.get_or_create(id=userObj, b_id=postObj)
-            
+            CountUnreadObj, isCreated2 =  CountUnread.objects.get_or_create(sp_id=savePostObj)
+
             if isCreated == False: # 삭제 해야 됨
                 res_data['action'] = 'delete'
                 savePostObj.delete()
+                CountUnreadObj.delete()
+                
             elif isCreated == True:
                 if str(user_id) != str(postObj.id):
                     # 내가 아닌 누군가가 글 구독!

@@ -67,6 +67,21 @@ class SavePostSerializer(serializers.ModelSerializer):
                 #   'pc_del'
                   )
 
+class CountUnreadSerializer(serializers.ModelSerializer):
+    countunread_sp_id = SavePostSerializer(read_only=True)
+    
+    class Meta:
+        model = CountUnread
+        # fields = "__all__"
+        fields = ('cu_id',
+                  'countunread_sp_id',
+                  'cu_pre_datetime',
+                  'cu_datetime',
+                  'cu_count'
+                #   'pc_datetime',
+                #   'pc_del'
+                  )
+
 
 class PostPlaceSerializer(serializers.ModelSerializer):
     pp_user_id = UserSerializer2(read_only=True)
