@@ -102,7 +102,7 @@ class UploadImageViewSet(APIView):
                     
         res_data['image_cnt'] = cnt
         
-        CountUnread.objects.filter(sp_id__in = Subquery(SavePost.objects.values('sp_id').filter(b_id=postObj))).update(cu_count=F('cu_count')+cnt)
+        CountUnread.objects.filter(sp_id__in = Subquery(SavePost.objects.values('sp_id').filter(~Q(id=userObj), b_id=postObj))).update(cu_count=F('cu_count')+cnt)
         
         return Response(res_data, status=200)
 
@@ -531,7 +531,8 @@ class PostCommentViewSet(APIView):
             new_Comment = PostComment(id=userObj, b_id=postObj, pc_comment=pc_comment)
             new_Comment.save()  # insert
             
-            CountUnread.objects.filter(sp_id__in = Subquery(SavePost.objects.values('sp_id').filter(b_id=postObj))).update(cu_count=F('cu_count')+1)
+            CountUnread.objects.filter(sp_id__in = Subquery(SavePost.objects.values('sp_id').filter(~Q(id=userObj), b_id=postObj))).update(cu_count=F('cu_count')+1)
+            # CountUnread.objects.filter(sp_id__in = Subquery(SavePost.objects.values('sp_id').filter(b_id=postObj))).update(cu_count=F('cu_count')+1)
                 
             # 내가 내 글에 글 씀 -> 구독자한테 알림 가야됨
             if str(postObj.id) == str(user_id):
@@ -707,7 +708,8 @@ class SavePostPlaceViewSet(APIView):
             new_postplace = PostPlace(pp_user_id=userObj, b_id=postId, pp_place_id=pp_place_id)
             new_postplace.save()  # insert
             
-            CountUnread.objects.filter(sp_id__in = Subquery(SavePost.objects.values('sp_id').filter(b_id=postId))).update(cu_count=F('cu_count')+1)
+            CountUnread.objects.filter(sp_id__in = Subquery(SavePost.objects.values('sp_id').filter(~Q(id=userObj), b_id=postId))).update(cu_count=F('cu_count')+1)
+            # CountUnread.objects.filter(sp_id__in = Subquery(SavePost.objects.values('sp_id').filter(b_id=postId))).update(cu_count=F('cu_count')+1)
 
             if str(user_id) == str(postId.id):
                 UserNotiCount.objects.filter(unc_b_id=postId).update(unc_count=F('unc_count')+1) #다 하나씩 올리고 그 다음엔?
@@ -809,11 +811,10 @@ class SavePostViewSet(APIView):
                 
                 res_data['count'] = SavePost.objects.filter(id=user_id, b_id=b_id).count()
                 res_data['data'] =spdata.sp_is_noti
-                res_data['savepost_id'] = spdata.sp_id
                 
-                print(request.data['last_time'])
                 
                 try:
+                    res_data['savepost_id'] = spdata.sp_id
                     cu_data = CountUnread.objects.get(sp_id=spdata)
                     
                     res_data['countunread_data'] = CountUnreadSerializer(cu_data).data
@@ -825,6 +826,7 @@ class SavePostViewSet(APIView):
                     cu_data.save()
                     
                 except:     
+                    res_data['savepost_id'] = None
                     res_data['countunread_data'] = None
                 
             
