@@ -80,7 +80,6 @@ class UploadImageViewSet(APIView):
                         process = subprocess.Popen(param1, shell=True)
                         
                     else: # 내 글은 아닌데 누군가의 글에 답글이 달린 상태겠죠?
-                        print('hi~')
                         new_noticount, is_created = UserNotiCount.objects.get_or_create(unc_user_id=userObj, unc_b_id=postObj)
 
                         # 기존에 있다면
