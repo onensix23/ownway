@@ -1,5 +1,6 @@
 from django.db.models.functions import Substr
 from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
 from snsP.my_settings import *
 from django.http import HttpResponse
 from django.db.models import Q,Subquery,Prefetch,F, Max, Min
@@ -264,9 +265,18 @@ class PostViewSet(APIView):
                 ~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj))))
                 &Q(b_del='N')
             ))
-
-            get_serializer_class = PostListSerializer(get_queryset, many=True)
-            res_data = get_serializer_class.data
+            
+            paginator = Paginator(get_queryset, 10)
+            page = request.data['page']
+            
+            if paginator.num_pages < page:
+                res_data = None
+            else:   
+                posts = paginator.get_page(page)
+                get_serializer_class = PostListSerializer(posts, many=True)
+                res_data = get_serializer_class.data
+                # get_serializer_class = PostListSerializer(get_queryset, many=True)
+            
 
         elif request.data['type'] == 'readDetail':
             now_post = Posts.objects.get(b_id=request.data['b_id'])
@@ -337,7 +347,9 @@ class PostViewSet(APIView):
             get_serializer_class = PostSerializer(get_queryset, many=True)
 
         else:
+            
             get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime')
+            
             get_serializer_class = PostSerializer(get_queryset, many=True)
 
         # return Response(get_serializer_class2.data, status=200)
