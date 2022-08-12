@@ -274,7 +274,6 @@ class PostViewSet(APIView):
                 posts = paginator.get_page(page)
                 get_serializer_class = PostListSerializer(posts, many=True)
                 res_data = get_serializer_class.data
-                # get_serializer_class = PostListSerializer(get_queryset, many=True)
             
 
         elif request.data['type'] == 'readDetail':
