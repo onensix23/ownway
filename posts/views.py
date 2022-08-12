@@ -38,7 +38,6 @@ class UploadImageViewSet(APIView):
         
         postObj.b_update_datetime = datetime.now()
         postObj.save()
-        
 
         cnt = 0
         zero_cnt = 0
@@ -275,7 +274,6 @@ class PostViewSet(APIView):
                 posts = paginator.get_page(page)
                 get_serializer_class = PostListSerializer(posts, many=True)
                 res_data = get_serializer_class.data
-                # get_serializer_class = PostListSerializer(get_queryset, many=True)
             
 
         elif request.data['type'] == 'readDetail':
@@ -392,10 +390,10 @@ class SearchPostViewSet(APIView):
         type = request.data['themeValue']
         tag = request.data['hashTagValue']
         text = request.data['text']
+        user_id = request.data['user_id']
+        page = request.data['page']
 
-        # print(request.data)
-        # get_queryset = Posts.objects.filter(b_title__icontains=text)
-        # get_serializer_class = PostDetailSerializer(get_queryset, many=True)
+        userObj = User.objects.get(username=user_id)
 
         """
             select * from posts 
@@ -417,10 +415,20 @@ class SearchPostViewSet(APIView):
 
         get_queryset = Posts.objects.filter(q).prefetch_related(Prefetch('photo_b_id',
                     queryset=Photo.objects.filter(p_isthumb=1)
-                )).prefetch_related('savepost_b_id').select_related('id').order_by('-b_datetime')
-        get_serializer_class = PostListSerializer(get_queryset, many=True)
+                )).prefetch_related('savepost_b_id').select_related('id').order_by('-b_datetime').filter(Q(~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj)))))&Q(b_del='N'))
+        
+        paginator = Paginator(get_queryset, 6)
+        page = request.data['page']
+            
+        if paginator.num_pages < page:
+                res_data = None
+        else:   
+            posts = paginator.get_page(page)
+            get_serializer_class = PostListSerializer(posts, many=True)
+            res_data = get_serializer_class.data
+            
 
-        return Response(get_serializer_class.data, status=200)
+        return Response(res_data, status=200)
 
 class LikePostViewSet(APIView):
     """
@@ -766,13 +774,21 @@ class MyPageViewSet(APIView):
     """
     POST /mypage/
     """
-
     def post(self, request, **kwargs):
         user_id = request.data['userId']
+        page = request.data['page']
+        
         get_queryset = Posts.objects.filter(id=user_id, b_del='N').order_by('-b_datetime')
-        get_serializer_class = PostSerializer(get_queryset, many=True)
-        # print(get_serializer_class.data)
-        return Response(get_serializer_class.data, status=200)
+        paginator = Paginator(get_queryset, 10)
+        
+        if paginator.num_pages < page:
+                res_data = None
+        else:   
+            posts = paginator.get_page(page)
+            get_serializer_class = PostSerializer(posts, many=True)
+            res_data = get_serializer_class.data
+            
+        return Response(res_data, status=200)
 
 class FollowPostViewSet(APIView):
     """
@@ -781,10 +797,19 @@ class FollowPostViewSet(APIView):
     def post(self, request, **kwargs):
         user_id = request.data['userId']
         get_queryset = Posts.objects.filter(id__in=Subquery(UserFollow.objects.values('uf_reader').filter(uf_reading=user_id)), b_del='N').order_by('-b_update_datetime')
-        # print(Posts.objects.filter(id__in=Subquery(UserFollow.objects.values('uf_reader').filter(uf_reading=user_id)), b_del='N').order_by('-b_datetime'))
-        get_serializer_class = PostListSerializer(get_queryset, many=True)
 
-        return Response(get_serializer_class.data, status=200)
+        paginator = Paginator(get_queryset, 15)
+        page = request.data['page']
+        
+        if paginator.num_pages < page:
+            res_data = None
+        else:   
+            posts = paginator.get_page(page)
+            get_serializer_class = PostListSerializer(posts, many=True)
+            res_data = get_serializer_class.data
+            
+
+        return Response(res_data, status=200)
 
 class SavePostViewSet(APIView):
     """
@@ -810,13 +835,26 @@ class SavePostViewSet(APIView):
         }
 
         user_id = request.data['userId']
-        b_id = request.data['b_id']
-
         userObj = User.objects.get(username=user_id)
-        postObj = Posts.objects.get(b_id=b_id)
 
-        if request.data['type'] == '0':
+        if request.data['type'] == 'r':
+            get_queryset = Posts.objects.filter(b_id__in=Subquery(SavePost.objects.values('b_id').filter(id=user_id))).prefetch_related('photo_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime')
             
+            paginator = Paginator(get_queryset, 15)
+            page = request.data['page']
+            
+            if paginator.num_pages < page:
+                res_data = None
+            else:   
+                posts = paginator.get_page(page)
+                get_serializer_class = PostListSerializer(posts, many=True)
+                res_data = get_serializer_class.data
+
+            return Response(res_data, status=200)
+        elif request.data['type'] == '0':
+            
+            b_id = request.data['b_id']
+            postObj = Posts.objects.get(b_id=b_id)
             if  SavePost.objects.filter(id=user_id, b_id=b_id).count() > 0:
                 
                 spdata = SavePost.objects.get(id=user_id, b_id=b_id)
@@ -840,9 +878,10 @@ class SavePostViewSet(APIView):
                 except:     
                     res_data['savepost_id'] = None
                     res_data['countunread_data'] = None
-                
-            
         else:
+
+            b_id = request.data['b_id']
+            postObj = Posts.objects.get(b_id=b_id)
             savePostObj, isCreated =  SavePost.objects.get_or_create(id=userObj, b_id=postObj)
             CountUnreadObj, isCreated2 =  CountUnread.objects.get_or_create(sp_id=savePostObj)
 
