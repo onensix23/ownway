@@ -1,6 +1,8 @@
 import json, requests, subprocess
 import threading
 
+from django.core.paginator import Paginator
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 
@@ -459,10 +461,18 @@ class UserNotificationSet(APIView):
 
             try:
                 userNotificationObj = UserNotification.objects.filter(un_token_id=userFCMObj,un_to=userObj, un_is_sended=True).order_by("-un_send_date")
-                get_serializer_class = UserNotificationSerializer2(userNotificationObj, many=True)         
-                res_data['success'] = True
-
-                return Response(get_serializer_class.data, status=200)
+                
+                paginator = Paginator(userNotificationObj, 15)
+                page = request.data['page']
+            
+                if paginator.num_pages < page:
+                    res_data = None
+                else:   
+                    posts = paginator.get_page(page)
+                    get_serializer_class = UserNotificationSerializer2(posts, many=True)
+                    res_data = get_serializer_class.data
+                    
+                return Response(res_data, status=200)
 
             except Exception as e:
                 res_data['error'] = e
