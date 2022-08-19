@@ -55,6 +55,7 @@ class PostCommentSerializer2(serializers.ModelSerializer):
 
 class SavePostSerializer(serializers.ModelSerializer):
     savepost_username = UserSerializer2(read_only=True)
+    
     class Meta:
         model = SavePost
         # fields = "__all__"
@@ -62,25 +63,43 @@ class SavePostSerializer(serializers.ModelSerializer):
                   'savepost_username',
                   'id',
                   'sp_datetime',
-                  'sp_is_noti'
+                  'sp_is_noti',
                 #   'pc_datetime',
                 #   'pc_del'
                   )
-
+       
+        
 class CountUnreadSerializer(serializers.ModelSerializer):
-    countunread_sp_id = SavePostSerializer(read_only=True)
-    
+    # countunread_sp_id = SavePostSerializer(read_only=True)
     class Meta:
         model = CountUnread
         # fields = "__all__"
         fields = ('cu_id',
-                  'countunread_sp_id',
                   'cu_pre_datetime',
                   'cu_datetime',
                   'cu_count'
                 #   'pc_datetime',
                 #   'pc_del'
                   )
+        
+class SavePostSerializer2(serializers.ModelSerializer):
+    # savepost_username = UserSerializer2(read_only=True)
+    countunread_sp_id = CountUnreadSerializer(read_only=True, many=True)
+    
+    class Meta:
+        model = SavePost
+        # fields = "__all__"
+        fields = ('sp_id',
+                #   'savepost_username',
+                  'countunread_sp_id',
+                  'id',
+                  'sp_datetime',
+                  'sp_is_noti',
+                #   'pc_datetime',
+                #   'pc_del'
+                  )
+
+
 
 
 class PostPlaceSerializer(serializers.ModelSerializer):
@@ -112,6 +131,16 @@ class PostListSerializer(serializers.ModelSerializer):
     photo_b_id = PhotoSerializer(read_only=True, many=True)
     savepost_b_id = SavePostSerializer(read_only=True , many=True)
     id = UserSerializer2(read_only=True)
+    
+    class Meta:
+        model = Posts
+        fields = "__all__"
+        
+class PostListSerializer2(serializers.ModelSerializer):
+    photo_b_id = PhotoSerializer(read_only=True , many=True)
+    savepost_b_id = SavePostSerializer(read_only=True , many=True)
+    id = UserSerializer2(read_only=True)
+    CountUnreadSerializer = CountUnreadSerializer(read_only=True , many=True)
     
     class Meta:
         model = Posts

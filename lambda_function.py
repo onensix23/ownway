@@ -162,7 +162,7 @@ class CRUD(Databases):
                 
                 apns=messaging.APNSConfig( 
                     payload=messaging.APNSPayload( 
-                        aps=messaging.Aps(sound='default', ), 
+                        aps=messaging.Aps(sound='default',badge=0 ), 
                     ), 
                 ), 
                 token=registration_token,

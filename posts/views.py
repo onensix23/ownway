@@ -192,7 +192,6 @@ class PostViewSet(APIView):
        POST /board
     """
     def post(self, request, **kwargs):
-
         res_data = {
             'post_success': False,
             'postcomment_success': 'no comment',
@@ -264,6 +263,7 @@ class PostViewSet(APIView):
                 ~Q(id__in=User.objects.filter(username__in=Subquery(UserBlock.objects.values('ub_to').filter(ub_from=userObj))))
                 &Q(b_del='N')
             ))
+            
             
             paginator = Paginator(get_queryset, 10)
             page = request.data['page']
@@ -337,21 +337,21 @@ class PostViewSet(APIView):
     GET /board
         detail (b_id)
     """
-    def get(self, request, **kwargs):
-        if(len(request.GET) > 0): #detail
-            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('postplace_b_id').prefetch_related('savepost_b_id').filter(Q(
-                Q(b_id=request.GET['b_id']) 
-            )).select_related('id') # .order_by('-photo_b_id.p_datetime').order_by('-postplace_b_id.pp_datetime').order_by('-postcomment_b_id.pc_datetime')
-            get_serializer_class = PostSerializer(get_queryset, many=True)
+    # def get(self, request, **kwargs):
+    #     if(len(request.GET) > 0): #detail
+    #         get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('postplace_b_id').prefetch_related('savepost_b_id').filter(Q(
+    #             Q(b_id=request.GET['b_id']) 
+    #         )).select_related('id') # .order_by('-photo_b_id.p_datetime').order_by('-postplace_b_id.pp_datetime').order_by('-postcomment_b_id.pc_datetime')
+    #         get_serializer_class = PostSerializer(get_queryset, many=True)
 
-        else:
+    #     else:
             
-            get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime')
+    #         get_queryset = Posts.objects.prefetch_related('photo_b_id').prefetch_related('postcomment_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime')
             
-            get_serializer_class = PostSerializer(get_queryset, many=True)
+    #         get_serializer_class = PostSerializer(get_queryset, many=True)
 
-        # return Response(get_serializer_class2.data, status=200)
-        return Response(get_serializer_class.data, status=200)
+    #     # return Response(get_serializer_class2.data, status=200)
+    #     return Response(get_serializer_class.data, status=200)
 
     """
         PUT /board/{b_id}
@@ -817,13 +817,13 @@ class SavePostViewSet(APIView):
     GET  param userId
     POST param userId, b_id
     """
-    def get(self, request, **kwargs):
-        user_id = request.GET['userId']
+    # def get(self, request, **kwargs):
+    #     user_id = request.GET['userId']
 
-        get_queryset = Posts.objects.filter(b_id__in=Subquery(SavePost.objects.values('b_id').filter(id=user_id))).prefetch_related('photo_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime')
-        get_serializer_class = PostListSerializer(get_queryset, many=True)
+    #     get_queryset = Posts.objects.filter(b_id__in=Subquery(SavePost.objects.values('b_id').filter(id=user_id))).prefetch_related('photo_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime')
+    #     get_serializer_class = PostListSerializer(get_queryset, many=True)
 
-        return Response(get_serializer_class.data, status=200)
+    #     return Response(get_serializer_class.data, status=200)
 
 
     def post(self, request, **kwargs):
@@ -838,18 +838,34 @@ class SavePostViewSet(APIView):
         userObj = User.objects.get(username=user_id)
 
         if request.data['type'] == 'r':
-            get_queryset = Posts.objects.filter(b_id__in=Subquery(SavePost.objects.values('b_id').filter(id=user_id))).prefetch_related('photo_b_id').prefetch_related('savepost_b_id').select_related('id').order_by('-b_update_datetime')
-            
-            paginator = Paginator(get_queryset, 15)
             page = request.data['page']
+            
+            get_queryset = Posts.objects.filter(
+                b_id__in=Subquery(
+                    SavePost.objects.values('b_id').filter(id=userObj).prefetch_related('countunread_sp_id')
+                    )
+                ).prefetch_related(Prefetch('photo_b_id',
+                    queryset=Photo.objects.filter(p_isthumb='1')
+                )).prefetch_related(Prefetch('savepost_b_id',
+                    queryset=SavePost.objects.filter(id=userObj)
+                )).select_related('id').order_by('-b_update_datetime')
+            paginator = Paginator(get_queryset, 15)
+            
+            get_queryset_count = SavePost.objects.filter(id=user_id).prefetch_related('countunread_sp_id').order_by('-sp_datetime')
+            paginator2 = Paginator(get_queryset_count, 15)
             
             if paginator.num_pages < page:
                 res_data = None
             else:   
                 posts = paginator.get_page(page)
-                get_serializer_class = PostListSerializer(posts, many=True)
-                res_data = get_serializer_class.data
+                get_serializer_class = PostListSerializer2(posts, many=True)
 
+                posts2 = paginator2.get_page(page)
+                get_serializer_class2 = SavePostSerializer2(posts2, many=True)
+                
+                res_data['result'] = get_serializer_class.data
+                res_data['count'] = get_serializer_class2.data
+                
             return Response(res_data, status=200)
         elif request.data['type'] == '0':
             
